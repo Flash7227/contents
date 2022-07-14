@@ -18,7 +18,6 @@ window.moment = require('moment');
 
 
 //components will place below
-Vue.component('navbar-comp', require('./components/navbar-comp.vue').default);
 Vue.component('upload-comp', require('./components/upload-comp.vue').default);
 
 

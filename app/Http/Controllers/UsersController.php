@@ -61,4 +61,8 @@ class UsersController extends Controller
             return "error";
         }
     }
+    public function sharedIndex()
+    {
+        return view('user.shared');
+    }
 }

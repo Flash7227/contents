@@ -1,60 +1,39 @@
 <template>
-    <div class="container">
-        <Button>Default</Button>
-        <Button type="primary">Primary</Button>
-        <Button type="dashed">Dashed</Button>
-        <Button type="text">Text</Button>
-        <br><br>
-        <Button type="info">Info</Button>
-        <Button type="success">Success</Button>
-        <Button type="warning">Warning</Button>
-        <Button type="error">Error</Button>
-    </div>
+    <div
+        class="container"
+        v-loading.fullscreen.lock="loading"
+        element-loading-text="Уншиж байна..."
+    ></div>
 </template>
 
 <script>
-    export default {
-        data(){
-            return{
-                loading: false,
-            }
-        },
-        methods:{
-            spinStart(){
-                this.$Spin.show({
-                    render: (h) => {
-                        return h('div', [
-                            h('Icon', {
-                                'class': 'demo-spin-icon-load',
-                                props: {
-                                    type: 'ios-loading',
-                                    size: 38
-                                }
-                            }),
-                            h('div', 'Loading')
-                        ])
-                    }
+export default {
+    data() {
+        return {
+            loading: false,
+        };
+    },
+    methods: {
+        fetch() {
+            this.loading = true;
+            axios
+                .get("/test")
+                .then((response) => {
+                    this.loading = false;
                 })
-            },
-            fetch(){
-                this.spinStart();
-                axios.get("/test")
-                .then(response => {
-                    this.$Spin.hide();
-                })
-                .catch(error => {
+                .catch((error) => {
                     this.loading = false;
                     console.log(error.response);
                     this.$notify.error({
-                        title: 'Error',
-                        message: error.response.data.message
+                        title: "Error",
+                        message: error.response.data.message,
                     });
                 });
-            },
-
         },
-        created(){
-            // this.fetch();
-        }
-    }
+    },
+    created() {
+        // this.fetch();
+    },
+    // props:['permissions']
+};
 </script>

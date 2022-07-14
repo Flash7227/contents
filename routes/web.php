@@ -8,3 +8,8 @@ Route::get('/', 'HomeController@welcome');
 Route::get('/home', 'HomeController@index')->name('home');
 
 //Tseverhen ajiltsgaay
+// TVROOM 
+Route::group(['middleware' => 'auth', 'prefix' => '/user'], function(){
+    Route::get('/upload', 'UsersController@uploadIndex');
+    Route::post('/upload', 'UsersController@uploadPost');
+});

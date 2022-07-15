@@ -100,10 +100,10 @@
                         default-first-option
                     >
                         <el-option
-                            v-for="item in emails"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value"
+                            v-for="(item, index) in emails"
+                            :key="index"
+                            :label="item"
+                            :value="item"
                         >
                         </el-option>
                     </el-select>
@@ -117,13 +117,76 @@
                             @click="submitUpload"
                             >Хуулах</el-button
                         >
-                        <el-button @click="resetForm('fileList')"
-                            >Cancel</el-button
-                        >
+                        <el-button @click="resetForm()">Cancel</el-button>
                     </el-form-item>
                 </el-form-item>
             </el-form>
         </el-card>
+        <el-card class="mt-2">
+            <p>Таны хуулсан файлууд</p>
+            <el-table :data="lists.data" border style="width: 100%">
+                <el-table-column
+                    type="index"
+                    :index="indexMethod"
+                    align="center"
+                    header-align="center"
+                >
+                </el-table-column>
+                <el-table-column
+                    prop="type"
+                    label="Төрөл"
+                    width="160"
+                    align="center"
+                    header-align="center"
+                >
+                    <template slot-scope="scope">
+                        {{ typeName(scope.row.type) }}
+                    </template>
+                </el-table-column>
+                <el-table-column
+                    prop="name"
+                    label="Нэр"
+                    align="center"
+                    header-align="center"
+                >
+                </el-table-column>
+                <el-table-column
+                    prop="tags"
+                    label="Tags"
+                    align="center"
+                    header-align="center"
+                >
+                    <template slot-scope="scope">
+                        <el-tag
+                            type="info"
+                            class="mr-1 mb-1"
+                            v-for="(tag, index) in JSON.parse(scope.row.tags)"
+                            :key="index"
+                            >{{ tag }}</el-tag
+                        >
+                    </template>
+                </el-table-column>
+                <el-table-column
+                    prop="created_at"
+                    label="Огноо"
+                    align="center"
+                    header-align="center"
+                    width="180"
+                >
+                    <template slot-scope="scope">
+                        <i class="el-icon-time"></i>
+                        {{ dateformatter(scope.row.created_at) }}
+                    </template>
+                </el-table-column>
+            </el-table>
+        </el-card>
+        <pagination
+            :data="lists"
+            @pagination-change-page="fetch"
+            :limit="3"
+            align="center"
+            class="my-2"
+        ></pagination>
     </div>
 </template>
 
@@ -138,7 +201,6 @@ export default {
             inputVisible2: false,
             inputValue: "",
             inputValue2: "",
-            form: {},
             fileList: {
                 dataType: "0",
                 oldFilePath: "",
@@ -165,68 +227,17 @@ export default {
                 },
             ],
             emails: [],
-            list: [],
-            states: [
-                "Alabama",
-                "Alaska",
-                "Arizona",
-                "Arkansas",
-                "California",
-                "Colorado",
-                "Connecticut",
-                "Delaware",
-                "Florida",
-                "Georgia",
-                "Hawaii",
-                "Idaho",
-                "Illinois",
-                "Indiana",
-                "Iowa",
-                "Kansas",
-                "Kentucky",
-                "Louisiana",
-                "Maine",
-                "Maryland",
-                "Massachusetts",
-                "Michigan",
-                "Minnesota",
-                "Mississippi",
-                "Missouri",
-                "Montana",
-                "Nebraska",
-                "Nevada",
-                "New Hampshire",
-                "New Jersey",
-                "New Mexico",
-                "New York",
-                "North Carolina",
-                "North Dakota",
-                "Ohio",
-                "Oklahoma",
-                "Oregon",
-                "Pennsylvania",
-                "Rhode Island",
-                "South Carolina",
-                "South Dakota",
-                "Tennessee",
-                "Texas",
-                "Utah",
-                "Vermont",
-                "Virginia",
-                "Washington",
-                "West Virginia",
-                "Wisconsin",
-                "Wyoming",
-            ],
+            lists: {},
         };
     },
     methods: {
         fetch() {
             this.loading = true;
             axios
-                .get("/test")
+                .post("/user/upload/fetch")
                 .then((response) => {
                     this.loading = false;
+                    this.lists = response.data;
                 })
                 .catch((error) => {
                     this.loading = false;
@@ -252,14 +263,13 @@ export default {
         handleSuccess() {
             this.loading = false;
             this.loadText = "Уншиж байна...";
-            this.resetForm("fileList");
+            this.resetForm();
             this.$message({
                 message: "Successful",
                 type: "success",
                 duration: 3000,
             });
-            this.$refs.upload.clearFiles();
-            // this.fetch();
+            this.fetch();
         },
         handleError() {
             this.loading = false;
@@ -308,11 +318,13 @@ export default {
                 );
             }
         },
-        resetForm(formName) {
+        resetForm() {
             // this.$refs[formName].resetFields();
+            this.$refs.upload.clearFiles();
             this.fileList.name = "";
             this.fileList.desc = "";
             this.fileList.dynamicTags = [];
+            this.fileList.allowed = [];
         },
         showInput(index) {
             if (index == 1) {
@@ -346,32 +358,52 @@ export default {
         },
         remoteMethod(query) {
             if (query !== "") {
-                this.loading = true;
+                // this.loading = true;
                 setTimeout(() => {
-                    this.loading = false;
-                    this.emails = this.list.filter((item) => {
+                    // this.loading = false;
+                    this.emails = JSON.parse(this.states).filter((item) => {
                         return (
-                            item.label
-                                .toLowerCase()
-                                .indexOf(query.toLowerCase()) > -1
+                            item.toLowerCase().indexOf(query.toLowerCase()) > -1
                         );
                     });
-                }, 200);
+                }, 100);
             } else {
                 this.emails = [];
             }
         },
+        dateformatter(date, short) {
+            if (short) {
+                // console.log(short, '---');
+                return moment(date).format("YYYY-MM-DD");
+            } else {
+                return moment(date).format("YYYY-MM-DD HH:mm");
+            }
+        },
+        indexMethod(index) {
+            return (
+                (this.lists.current_page - 1) * this.lists.per_page + index + 1
+            );
+        },
+        typeName(type) {
+            var filtered = this.options.filter(
+                (option) => option.value == type
+            );
+            if (filtered) {
+                return filtered[0].label;
+            } else {
+                return "Unknown type";
+            }
+        },
     },
     created() {
-        // this.fetch();
+        this.fetch();
     },
-    mounted() {
-        this.list = this.states.map((item) => {
-            return { value: `value:${item}`, label: `label:${item}` };
-        });
-    },
+    mounted() {},
     props: {
         csrf: {
+            type: String,
+        },
+        states: {
             type: String,
         },
     },

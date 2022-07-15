@@ -14,7 +14,7 @@ import locale from 'element-ui/lib/locale/lang/en'
 Vue.use(ElementUI, { locale })
 
 window.moment = require('moment'); 
-
+Vue.component('pagination', require('laravel-vue-pagination'));
 
 
 //components will place below

@@ -4,13 +4,15 @@ namespace App\Http\Controllers;
 use App\Uploads;
 use Storage;
 use League\Flysystem\Filesystem;
+use App\User;
 use Illuminate\Http\Request;
 
 class UsersController extends Controller
 {
     public function uploadIndex()
     {
-        return view('user.upload');
+        $emails = User::select('email')->get()->pluck('email');
+        return view('user.upload', ['emails'=>$emails]);
     }
     public function uploadPost(Request $req)
     {
@@ -60,6 +62,11 @@ class UsersController extends Controller
         }else{
             return "error";
         }
+    }
+    public function uploadFetch(Request $req)
+    {
+        $lists = Uploads::where('user_id', Auth()->user()->id)->orderBy('created_at', 'DESC')->paginate(10);
+        return $lists;
     }
     public function sharedIndex()
     {

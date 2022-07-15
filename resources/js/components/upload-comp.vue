@@ -135,7 +135,7 @@
                 <el-table-column
                     prop="type"
                     label="Төрөл"
-                    width="160"
+                    width="140"
                     align="center"
                     header-align="center"
                 >

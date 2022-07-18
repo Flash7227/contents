@@ -11,6 +11,7 @@
                 :model="fileList"
                 label-width="120px"
                 size="mini"
+                :rules="rules"
             >
                 <el-form-item label="Төрөл" prop="type">
                     <el-select v-model="fileList.type" placeholder="Сонгох">
@@ -23,7 +24,7 @@
                         </el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="Файл">
+                <el-form-item label="Файл" prop="upload">
                     <el-upload
                         ref="upload"
                         action="/user/upload"
@@ -124,7 +125,7 @@
         </el-card>
         <el-card class="mt-2">
             <p>Таны хуулсан файлууд</p>
-            <el-table :data="lists.data" border style="width: 100%">
+            <el-table :data="lists.data" border style="width: 100%" @row-click="openDetails">
                 <el-table-column
                     type="index"
                     :index="indexMethod"
@@ -135,7 +136,7 @@
                 <el-table-column
                     prop="type"
                     label="Төрөл"
-                    width="140"
+                    width="110"
                     align="center"
                     header-align="center"
                 >
@@ -149,16 +150,6 @@
                     align="center"
                     header-align="center"
                 >
-                </el-table-column>
-                <el-table-column
-                    prop="size"
-                    label="Хэмжээ"
-                    align="center"
-                    header-align="center"
-                >
-                <template slot-scope="scope">
-                    {{readableSize(scope.row.size)}}
-                </template>
                 </el-table-column>
                 <el-table-column
                     prop="tags"
@@ -177,11 +168,48 @@
                     </template>
                 </el-table-column>
                 <el-table-column
+                    prop="size"
+                    label="Хуваалцсан"
+                    align="center"
+                    width="100"
+                    header-align="center"
+                >
+                    <template slot-scope="scope">
+                        <el-popover
+                            placement="right"
+                            title="Хуваалцсан жагсаалт"
+                            width="200"
+                            trigger="hover"
+                            >
+                            <table class="table text-center">
+                                <tr v-for="(dat, index) in JSON.parse(scope.row.allowed)" :key="index">
+                                    <td class="grey">{{index + 1}}</td>
+                                    <td>
+                                        {{dat}}
+                                    </td>
+                                </tr>
+                            </table>
+                            <el-button size="small" slot="reference">{{JSON.parse(scope.row.allowed).length}} <i class="el-icon-user"></i></el-button>
+                        </el-popover>
+                    </template>
+                </el-table-column>
+                <el-table-column
+                    prop="size"
+                    label="Хэмжээ"
+                    align="center"
+                    width="100"
+                    header-align="center"
+                >
+                    <template slot-scope="scope">
+                        {{readableSize(scope.row.size)}}
+                    </template>
+                </el-table-column>
+                <el-table-column
                     prop="created_at"
                     label="Огноо"
                     align="center"
                     header-align="center"
-                    width="180"
+                    width="160"
                 >
                     <template slot-scope="scope">
                         <i class="el-icon-time"></i>
@@ -197,6 +225,20 @@
             align="center"
             class="my-2"
         ></pagination>
+        <el-dialog
+            title="Action"
+            :visible.sync="dialogVisible"
+            width="30%"
+            :before-close="handleClose">
+            <span>This is a message</span>
+   
+            <span slot="footer" class="dialog-footer">
+                <div>
+                    <el-button type="danger" icon="el-icon-delete">Устгах</el-button>
+                    <el-button @click="downloadFile" type="success" icon="el-icon-download">Татах</el-button>
+                </div>
+            </span>
+        </el-dialog>
     </div>
 </template>
 
@@ -219,6 +261,7 @@ export default {
                 type: "1",
                 dynamicTags: [],
                 allowed: [],
+                url:""
             },
             attachments: [],
             srcList: [],
@@ -238,6 +281,11 @@ export default {
             ],
             emails: [],
             lists: {},
+            rules: {
+                name: [
+                    { required: true, message: 'Заавал бөглөнө үү!', trigger: 'blur' }
+                ],           
+            }
         };
     },
     methods: {
@@ -259,12 +307,43 @@ export default {
                 });
         },
         submitUpload() {
+            this.$refs['fileList'].validate((valid) => {
+            if (valid) {
+                if (this.$refs.upload.uploadFiles.length > 0) {
+                    this.loading = true;
+                    this.$refs.upload.submit();
+                }else{
+                    this.$message({
+                        message: 'Файл сонгогдоогүй байна!',
+                        type: 'warning'
+                    });
+                }
+            } else {
+                console.log('error submit!!');
+                return false;
+            }
+            });
             // console.log(this.fileList);
             // console.log(this.$refs.upload.uploadFiles);
-            if (this.$refs.upload.uploadFiles.length > 0) {
-                this.loading = true;
-                this.$refs.upload.submit();
-            }
+
+        },
+        downloadFile() {
+            var url = this.fileList.url;
+            // console.log(url);
+            axios({
+                url: '/storage/uploads/' + url, // File URL Goes Here
+                method: 'GET',
+                responseType: 'blob',
+            }).then((response) => {
+                var fileURL = window.URL.createObjectURL(new Blob([response.data]));
+                var fileLink = document.createElement('a');
+
+                fileLink.href = fileURL;
+                fileLink.setAttribute('download', url);
+                document.body.appendChild(fileLink);
+
+                fileLink.click();
+            });
         },
         handleProgress(event, file, fileList) {
             console.log(event);
@@ -410,6 +489,14 @@ export default {
         readableSize(size){
             var i = Math.floor( Math.log(size) / Math.log(1024) );
             return ( size / Math.pow(1024, i) ).toFixed(2) * 1 + ' ' + ['B', 'kB', 'MB', 'GB', 'TB'][i];
+        },
+        handleClose(){
+            this.dialogVisible = false;
+        },
+        openDetails(row, column, event){
+            this.fileList.url = row.url;
+            // console.log(row, column, event);
+            this.dialogVisible = true;
         }
     },
     created() {

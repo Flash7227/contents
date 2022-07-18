@@ -30,7 +30,6 @@ class UsersController extends Controller
                 'error' => 'File is not valid!'
             ]);
         }
-        
         $filenamewithExt= $file->getClientOriginalName();
         //get just filename
         $filename = pathinfo($filenamewithExt,PATHINFO_FILENAME);
@@ -55,8 +54,14 @@ class UsersController extends Controller
             $upload->type = $req->input('type');;
             $upload->url = $fileNameToStore;
             $upload->name = $req->input('name');
-            $tags = explode(",", $req->input('dynamicTags'));
-            $allowed = explode(",", $req->input('allowed'));
+            $tags = [];
+            if($req->input('dynamicTags')){
+                $tags = explode(",", $req->input('dynamicTags'));
+            };
+            $allowed = [];
+            if($req->input('allowed')){
+                $allowed = explode(",", $req->input('allowed'));
+            }
             $upload->tags = json_encode($tags);
             $upload->allowed = json_encode($allowed);
             $upload->desc = $req->input('desc');

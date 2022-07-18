@@ -60,8 +60,8 @@
 
                 <el-form-item label="Tags" prop="tags">
                     <el-tag
-                        :key="tag"
-                        v-for="tag in fileList.dynamicTags"
+                        v-for="(tag,index) in fileList.dynamicTags"
+                        :key="index"
                         closable
                         :disable-transitions="false"
                         @close="handleClose(tag, 1)"
@@ -149,6 +149,16 @@
                     align="center"
                     header-align="center"
                 >
+                </el-table-column>
+                <el-table-column
+                    prop="size"
+                    label="Хэмжээ"
+                    align="center"
+                    header-align="center"
+                >
+                <template slot-scope="scope">
+                    {{readableSize(scope.row.size)}}
+                </template>
                 </el-table-column>
                 <el-table-column
                     prop="tags"
@@ -294,6 +304,8 @@ export default {
             // console.log(fileList);
         },
         beforeAvatarUpload(file) {
+            console.log(file.size);
+            this.fileList.size = file.size;
             // const isJPG =
             //     file.type === "image/jpeg" || "image/png" || "image/gif";
             // const isLt2M = file.size / 1024 / 1024 < 2;
@@ -325,6 +337,7 @@ export default {
             this.fileList.desc = "";
             this.fileList.dynamicTags = [];
             this.fileList.allowed = [];
+            this.fileList.size = "";
         },
         showInput(index) {
             if (index == 1) {
@@ -394,6 +407,10 @@ export default {
                 return "Unknown type";
             }
         },
+        readableSize(size){
+            var i = Math.floor( Math.log(size) / Math.log(1024) );
+            return ( size / Math.pow(1024, i) ).toFixed(2) * 1 + ' ' + ['B', 'kB', 'MB', 'GB', 'TB'][i];
+        }
     },
     created() {
         this.fetch();

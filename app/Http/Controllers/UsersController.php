@@ -33,17 +33,21 @@ class UsersController extends Controller
         
         $filenamewithExt= $file->getClientOriginalName();
         //get just filename
-        // $filename = pathinfo($filenamewithExt,PATHINFO_FILENAME);
-        $filename = uniqid().Auth()->user()->id;
+        $filename = pathinfo($filenamewithExt,PATHINFO_FILENAME);
+        $time = Auth()->user()->id.'_'.time();
+        // $filename = uniqid().Auth()->user()->id;
+        $filename = $filename.'_'.$time;
+        // return $filename;
         //get jsut extension
         $extension = $file->guessClientExtension();
         //file name to store
-        $fileNameToStore = $filename.'_'.time().'.'.$extension;
+        $fileNameToStore = $filename.'.'.$extension;
         // $clientFileSize=$req->file('file')->getSize();
         //Upload Image
         // $path = $file->storeAs('public/uploads/', $fileNameToStore);
         $disk = Storage::disk('local');
         $disk->putFileAs('/public/uploads', $file, $fileNameToStore );
+    
         // $comparesize=$clientFileSize-$ftpFileSize;
         // return $file;
         if($disk){
@@ -57,6 +61,7 @@ class UsersController extends Controller
             $upload->allowed = json_encode($allowed);
             $upload->desc = $req->input('desc');
             $upload->user_id = Auth()->user()->id;
+            $upload->size = $req->input('size');
             $upload->save();
             return "success";
         }else{

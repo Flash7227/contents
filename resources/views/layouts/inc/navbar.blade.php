@@ -10,8 +10,8 @@
     <div class="collapse navbar-collapse" id="navbarColor02">
       <ul class="navbar-nav mr-auto">
         @auth
-        <li class="nav-item {{ Request::path() == '/' ? 'active' : ''}}">
-            <a class="nav-link" href="/">Үндсэн нүүр
+        <li class="nav-item {{ Request::path() == 'home/home' ? 'active' : ''}}">
+            <a class="nav-link" href="/home/home">Үндсэн нүүр
             </a>
         </li>
         <li class="nav-item {{ Request::path() == 'user/upload' ? 'active' : ''}}">

@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Route;
 Auth::routes();
 
 Route::get('/', 'HomeController@welcome');
-Route::get('/', 'HomeController@homecompIndex');
+
 
 //Tseverhen ajiltsgaay
 // TVROOM 
@@ -21,6 +21,12 @@ Route::group(['middleware' => 'auth', 'prefix' => '/user'], function(){
 
 Route::group(['middleware' => 'auth', 'prefix' => '/admin'], function(){
     Route::get('/users', 'AdminsController@usersIndex');
+    
+});
+
+Route::group(['middleware' => 'auth', 'prefix' => '/home'], function(){
+    Route::get('/home', 'HomeController@homecompIndex');
+    Route::get('/getupload', 'HomeController@uploadData');
     
 });
 

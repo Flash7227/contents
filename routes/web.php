@@ -31,3 +31,4 @@ Route::group(['middleware' => 'auth', 'prefix' => '/home'], function(){
 });
 
     
+Route::post('/ckeditor/upload', 'CkeditorController@upload')->name('ckeditor.upload');

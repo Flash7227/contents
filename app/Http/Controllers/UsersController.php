@@ -16,56 +16,72 @@ class UsersController extends Controller
     }
     public function uploadPost(Request $req)
     {
-        if(!$req->hasFile('file')){
-            return response()->json([
-                'error' => 'No File Uploaded'
-            ]);
-        }
+        if($req->input('form')){
+            //post oruulah uyed l form bn
+            $form = $req->input('form');
+            $name = $form['name'];
+            $type = $form['type'];
+            $desc = $form['desc'];
+            $temp_tags = $form['dynamicTags'];
+            $temp_allowed = $form['allowed'];
+            $size = 0;
+        }else{
+            $name = $req->input('name');
+            $type = $req->input('type');
+            $desc = $req->input('desc');
+            $temp_tags = $req->input('dynamicTags');
+            $temp_allowed = $req->input('allowed');
+            $size = $req->input('size');
 
-        $file = $req->file('file');
-        
-        if(!$file->isValid()){
-            return response()->json([
-                'error' => 'File is not valid!'
-            ]);
+            if(!$req->hasFile('file')){
+                return response()->json([
+                    'error' => 'No File Uploaded'
+                ]);
+            }
         }
-        $filenamewithExt= $file->getClientOriginalName();
-        //get just filename
-        $filename = pathinfo($filenamewithExt,PATHINFO_FILENAME);
-        $time = Auth()->user()->id.'_'.time();
-        // $filename = uniqid().Auth()->user()->id;
-        $filename = $filename.'_'.$time;
-        // return $filename;
-        //get jsut extension
-        $extension = $file->guessClientExtension();
-        //file name to store
-        $fileNameToStore = $filename.'.'.$extension;
-        // $clientFileSize=$req->file('file')->getSize();
-        //Upload Image
-        // $path = $file->storeAs('public/uploads/', $fileNameToStore);
-        $disk = Storage::disk('local');
-        $disk->putFileAs('/public/uploads', $file, $fileNameToStore);
-    
-        // $comparesize=$clientFileSize-$ftpFileSize;
-        // return $file;
+  
+        if($req->hasFile('file')){
+            $file = $req->file('file');
+            if(!$file->isValid()){
+                return response()->json([
+                    'error' => 'File is not valid!'
+                ]);
+            }
+            $filenamewithExt= $file->getClientOriginalName();
+            //get just filename
+            $filename = pathinfo($filenamewithExt,PATHINFO_FILENAME);
+            $time = Auth()->user()->id.'_'.time();
+            $filename = $filename.'_'.$time;
+            //get jsut extension
+            $extension = $file->guessClientExtension();
+            //file name to store
+            $fileNameToStore = $filename.'.'.$extension;
+            //Upload Image
+            // $path = $file->storeAs('public/uploads/', $fileNameToStore);
+            $disk = Storage::disk('local');
+            $disk->putFileAs('/public/uploads', $file, $fileNameToStore);
+        }else{
+            $disk = true;
+            $fileNameToStore = 'noimage123.png';
+        }
         if($disk){
             $upload = new Uploads;
-            $upload->type = $req->input('type');;
+            $upload->type = $type;
             $upload->url = $fileNameToStore;
-            $upload->name = $req->input('name');
+            $upload->name = $name;
             $tags = [];
-            if($req->input('dynamicTags')){
-                $tags = explode(",", $req->input('dynamicTags'));
+            if($temp_tags){
+                $tags = explode(",", $temp_tags);
             };
             $allowed = [];
-            if($req->input('allowed')){
-                $allowed = explode(",", $req->input('allowed'));
+            if($temp_allowed){
+                $allowed = explode(",", $temp_allowed);
             }
             $upload->tags = json_encode($tags);
             $upload->allowed = json_encode($allowed);
-            $upload->desc = $req->input('desc');
+            $upload->desc = $desc;
             $upload->user_id = Auth()->user()->id;
-            $upload->size = $req->input('size');
+            $upload->size = $size;
             $upload->save();
             return "success";
         }else{
@@ -84,6 +100,7 @@ class UsersController extends Controller
             $upload->delete();
         }else{
             $upload->name = $form['name'];
+            $upload->desc = $form['desc'];
             $tags = [];
             if($form['dynamicTags']){
                 // $tags = explode(",", $form['dynamicTags']);

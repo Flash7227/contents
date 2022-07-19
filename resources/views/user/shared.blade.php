@@ -1,4 +1,4 @@
 @extends('layouts.app')
 @section('content')
-{{-- <upload-comp csrf="{{ csrf_token() }}"></upload-comp> --}}
+<shared-comp csrf="{{ csrf_token() }}"></shared-comp>
 @endsection

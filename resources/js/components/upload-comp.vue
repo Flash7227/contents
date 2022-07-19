@@ -43,7 +43,7 @@
                     >
                         <el-button
                             slot="trigger"
-                            size="mini"
+                            size="small"
                             icon="el-icon-document-add"
                             type="info"
                             plain
@@ -65,7 +65,7 @@
                         :key="index"
                         closable
                         :disable-transitions="false"
-                        @close="handleClose(tag, 1)"
+                        @close="tagClose(tag, 1)"
                     >
                         {{ tag }}
                     </el-tag>
@@ -228,17 +228,82 @@
         <el-dialog
             title="Action"
             :visible.sync="dialogVisible"
-            width="30%"
+            width="90%"
             :before-close="handleClose">
-            <span>This is a message</span>
+            <el-form                
+                ref="invisModify"
+                :model="selected"
+                label-width="120px"
+                size="mini"
+                :rules="rules">
+                <el-form-item label="Нэр" prop="name">
+                    <el-input v-model="selected.name"></el-input>
+                </el-form-item>
+                <el-form-item label="Tags" prop="tags">
+                    <el-tag
+                        v-for="(tag,index) in selected.dynamicTags"
+                        :key="index"
+                        closable
+                        :disable-transitions="false"
+                        @close="tagClose2(tag, 1)"
+                    >
+                        {{ tag }}
+                    </el-tag>
+                    <el-input
+                        class="input-new-tag"
+                        v-if="inputVisible"
+                        v-model="inputValue"
+                        ref="saveTagInput"
+                        size="mini"
+                        @keyup.enter.native="handleInputConfirm2(1)"
+                        @blur="handleInputConfirm2(1)"
+                    >
+                    </el-input>
+                    <el-button
+                        v-else
+                        class="button-new-tag"
+                        size="small"
+                        @click="showInput(1)"
+                        >#Нэмэх</el-button
+                    >
+                </el-form-item>
+                <el-form-item label="Хуваалцах" prop="allowed">
+                    <el-select
+                        v-model="selected.allowed"
+                        multiple
+                        filterable
+                        remote
+                        reserve-keyword
+                        placeholder="Имайл"
+                        :remote-method="remoteMethod"
+                        :loading="loading"
+                        allow-create
+                        default-first-option
+                    >
+                        <el-option
+                            v-for="(item, index) in emails"
+                            :key="index"
+                            :label="item"
+                            :value="item"
+                        >
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+            </el-form>
    
             <span slot="footer" class="dialog-footer">
-                <div>
-                    <el-button type="danger" icon="el-icon-delete">Устгах</el-button>
-                    <el-button @click="downloadFile" type="success" icon="el-icon-download">Татах</el-button>
+                    <el-button @click="modify(0)" type="danger" icon="el-icon-delete" class="float-left">Устгах</el-button>
+                    <el-button @click="downloadFile" type="success" icon="el-icon-download" class="float-left">Татах</el-button>  
+                    <el-button @click="modify(1)" type="primary" icon="el-icon-edit">Засах</el-button>
+                <!-- <div class="float-left">
+                    <el-button @click="modify" type="danger" icon="el-icon-delete">Устгах</el-button>
+                    <el-button @click="downloadFile" type="success" icon="el-icon-download">Татах</el-button>  
                 </div>
+                <div class="float-right">
+                    
+                </div> -->
             </span>
-        </el-dialog>
+    </el-dialog>
     </div>
 </template>
 
@@ -254,6 +319,7 @@ export default {
             inputValue: "",
             inputValue2: "",
             fileList: {
+                id: "",
                 dataType: "0",
                 oldFilePath: "",
                 name: "",
@@ -261,7 +327,19 @@ export default {
                 type: "1",
                 dynamicTags: [],
                 allowed: [],
-                url:""
+                url:"",
+                size:""
+            },
+            selected:{
+                id:"",
+                name: "",
+                desc: "",
+                type: "1",
+                dynamicTags: [],
+                allowed: [],
+                url:"",
+                size:"",
+                download: ""
             },
             attachments: [],
             srcList: [],
@@ -323,30 +401,63 @@ export default {
                 return false;
             }
             });
-            // console.log(this.fileList);
-            // console.log(this.$refs.upload.uploadFiles);
-
         },
-        downloadFile() {
-            var url = this.fileList.url;
-            // console.log(url);
-            axios({
-                url: '/storage/uploads/' + url, // File URL Goes Here
-                method: 'GET',
-                responseType: 'blob',
-            }).then((response) => {
-                var fileURL = window.URL.createObjectURL(new Blob([response.data]));
-                var fileLink = document.createElement('a');
+        modify(type){
+            this.$confirm('Та итгэлтэй байна уу?', 'Warning', {
+                confirmButtonText: 'OK',
+                cancelButtonText: 'Cancel',
+                type: 'warning'
+            }).then(() => {
+                this.loading = true;
+                var temp = 'mod';
+                if(type == 0){
+                    temp = 'del';
+                }
+                axios
+                .post("/user/upload/modify", {form: this.selected, type: temp})
+                .then((response) => {
+                    this.loading = false;
+                    if(response.data == 'success'){
+                        this.$message({
+                            type: 'success',
+                            message: 'Амжилттай!'
+                        });
+                        this.handleClose();
+                        this.fetch();
+                    }else{
+                        this.$notify.error({
+                            title: "Error",
+                            message: response.data
+                        });
+                    }
+                })
+                .catch((error) => {
+                    this.loading = false;
+                    console.log(error.response);
+                    this.$notify.error({
+                        title: "Error",
+                        message: error.response.data.message,
+                    });
+                });
 
-                fileLink.href = fileURL;
-                fileLink.setAttribute('download', url);
-                document.body.appendChild(fileLink);
-
-                fileLink.click();
+            }).catch(() => {
+                // this.$message({
+                //     type: 'info',
+                //     message: 'Цуцлагдлаа'
+                // });          
             });
         },
+        downloadFile() {
+            var url = this.selected.url;
+            var link = document.createElement("a");
+            link.setAttribute('download', url);
+            link.href = this.selected.download;
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+        },
         handleProgress(event, file, fileList) {
-            console.log(event);
+            // console.log(event);
             this.loadText = "Уншиж байна..." + Math.floor(event.percent) + "%";
         },
         handleSuccess() {
@@ -379,11 +490,11 @@ export default {
         },
         addAttachment(file, fileList) {
             this.attachments.push(file);
-            console.log(file);
+            // console.log(file);
             // console.log(fileList);
         },
         beforeAvatarUpload(file) {
-            console.log(file.size);
+            // console.log(file.size);
             this.fileList.size = file.size;
             // const isJPG =
             //     file.type === "image/jpeg" || "image/png" || "image/gif";
@@ -396,10 +507,23 @@ export default {
             // }
             // return isJPG && isLt2M;
         },
-        handleClose(tag, index) {
+        tagClose(tag, index) {
             if (index == 1) {
                 this.fileList.dynamicTags.splice(
                     this.fileList.dynamicTags.indexOf(tag),
+                    1
+                );
+            } else {
+                this.currentList.tags.splice(
+                    this.currentList.tags.indexOf(tag),
+                    1
+                );
+            }
+        },
+        tagClose2(tag, index) {
+            if (index == 1) {
+                this.selected.dynamicTags.splice(
+                    this.selected.dynamicTags.indexOf(tag),
                     1
                 );
             } else {
@@ -417,6 +541,8 @@ export default {
             this.fileList.dynamicTags = [];
             this.fileList.allowed = [];
             this.fileList.size = "";
+            this.fileList.id = "";
+            this.fileList.download = "";
         },
         showInput(index) {
             if (index == 1) {
@@ -436,6 +562,23 @@ export default {
                 let inputValue = this.inputValue;
                 if (inputValue) {
                     this.fileList.dynamicTags.push(inputValue);
+                }
+                this.inputVisible = false;
+                this.inputValue = "";
+            } else {
+                let inputValue2 = this.inputValue2;
+                if (inputValue2) {
+                    this.currentList.tags.push(inputValue2);
+                }
+                this.inputVisible2 = false;
+                this.inputValue2 = "";
+            }
+        },
+        handleInputConfirm2(index) {
+            if (index == 1) {
+                let inputValue = this.inputValue;
+                if (inputValue) {
+                    this.selected.dynamicTags.push(inputValue);
                 }
                 this.inputVisible = false;
                 this.inputValue = "";
@@ -492,9 +635,16 @@ export default {
         },
         handleClose(){
             this.dialogVisible = false;
+            
         },
         openDetails(row, column, event){
-            this.fileList.url = row.url;
+            this.selected.url = row.url;
+            this.selected.id = row.id;
+            // this.selected.allowed = JSON.parse(row.allowed);
+            this.selected.allowed = JSON.parse(row.allowed);
+            this.selected.name = row.name;
+            this.selected.dynamicTags = JSON.parse(row.tags);
+            this.selected.download = row.download;
             // console.log(row, column, event);
             this.dialogVisible = true;
         }

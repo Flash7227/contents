@@ -16,7 +16,6 @@ class UsersController extends Controller
     }
     public function uploadPost(Request $req)
     {
-        // return $req->all();
         if(!$req->hasFile('file')){
             return response()->json([
                 'error' => 'No File Uploaded'
@@ -45,7 +44,7 @@ class UsersController extends Controller
         //Upload Image
         // $path = $file->storeAs('public/uploads/', $fileNameToStore);
         $disk = Storage::disk('local');
-        $disk->putFileAs('/public/uploads', $file, $fileNameToStore );
+        $disk->putFileAs('/public/uploads', $file, $fileNameToStore);
     
         // $comparesize=$clientFileSize-$ftpFileSize;
         // return $file;
@@ -73,6 +72,34 @@ class UsersController extends Controller
             return "error";
         }
     }
+    public function uploadModify(Request $req)
+    {
+        $form = $req->input('form');
+        $type = $req->input('type');
+        $upload = Uploads::find($form['id']);
+        if($type == 'del'){
+            if (Storage::exists('/public/uploads/'.$upload->url)) {
+                Storage::delete('/public/uploads/'.$upload->url);
+            }
+            $upload->delete();
+        }else{
+            $upload->name = $form['name'];
+            $tags = [];
+            if($form['dynamicTags']){
+                // $tags = explode(",", $form['dynamicTags']);
+                $tags = $form['dynamicTags'];
+            };
+            $allowed = [];
+            if($form['allowed']){
+                // $allowed = explode(",", $form['allowed']);
+                $allowed = $form['allowed'];
+            }
+            $upload->tags = json_encode($tags);
+            $upload->allowed = json_encode($allowed);
+            $upload->save();
+        }
+        return "success";
+    }
     public function uploadFetch(Request $req)
     {
         $lists = Uploads::where('user_id', Auth()->user()->id)->orderBy('created_at', 'DESC')->paginate(10);
@@ -81,5 +108,13 @@ class UsersController extends Controller
     public function sharedIndex()
     {
         return view('user.shared');
+    }
+
+    public function sharedFetch(Request $request){
+        $email = Auth()->user()->email;
+        $data = Uploads::
+        // where('allowed', Auth()->user()->email)
+        whereJsonContains('allowed', $email)->get();
+        return $data;
     }
 }

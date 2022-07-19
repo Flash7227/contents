@@ -19,6 +19,7 @@ Vue.component('pagination', require('laravel-vue-pagination'));
 
 //components will place below
 Vue.component('upload-comp', require('./components/upload-comp.vue').default);
+Vue.component('home-comp', require('./components/home-comp.vue').default);
 
 
 Vue.component('example-component', require('./components/ExampleComponent.vue').default);

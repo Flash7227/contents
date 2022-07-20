@@ -16,7 +16,6 @@ class UsersController extends Controller
     }
     public function uploadPost(Request $req)
     {
-        // return $req->all();
         if(!$req->hasFile('file')){
             return response()->json([
                 'error' => 'No File Uploaded'
@@ -30,20 +29,23 @@ class UsersController extends Controller
                 'error' => 'File is not valid!'
             ]);
         }
-        
         $filenamewithExt= $file->getClientOriginalName();
         //get just filename
-        // $filename = pathinfo($filenamewithExt,PATHINFO_FILENAME);
-        $filename = uniqid().Auth()->user()->id;
+        $filename = pathinfo($filenamewithExt,PATHINFO_FILENAME);
+        $time = Auth()->user()->id.'_'.time();
+        // $filename = uniqid().Auth()->user()->id;
+        $filename = $filename.'_'.$time;
+        // return $filename;
         //get jsut extension
         $extension = $file->guessClientExtension();
         //file name to store
-        $fileNameToStore = $filename.'_'.time().'.'.$extension;
+        $fileNameToStore = $filename.'.'.$extension;
         // $clientFileSize=$req->file('file')->getSize();
         //Upload Image
         // $path = $file->storeAs('public/uploads/', $fileNameToStore);
         $disk = Storage::disk('local');
-        $disk->putFileAs('/public/uploads', $file, $fileNameToStore );
+        $disk->putFileAs('/public/uploads', $file, $fileNameToStore);
+    
         // $comparesize=$clientFileSize-$ftpFileSize;
         // return $file;
         if($disk){
@@ -51,17 +53,52 @@ class UsersController extends Controller
             $upload->type = $req->input('type');;
             $upload->url = $fileNameToStore;
             $upload->name = $req->input('name');
-            $tags = explode(",", $req->input('dynamicTags'));
-            $allowed = explode(",", $req->input('allowed'));
+            $tags = [];
+            if($req->input('dynamicTags')){
+                $tags = explode(",", $req->input('dynamicTags'));
+            };
+            $allowed = [];
+            if($req->input('allowed')){
+                $allowed = explode(",", $req->input('allowed'));
+            }
             $upload->tags = json_encode($tags);
             $upload->allowed = json_encode($allowed);
             $upload->desc = $req->input('desc');
             $upload->user_id = Auth()->user()->id;
+            $upload->size = $req->input('size');
             $upload->save();
             return "success";
         }else{
             return "error";
         }
+    }
+    public function uploadModify(Request $req)
+    {
+        $form = $req->input('form');
+        $type = $req->input('type');
+        $upload = Uploads::find($form['id']);
+        if($type == 'del'){
+            if (Storage::exists('/public/uploads/'.$upload->url)) {
+                Storage::delete('/public/uploads/'.$upload->url);
+            }
+            $upload->delete();
+        }else{
+            $upload->name = $form['name'];
+            $tags = [];
+            if($form['dynamicTags']){
+                // $tags = explode(",", $form['dynamicTags']);
+                $tags = $form['dynamicTags'];
+            };
+            $allowed = [];
+            if($form['allowed']){
+                // $allowed = explode(",", $form['allowed']);
+                $allowed = $form['allowed'];
+            }
+            $upload->tags = json_encode($tags);
+            $upload->allowed = json_encode($allowed);
+            $upload->save();
+        }
+        return "success";
     }
     public function uploadFetch(Request $req)
     {

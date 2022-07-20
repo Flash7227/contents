@@ -11,6 +11,7 @@
                 :model="fileList"
                 label-width="120px"
                 size="mini"
+                :rules="rules"
             >
                 <el-form-item label="Төрөл" prop="type">
                     <el-select v-model="fileList.type" placeholder="Сонгох">
@@ -23,7 +24,7 @@
                         </el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="Файл">
+                <el-form-item label="Файл" prop="upload">
                     <el-upload
                         ref="upload"
                         action="/user/upload"
@@ -60,11 +61,11 @@
 
                 <el-form-item label="Tags" prop="tags">
                     <el-tag
-                        :key="tag"
-                        v-for="tag in fileList.dynamicTags"
+                        v-for="(tag,index) in fileList.dynamicTags"
+                        :key="index"
                         closable
                         :disable-transitions="false"
-                        @close="handleClose(tag, 1)"
+                        @close="tagClose(tag, 1)"
                     >
                         {{ tag }}
                     </el-tag>
@@ -124,7 +125,7 @@
         </el-card>
         <el-card class="mt-2">
             <p>Таны хуулсан файлууд</p>
-            <el-table :data="lists.data" border style="width: 100%">
+            <el-table :data="lists.data" border style="width: 100%" @row-click="openDetails">
                 <el-table-column
                     type="index"
                     :index="indexMethod"
@@ -135,7 +136,7 @@
                 <el-table-column
                     prop="type"
                     label="Төрөл"
-                    width="140"
+                    width="110"
                     align="center"
                     header-align="center"
                 >
@@ -167,11 +168,48 @@
                     </template>
                 </el-table-column>
                 <el-table-column
+                    prop="size"
+                    label="Хуваалцсан"
+                    align="center"
+                    width="100"
+                    header-align="center"
+                >
+                    <template slot-scope="scope">
+                        <el-popover
+                            placement="right"
+                            title="Хуваалцсан жагсаалт"
+                            width="200"
+                            trigger="hover"
+                            >
+                            <table class="table text-center">
+                                <tr v-for="(dat, index) in JSON.parse(scope.row.allowed)" :key="index">
+                                    <td class="grey">{{index + 1}}</td>
+                                    <td>
+                                        {{dat}}
+                                    </td>
+                                </tr>
+                            </table>
+                            <el-button size="small" slot="reference">{{JSON.parse(scope.row.allowed).length}} <i class="el-icon-user"></i></el-button>
+                        </el-popover>
+                    </template>
+                </el-table-column>
+                <el-table-column
+                    prop="size"
+                    label="Хэмжээ"
+                    align="center"
+                    width="100"
+                    header-align="center"
+                >
+                    <template slot-scope="scope">
+                        {{readableSize(scope.row.size)}}
+                    </template>
+                </el-table-column>
+                <el-table-column
                     prop="created_at"
                     label="Огноо"
                     align="center"
                     header-align="center"
-                    width="180"
+                    width="160"
                 >
                     <template slot-scope="scope">
                         <i class="el-icon-time"></i>
@@ -187,6 +225,85 @@
             align="center"
             class="my-2"
         ></pagination>
+        <el-dialog
+            title="Action"
+            :visible.sync="dialogVisible"
+            width="90%"
+            :before-close="handleClose">
+            <el-form                
+                ref="invisModify"
+                :model="selected"
+                label-width="120px"
+                size="mini"
+                :rules="rules">
+                <el-form-item label="Нэр" prop="name">
+                    <el-input v-model="selected.name"></el-input>
+                </el-form-item>
+                <el-form-item label="Tags" prop="tags">
+                    <el-tag
+                        v-for="(tag,index) in selected.dynamicTags"
+                        :key="index"
+                        closable
+                        :disable-transitions="false"
+                        @close="tagClose2(tag, 1)"
+                    >
+                        {{ tag }}
+                    </el-tag>
+                    <el-input
+                        class="input-new-tag"
+                        v-if="inputVisible"
+                        v-model="inputValue"
+                        ref="saveTagInput"
+                        size="mini"
+                        @keyup.enter.native="handleInputConfirm2(1)"
+                        @blur="handleInputConfirm2(1)"
+                    >
+                    </el-input>
+                    <el-button
+                        v-else
+                        class="button-new-tag"
+                        size="small"
+                        @click="showInput(1)"
+                        >#Нэмэх</el-button
+                    >
+                </el-form-item>
+                <el-form-item label="Хуваалцах" prop="allowed">
+                    <el-select
+                        v-model="selected.allowed"
+                        multiple
+                        filterable
+                        remote
+                        reserve-keyword
+                        placeholder="Имайл"
+                        :remote-method="remoteMethod"
+                        :loading="loading"
+                        allow-create
+                        default-first-option
+                    >
+                        <el-option
+                            v-for="(item, index) in emails"
+                            :key="index"
+                            :label="item"
+                            :value="item"
+                        >
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+            </el-form>
+   
+            <span slot="footer" class="dialog-footer">
+                    <el-button @click="modify(0)" type="danger" icon="el-icon-delete" class="float-left">Устгах</el-button>
+                    <el-button @click="downloadFile" type="success" icon="el-icon-download" class="float-left">Татах</el-button>  
+                    <el-button @click="modify(1)" type="primary" icon="el-icon-edit">Засах</el-button>
+                <!-- <div class="float-left">
+                    <el-button @click="modify" type="danger" icon="el-icon-delete">Устгах</el-button>
+                    <el-button @click="downloadFile" type="success" icon="el-icon-download">Татах</el-button>  
+                </div>
+                <div class="float-right">
+                    
+                </div> -->
+            </span>
+    </el-dialog>
     </div>
 </template>
 
@@ -202,6 +319,7 @@ export default {
             inputValue: "",
             inputValue2: "",
             fileList: {
+                id: "",
                 dataType: "0",
                 oldFilePath: "",
                 name: "",
@@ -209,6 +327,18 @@ export default {
                 type: "1",
                 dynamicTags: [],
                 allowed: [],
+                url:"",
+                size:""
+            },
+            selected:{
+                id:"",
+                name: "",
+                desc: "",
+                type: "1",
+                dynamicTags: [],
+                allowed: [],
+                url:"",
+                size:""
             },
             attachments: [],
             srcList: [],
@@ -228,6 +358,11 @@ export default {
             ],
             emails: [],
             lists: {},
+            rules: {
+                name: [
+                    { required: true, message: 'Заавал бөглөнө үү!', trigger: 'blur' }
+                ],           
+            }
         };
     },
     methods: {
@@ -249,12 +384,76 @@ export default {
                 });
         },
         submitUpload() {
-            // console.log(this.fileList);
-            // console.log(this.$refs.upload.uploadFiles);
-            if (this.$refs.upload.uploadFiles.length > 0) {
-                this.loading = true;
-                this.$refs.upload.submit();
+            this.$refs['fileList'].validate((valid) => {
+            if (valid) {
+                if (this.$refs.upload.uploadFiles.length > 0) {
+                    this.loading = true;
+                    this.$refs.upload.submit();
+                }else{
+                    this.$message({
+                        message: 'Файл сонгогдоогүй байна!',
+                        type: 'warning'
+                    });
+                }
+            } else {
+                console.log('error submit!!');
+                return false;
             }
+            });
+        },
+        modify(type){
+            this.$confirm('Та итгэлтэй байна уу?', 'Warning', {
+                confirmButtonText: 'OK',
+                cancelButtonText: 'Cancel',
+                type: 'warning'
+            }).then(() => {
+                this.loading = true;
+                var temp = 'mod';
+                if(type == 0){
+                    temp = 'del';
+                }
+                axios
+                .post("/user/upload/modify", {form: this.selected, type: temp})
+                .then((response) => {
+                    this.loading = false;
+                    if(response.data == 'success'){
+                        this.$message({
+                            type: 'success',
+                            message: 'Амжилттай!'
+                        });
+                        this.handleClose();
+                        this.fetch();
+                    }else{
+                        this.$notify.error({
+                            title: "Error",
+                            message: response.data
+                        });
+                    }
+                })
+                .catch((error) => {
+                    this.loading = false;
+                    console.log(error.response);
+                    this.$notify.error({
+                        title: "Error",
+                        message: error.response.data.message,
+                    });
+                });
+
+            }).catch(() => {
+                // this.$message({
+                //     type: 'info',
+                //     message: 'Цуцлагдлаа'
+                // });          
+            });
+        },
+        downloadFile() {
+            var url = this.selected.url;
+            var link = document.createElement("a");
+            link.setAttribute('download', url);
+            link.href = '/storage/uploads/'+url;
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
         },
         handleProgress(event, file, fileList) {
             console.log(event);
@@ -294,6 +493,8 @@ export default {
             // console.log(fileList);
         },
         beforeAvatarUpload(file) {
+            console.log(file.size);
+            this.fileList.size = file.size;
             // const isJPG =
             //     file.type === "image/jpeg" || "image/png" || "image/gif";
             // const isLt2M = file.size / 1024 / 1024 < 2;
@@ -305,10 +506,23 @@ export default {
             // }
             // return isJPG && isLt2M;
         },
-        handleClose(tag, index) {
+        tagClose(tag, index) {
             if (index == 1) {
                 this.fileList.dynamicTags.splice(
                     this.fileList.dynamicTags.indexOf(tag),
+                    1
+                );
+            } else {
+                this.currentList.tags.splice(
+                    this.currentList.tags.indexOf(tag),
+                    1
+                );
+            }
+        },
+        tagClose2(tag, index) {
+            if (index == 1) {
+                this.selected.dynamicTags.splice(
+                    this.selected.dynamicTags.indexOf(tag),
                     1
                 );
             } else {
@@ -325,6 +539,8 @@ export default {
             this.fileList.desc = "";
             this.fileList.dynamicTags = [];
             this.fileList.allowed = [];
+            this.fileList.size = "";
+            this.fileList.id = ""
         },
         showInput(index) {
             if (index == 1) {
@@ -344,6 +560,23 @@ export default {
                 let inputValue = this.inputValue;
                 if (inputValue) {
                     this.fileList.dynamicTags.push(inputValue);
+                }
+                this.inputVisible = false;
+                this.inputValue = "";
+            } else {
+                let inputValue2 = this.inputValue2;
+                if (inputValue2) {
+                    this.currentList.tags.push(inputValue2);
+                }
+                this.inputVisible2 = false;
+                this.inputValue2 = "";
+            }
+        },
+        handleInputConfirm2(index) {
+            if (index == 1) {
+                let inputValue = this.inputValue;
+                if (inputValue) {
+                    this.selected.dynamicTags.push(inputValue);
                 }
                 this.inputVisible = false;
                 this.inputValue = "";
@@ -394,6 +627,24 @@ export default {
                 return "Unknown type";
             }
         },
+        readableSize(size){
+            var i = Math.floor( Math.log(size) / Math.log(1024) );
+            return ( size / Math.pow(1024, i) ).toFixed(2) * 1 + ' ' + ['B', 'kB', 'MB', 'GB', 'TB'][i];
+        },
+        handleClose(){
+            this.dialogVisible = false;
+            
+        },
+        openDetails(row, column, event){
+            this.selected.url = row.url;
+            this.selected.id = row.id;
+            // this.selected.allowed = JSON.parse(row.allowed);
+            this.selected.allowed = JSON.parse(row.allowed);
+            this.selected.name = row.name;
+            this.selected.dynamicTags = JSON.parse(row.tags);
+            // console.log(row, column, event);
+            this.dialogVisible = true;
+        }
     },
     created() {
         this.fetch();

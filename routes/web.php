@@ -12,6 +12,7 @@ Route::get('/home', 'HomeController@index')->name('home');
 Route::group(['middleware' => 'auth', 'prefix' => '/user'], function(){
     Route::get('/upload', 'UsersController@uploadIndex');
     Route::post('/upload', 'UsersController@uploadPost');
+    Route::post('/upload/modify', 'UsersController@uploadModify');
     Route::post('/upload/fetch', 'UsersController@uploadFetch');
     //shared
     Route::get('/shared', 'UsersController@sharedIndex');

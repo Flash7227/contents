@@ -4,7 +4,7 @@
         v-loading.fullscreen.lock="loading"
         :element-loading-text="loadText"
     >
-      <ckeditor :editor="editor" v-model="fileList.desc" :config="editorConfig"></ckeditor>
+
         <el-card>
             <p>Шинэ файл хуулах</p>
             <el-form
@@ -25,7 +25,12 @@
                         </el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="Файл" prop="upload">
+
+                <el-form-item label="Нийтлэл" prop="desc" v-if="fileList.type==4">
+                    <ckeditor :editor="editor" v-model="fileList.desc" :config="editorConfig"></ckeditor>
+                </el-form-item>
+
+                <el-form-item :label="fileList.type != 4 ? 'Файл' :'Нүүр зураг'" prop="upload">
                     <el-upload
                         ref="upload"
                         action="/user/upload"
@@ -237,6 +242,11 @@
                 label-width="120px"
                 size="mini"
                 :rules="rules">
+
+                <el-form-item label="Нийтлэл" prop="desc" v-if="selected.type==4">
+                    <ckeditor :editor="editor" v-model="selected.desc" :config="editorConfig"></ckeditor>
+                </el-form-item>
+
                 <el-form-item label="Нэр" prop="name">
                     <el-input v-model="selected.name"></el-input>
                 </el-form-item>
@@ -310,6 +320,11 @@
 
 <script>
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+// import Image from '@ckeditor/ckeditor5-image/src/image';
+// import ImageResize from '@ckeditor/ckeditor5-image/src/imageresize';
+
+import UploadAdapter from '../UploadAdapter';
+
 export default {
     data() {
         return {
@@ -358,6 +373,10 @@ export default {
                     value: "3",
                     label: "Постер",
                 },
+                {
+                    value: "4",
+                    label: "Нийтлэл",
+                },
             ],
             emails: [],
             lists: {},
@@ -368,6 +387,15 @@ export default {
             },
             editor: ClassicEditor,
             editorConfig:{
+                // plugins: [ Image, ImageResize],
+                extraPlugins: [this.uploader],
+                ui: {
+                    // width: '500px',
+                    height: '800px'
+                },
+                image: {
+                    toolbar: [ 'toggleImageCaption', 'imageTextAlternative', 'ImageStyle', 'ImageResize']
+                }
             },
         };
     },
@@ -391,20 +419,46 @@ export default {
         },
         submitUpload() {
             this.$refs['fileList'].validate((valid) => {
-            if (valid) {
-                if (this.$refs.upload.uploadFiles.length > 0) {
-                    this.loading = true;
-                    this.$refs.upload.submit();
-                }else{
-                    this.$message({
-                        message: 'Файл сонгогдоогүй байна!',
-                        type: 'warning'
-                    });
+                if (valid) {
+                    if (this.$refs.upload.uploadFiles.length > 0) {
+                            this.loading = true;
+                            this.$refs.upload.submit();
+                        }else{
+                            if(this.fileList.type == 4){
+                                this.loading = true;
+                                axios
+                                    .post("/user/upload", {form: this.fileList})
+                                    .then((response) => {
+                                        this.loading = false;
+                                        if(response.data == 'success'){
+                                            this.resetForm();
+                                            this.$message({
+                                                message: "Successful",
+                                                type: "success",
+                                                duration: 3000,
+                                            });
+                                            this.fetch();
+                                        }
+                                    })
+                                    .catch((error) => {
+                                        this.loading = false;
+                                        console.log(error.response);
+                                        this.$notify.error({
+                                            title: "Error",
+                                            message: error.response.data.message,
+                                        });
+                                    });
+                            }else{
+                                this.$message({
+                                    message: 'Файл сонгогдоогүй байна!',
+                                    type: 'warning'
+                                });
+                            }
+                        }
+                } else {
+                    console.log('error submit!!');
+                    return false;
                 }
-            } else {
-                console.log('error submit!!');
-                return false;
-            }
             });
         },
         modify(type){
@@ -495,22 +549,21 @@ export default {
         },
         addAttachment(file, fileList) {
             this.attachments.push(file);
-            // console.log(file);
-            // console.log(fileList);
         },
         beforeAvatarUpload(file) {
-            // console.log(file.size);
             this.fileList.size = file.size;
-            // const isJPG =
-            //     file.type === "image/jpeg" || "image/png" || "image/gif";
-            // const isLt2M = file.size / 1024 / 1024 < 2;
-            // if (!isJPG) {
-            //     this.$message.error("Avatar picture must be JPG format!");
-            // }
-            // if (!isLt2M) {
-            //     this.$message.error("Avatar picture size can not exceed 2MB!");
-            // }
-            // return isJPG && isLt2M;
+            if(this.fileList.type == 4){
+                const isJPG =
+                file.type === "image/jpeg" || "image/png" || "image/gif";
+                const isLt2M = file.size / 1024 / 1024 < 2;
+                if (!isJPG) {
+                    this.$message.error("Avatar picture must be JPG format!");
+                }
+                if (!isLt2M) {
+                    this.$message.error("Avatar picture size can not exceed 2MB!");
+                }
+                return isJPG && isLt2M;
+            }
         },
         tagClose(tag, index) {
             if (index == 1) {
@@ -635,24 +688,32 @@ export default {
             }
         },
         readableSize(size){
-            var i = Math.floor( Math.log(size) / Math.log(1024) );
-            return ( size / Math.pow(1024, i) ).toFixed(2) * 1 + ' ' + ['B', 'kB', 'MB', 'GB', 'TB'][i];
+            if(size != 0){
+                var i = Math.floor( Math.log(size) / Math.log(1024) );
+                return ( size / Math.pow(1024, i) ).toFixed(2) * 1 + ' ' + ['B', 'kB', 'MB', 'GB', 'TB'][i];
+            }        
         },
         handleClose(){
             this.dialogVisible = false;
             
         },
         openDetails(row, column, event){
+            this.selected.type = row.type;
             this.selected.url = row.url;
             this.selected.id = row.id;
-            // this.selected.allowed = JSON.parse(row.allowed);
+            this.selected.desc = row.desc;  
             this.selected.allowed = JSON.parse(row.allowed);
             this.selected.name = row.name;
             this.selected.dynamicTags = JSON.parse(row.tags);
             this.selected.download = row.download;
-            // console.log(row, column, event);
             this.dialogVisible = true;
-        }
+        },
+        uploader(editor)
+        {
+            editor.plugins.get( 'FileRepository' ).createUploadAdapter = ( loader, csrf ) => {
+                return new UploadAdapter( loader, this.csrf);
+            };
+        },
     },
     created() {
         this.fetch();

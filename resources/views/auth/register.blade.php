@@ -1,10 +1,10 @@
 @extends('layouts.app')
 @section('scripts')
-<script src="{{ asset('js/login.js') }}" defer></script>
+<script src="{{ asset('include/login.js') }}" defer></script>
 @endsection
 
 @section('logincss')
-    <link rel="stylesheet" href='css/login.css'>
+    <link rel="stylesheet" href='include/login.css'>
 @endsection
 @section('content')
 {{-- <div class="container">

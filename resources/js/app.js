@@ -15,6 +15,10 @@ import locale from 'element-ui/lib/locale/lang/en'
 Vue.use(ElementUI, { locale })
 
 window.moment = require('moment');
+
+import CKEditor from '@ckeditor/ckeditor5-vue2';
+Vue.use( CKEditor );
+
 Vue.component('pagination', require('laravel-vue-pagination'));
 
 

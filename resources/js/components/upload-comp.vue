@@ -4,6 +4,7 @@
         v-loading.fullscreen.lock="loading"
         :element-loading-text="loadText"
     >
+      <ckeditor :editor="editor" v-model="fileList.desc" :config="editorConfig"></ckeditor>
         <el-card>
             <p>Шинэ файл хуулах</p>
             <el-form
@@ -308,6 +309,7 @@
 </template>
 
 <script>
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 export default {
     data() {
         return {
@@ -363,7 +365,10 @@ export default {
                 name: [
                     { required: true, message: 'Заавал бөглөнө үү!', trigger: 'blur' }
                 ],           
-            }
+            },
+            editor: ClassicEditor,
+            editorConfig:{
+            },
         };
     },
     methods: {

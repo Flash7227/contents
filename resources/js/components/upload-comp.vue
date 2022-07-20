@@ -43,7 +43,7 @@
                     >
                         <el-button
                             slot="trigger"
-                            size="mini"
+                            size="small"
                             icon="el-icon-document-add"
                             type="info"
                             plain
@@ -338,7 +338,8 @@ export default {
                 dynamicTags: [],
                 allowed: [],
                 url:"",
-                size:""
+                size:"",
+                download: ""
             },
             attachments: [],
             srcList: [],
@@ -450,13 +451,13 @@ export default {
             var url = this.selected.url;
             var link = document.createElement("a");
             link.setAttribute('download', url);
-            link.href = '/storage/uploads/'+url;
+            link.href = this.selected.download;
             document.body.appendChild(link);
             link.click();
             link.remove();
         },
         handleProgress(event, file, fileList) {
-            console.log(event);
+            // console.log(event);
             this.loadText = "Уншиж байна..." + Math.floor(event.percent) + "%";
         },
         handleSuccess() {
@@ -489,11 +490,11 @@ export default {
         },
         addAttachment(file, fileList) {
             this.attachments.push(file);
-            console.log(file);
+            // console.log(file);
             // console.log(fileList);
         },
         beforeAvatarUpload(file) {
-            console.log(file.size);
+            // console.log(file.size);
             this.fileList.size = file.size;
             // const isJPG =
             //     file.type === "image/jpeg" || "image/png" || "image/gif";
@@ -540,7 +541,8 @@ export default {
             this.fileList.dynamicTags = [];
             this.fileList.allowed = [];
             this.fileList.size = "";
-            this.fileList.id = ""
+            this.fileList.id = "";
+            this.fileList.download = "";
         },
         showInput(index) {
             if (index == 1) {
@@ -642,6 +644,7 @@ export default {
             this.selected.allowed = JSON.parse(row.allowed);
             this.selected.name = row.name;
             this.selected.dynamicTags = JSON.parse(row.tags);
+            this.selected.download = row.download;
             // console.log(row, column, event);
             this.dialogVisible = true;
         }

@@ -30,11 +30,11 @@
       <ul class="navbar-nav">
         @guest
         <li class="nav-item {{ Request::path() == 'register' ? 'active' : ''}}">
-            <a class="nav-link" href="/register">Бүртгүүлэх</a>
+            <a class="nav-link" href="/register"><i class="ri-login-box-line"></i> Нэвтрэх</a>
         </li>
-        <li class="nav-item {{ Request::path() == 'login' ? 'active' : ''}}">
+        {{-- <li class="nav-item {{ Request::path() == 'login' ? 'active' : ''}}">
             <a class="nav-link" href="/login">Нэвтрэх</a>
-        </li>
+        </li> --}}
         @else 
         <li class="nav-item dropdown {{ str_contains(Request::path(), 'admin') ? 'active' : ''}}">
             <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>

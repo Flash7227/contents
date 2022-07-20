@@ -72,4 +72,12 @@ class UsersController extends Controller
     {
         return view('user.shared');
     }
+
+    public function sharedFetch(Request $request){
+        $email = Auth()->user()->email;
+        $data = Uploads::
+        // where('allowed', Auth()->user()->email)
+        whereJsonContains('allowed', $email)->get();
+        return $data;
+    }
 }

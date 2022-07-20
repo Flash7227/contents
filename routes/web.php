@@ -14,7 +14,9 @@ Route::group(['middleware' => 'auth', 'prefix' => '/user'], function(){
     Route::post('/upload', 'UsersController@uploadPost');
     Route::post('/upload/modify', 'UsersController@uploadModify');
     Route::post('/upload/fetch', 'UsersController@uploadFetch');
+    //shared
     Route::get('/shared', 'UsersController@sharedIndex');
+    Route::post('/shared/fetch', 'UsersController@sharedFetch');
 });
 
 Route::group(['middleware' => 'auth', 'prefix' => '/admin'], function(){

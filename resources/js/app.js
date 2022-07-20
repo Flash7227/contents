@@ -11,14 +11,16 @@ window.Vue = require('vue');
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 import locale from 'element-ui/lib/locale/lang/en'
+
 Vue.use(ElementUI, { locale })
 
-window.moment = require('moment'); 
+window.moment = require('moment');
 Vue.component('pagination', require('laravel-vue-pagination'));
 
 
 //components will place below
 Vue.component('upload-comp', require('./components/upload-comp.vue').default);
+Vue.component('shared-comp', require('./components/shared-comp.vue').default);
 
 
 Vue.component('example-component', require('./components/ExampleComponent.vue').default);

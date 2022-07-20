@@ -11,12 +11,15 @@
 
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}" defer></script>
+    {{-- <script src="{{ asset('js/login.js') }}" defer></script> --}}
+    @yield('scripts')
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
 
     <!-- Styles -->
+    @yield('logincss')
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <link rel="icon" type="image/png" href="/imgs/meta.png" />
     <link href="/include/main.css" rel="stylesheet">
@@ -28,5 +31,7 @@
             @yield('content')
         </main>
     </div>
+    
+    
 </body>
 </html>

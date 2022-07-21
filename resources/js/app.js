@@ -28,6 +28,15 @@ Vue.component('home-comp', require('./components/home-comp.vue').default);
 Vue.component('shared-comp', require('./components/shared-comp.vue').default);
 
 
+
+
+////attachments components
+Vue.component('niitlel-comp', require('./components/niitlel-comp.vue').default);
+Vue.component('poster-comp', require('./components/poster-comp.vue').default);
+Vue.component('video-comp', require('./components/video-comp.vue').default);
+Vue.component('file-comp', require('./components/file-comp.vue').default);
+
+
 Vue.component('example-component', require('./components/ExampleComponent.vue').default);
 //frame
 const app = new Vue({

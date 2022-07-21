@@ -34,6 +34,32 @@ class HomeController extends Controller
         $uploadData = Uploads::where('allowed', '["public"]')->orderBy('created_at', 'DESC')->get();
         return $uploadData;
     }
+    public function niitlelcompIndex()
+    {
+        $uploadData = Uploads::where('allowed', '["public"]')->orderBy('created_at', 'DESC')->get();
+        return view('files.niitlel');
+    }
+    public function postercompIndex()
+    {
+        $uploadData = Uploads::where('allowed', '["public"]')->orderBy('created_at', 'DESC')->get();
+        return view('files.poster');
+    }
+    public function videocompIndex()
+    {
+        $uploadData = Uploads::where('allowed', '["public"]')->orderBy('created_at', 'DESC')->get();
+        return view('files.video');
+    }
+    public function filecompIndex()
+    {
+        //$files = Uploads::where('allowed', '["public"]')->where('type', '1')->orderBy('created_at', 'DESC')->get();
+        return view('files.file');
+    }
+    public function getFiles()
+    {
+        $uploadData = Uploads::where('allowed', '["public"]')->where('type', '1')->orderBy('created_at', 'DESC')->get();
+        return $uploadData;
+    }
+    
 }
 
 

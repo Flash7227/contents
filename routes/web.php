@@ -27,6 +27,10 @@ Route::group(['middleware' => 'auth', 'prefix' => '/admin'], function(){
 Route::group(['middleware' => 'auth', 'prefix' => '/home'], function(){
     Route::get('/home', 'HomeController@homecompIndex');
     Route::get('/getupload', 'HomeController@uploadData');
+    Route::get('/niitlel', 'HomeController@niitlelcompIndex');
+    Route::get('/poster', 'HomeController@postercompIndex');
+    Route::get('/video', 'HomeController@videocompIndex');
+    Route::get('/file', 'HomeController@filecompIndex');
     
 });
 

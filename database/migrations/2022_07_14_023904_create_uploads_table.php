@@ -21,6 +21,7 @@ class CreateUploadsTable extends Migration
             $table->longText('name')->nullable();
             $table->json('tags')->nullable();
             $table->longText('desc')->nullable();
+            $table->string('sharetype');
             $table->longText('allowed')->nullable();
             $table->string('size');
             $table->timestamps();

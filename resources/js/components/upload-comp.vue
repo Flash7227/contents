@@ -4,13 +4,13 @@
         v-loading.fullscreen.lock="loading"
         :element-loading-text="loadText"
     >
-      <ckeditor :editor="editor" v-model="fileList.desc" :config="editorConfig"></ckeditor>
+
         <el-card>
             <p>Шинэ файл хуулах</p>
             <el-form
                 ref="fileList"
                 :model="fileList"
-                label-width="120px"
+                label-width="140px"
                 size="mini"
                 :rules="rules"
             >
@@ -25,7 +25,12 @@
                         </el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="Файл" prop="upload">
+
+                <el-form-item label="Нийтлэл" prop="desc" v-if="fileList.type==4">
+                    <ckeditor :editor="editor" v-model="fileList.desc" :config="editorConfig"></ckeditor>
+                </el-form-item>
+
+                <el-form-item :label="fileList.type != 4 ? 'Файл' :'Нүүр зураг'" prop="upload">
                     <el-upload
                         ref="upload"
                         action="/user/upload"
@@ -88,7 +93,20 @@
                         >#Нэмэх</el-button
                     >
                 </el-form-item>
-                <el-form-item label="Хуваалцах" prop="allowed">
+                <el-form-item label="Хуваалцах төрөл" prop="sharetype">
+                    <el-select
+                        v-model="fileList.sharetype"
+                    >
+                        <el-option
+                            v-for="(item, index) in sharetypes"
+                            :key="index"
+                            :label="item.label"
+                            :value="item.value"
+                        >
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="Хуваалцах" prop="allowed" v-if="fileList.sharetype == 'allowed'">
                     <el-select
                         v-model="fileList.allowed"
                         multiple
@@ -172,17 +190,18 @@
                     prop="size"
                     label="Хуваалцсан"
                     align="center"
-                    width="100"
+                    width="160"
                     header-align="center"
                 >
                     <template slot-scope="scope">
                         <el-popover
+
                             placement="right"
-                            title="Хуваалцсан жагсаалт"
-                            width="200"
+                            title="Сонгож хуваалцсан жагсаалт"
+                            width="300"
                             trigger="hover"
                             >
-                            <table class="table text-center">
+                            <table class="table text-center" v-if="scope.row.sharetype == 'allowed'">
                                 <tr v-for="(dat, index) in JSON.parse(scope.row.allowed)" :key="index">
                                     <td class="grey">{{index + 1}}</td>
                                     <td>
@@ -190,7 +209,15 @@
                                     </td>
                                 </tr>
                             </table>
-                            <el-button size="small" slot="reference">{{JSON.parse(scope.row.allowed).length}} <i class="el-icon-user"></i></el-button>
+                            <p v-else-if="scope.row.sharetype == 'public'">Бүх хүмүүст</p>
+                            <p v-else-if="scope.row.sharetype == 'onlyme'">Зөвхөн өөртөө</p>
+                            <p v-else-if="scope.row.sharetype == 'all'">Бүртгэлтэй бүх хүнд</p>
+                            <el-button size="small" slot="reference">
+                                <span v-if="scope.row.sharetype == 'public'">Бүх хүнд</span>
+                                <span v-if="scope.row.sharetype == 'all'">Бүртгэлтэй бүгдэд</span>
+                                <span v-if="scope.row.sharetype == 'onlyme'">Зөвхөн өөртөө</span>
+                                <span v-if="scope.row.sharetype == 'allowed'">{{JSON.parse(scope.row.allowed).length}} <i class="el-icon-user"></i></span>
+                            </el-button>
                         </el-popover>
                     </template>
                 </el-table-column>
@@ -234,9 +261,14 @@
             <el-form                
                 ref="invisModify"
                 :model="selected"
-                label-width="120px"
+                label-width="140px"
                 size="mini"
                 :rules="rules">
+
+                <el-form-item label="Нийтлэл" prop="desc" v-if="selected.type==4">
+                    <ckeditor :editor="editor" v-model="selected.desc" :config="editorConfig"></ckeditor>
+                </el-form-item>
+
                 <el-form-item label="Нэр" prop="name">
                     <el-input v-model="selected.name"></el-input>
                 </el-form-item>
@@ -268,7 +300,20 @@
                         >#Нэмэх</el-button
                     >
                 </el-form-item>
-                <el-form-item label="Хуваалцах" prop="allowed">
+                <el-form-item label="Хуваалцах төрөл" prop="sharetype">
+                    <el-select
+                        v-model="selected.sharetype"
+                    >
+                        <el-option
+                            v-for="(item, index) in sharetypes"
+                            :key="index"
+                            :label="item.label"
+                            :value="item.value"
+                        >
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item v-if="selected.sharetype == 'allowed'" label="Хуваалцах жагсаалт" prop="allowed">
                     <el-select
                         v-model="selected.allowed"
                         multiple
@@ -310,6 +355,11 @@
 
 <script>
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+// import Image from '@ckeditor/ckeditor5-image/src/image';
+// import ImageResize from '@ckeditor/ckeditor5-image/src/imageresize';
+
+import UploadAdapter from '../UploadAdapter';
+
 export default {
     data() {
         return {
@@ -328,6 +378,7 @@ export default {
                 desc: "",
                 type: "1",
                 dynamicTags: [],
+                sharetype:"public",
                 allowed: [],
                 url:"",
                 size:""
@@ -341,7 +392,8 @@ export default {
                 allowed: [],
                 url:"",
                 size:"",
-                download: ""
+                download: "",
+                sharetype:""
             },
             attachments: [],
             srcList: [],
@@ -358,6 +410,28 @@ export default {
                     value: "3",
                     label: "Постер",
                 },
+                {
+                    value: "4",
+                    label: "Нийтлэл",
+                },
+            ],
+            sharetypes: [
+                {
+                    value: "public",
+                    label: "Бүх хүнд",
+                },
+                {
+                    value: "all",
+                    label: "Бүртгэлтэй бүгдэд",
+                },
+                {
+                    value: "onlyme",
+                    label: "Зөвхөн өөртөө",
+                },
+                {
+                    value: "allowed",
+                    label: "Сонгож хуваалцах",
+                }
             ],
             emails: [],
             lists: {},
@@ -368,6 +442,15 @@ export default {
             },
             editor: ClassicEditor,
             editorConfig:{
+                // plugins: [ Image, ImageResize],
+                extraPlugins: [this.uploader],
+                ui: {
+                    // width: '500px',
+                    height: '800px'
+                },
+                image: {
+                    toolbar: [ 'toggleImageCaption', 'imageTextAlternative', 'ImageStyle', 'ImageResize']
+                }
             },
         };
     },
@@ -391,20 +474,46 @@ export default {
         },
         submitUpload() {
             this.$refs['fileList'].validate((valid) => {
-            if (valid) {
-                if (this.$refs.upload.uploadFiles.length > 0) {
-                    this.loading = true;
-                    this.$refs.upload.submit();
-                }else{
-                    this.$message({
-                        message: 'Файл сонгогдоогүй байна!',
-                        type: 'warning'
-                    });
+                if (valid) {
+                    if (this.$refs.upload.uploadFiles.length > 0) {
+                            this.loading = true;
+                            this.$refs.upload.submit();
+                        }else{
+                            if(this.fileList.type == 4){
+                                this.loading = true;
+                                axios
+                                    .post("/user/upload", {form: this.fileList})
+                                    .then((response) => {
+                                        this.loading = false;
+                                        if(response.data == 'success'){
+                                            this.resetForm();
+                                            this.$message({
+                                                message: "Successful",
+                                                type: "success",
+                                                duration: 3000,
+                                            });
+                                            this.fetch();
+                                        }
+                                    })
+                                    .catch((error) => {
+                                        this.loading = false;
+                                        console.log(error.response);
+                                        this.$notify.error({
+                                            title: "Error",
+                                            message: error.response.data.message,
+                                        });
+                                    });
+                            }else{
+                                this.$message({
+                                    message: 'Файл сонгогдоогүй байна!',
+                                    type: 'warning'
+                                });
+                            }
+                        }
+                } else {
+                    console.log('error submit!!');
+                    return false;
                 }
-            } else {
-                console.log('error submit!!');
-                return false;
-            }
             });
         },
         modify(type){
@@ -495,22 +604,21 @@ export default {
         },
         addAttachment(file, fileList) {
             this.attachments.push(file);
-            // console.log(file);
-            // console.log(fileList);
         },
         beforeAvatarUpload(file) {
-            // console.log(file.size);
             this.fileList.size = file.size;
-            // const isJPG =
-            //     file.type === "image/jpeg" || "image/png" || "image/gif";
-            // const isLt2M = file.size / 1024 / 1024 < 2;
-            // if (!isJPG) {
-            //     this.$message.error("Avatar picture must be JPG format!");
-            // }
-            // if (!isLt2M) {
-            //     this.$message.error("Avatar picture size can not exceed 2MB!");
-            // }
-            // return isJPG && isLt2M;
+            if(this.fileList.type == 4){
+                const isJPG =
+                file.type === "image/jpeg" || "image/png" || "image/gif";
+                const isLt2M = file.size / 1024 / 1024 < 2;
+                if (!isJPG) {
+                    this.$message.error("Avatar picture must be JPG format!");
+                }
+                if (!isLt2M) {
+                    this.$message.error("Avatar picture size can not exceed 2MB!");
+                }
+                return isJPG && isLt2M;
+            }
         },
         tagClose(tag, index) {
             if (index == 1) {
@@ -548,6 +656,7 @@ export default {
             this.fileList.size = "";
             this.fileList.id = "";
             this.fileList.download = "";
+            this.fileList.sharetype = "";
         },
         showInput(index) {
             if (index == 1) {
@@ -635,24 +744,33 @@ export default {
             }
         },
         readableSize(size){
-            var i = Math.floor( Math.log(size) / Math.log(1024) );
-            return ( size / Math.pow(1024, i) ).toFixed(2) * 1 + ' ' + ['B', 'kB', 'MB', 'GB', 'TB'][i];
+            if(size != 0){
+                var i = Math.floor( Math.log(size) / Math.log(1024) );
+                return ( size / Math.pow(1024, i) ).toFixed(2) * 1 + ' ' + ['B', 'kB', 'MB', 'GB', 'TB'][i];
+            }        
         },
         handleClose(){
             this.dialogVisible = false;
             
         },
         openDetails(row, column, event){
+            this.selected.type = row.type;
             this.selected.url = row.url;
             this.selected.id = row.id;
-            // this.selected.allowed = JSON.parse(row.allowed);
+            this.selected.desc = row.desc;  
             this.selected.allowed = JSON.parse(row.allowed);
             this.selected.name = row.name;
             this.selected.dynamicTags = JSON.parse(row.tags);
             this.selected.download = row.download;
-            // console.log(row, column, event);
+            this.selected.sharetype = row.sharetype;
             this.dialogVisible = true;
-        }
+        },
+        uploader(editor)
+        {
+            editor.plugins.get( 'FileRepository' ).createUploadAdapter = ( loader, csrf ) => {
+                return new UploadAdapter( loader, this.csrf);
+            };
+        },
     },
     created() {
         this.fetch();

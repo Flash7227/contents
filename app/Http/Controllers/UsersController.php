@@ -102,7 +102,7 @@ class UsersController extends Controller
     }
     public function uploadFetch(Request $req)
     {
-        $lists = Uploads::where('user_id', Auth()->user()->id)->orderBy('created_at', 'DESC')->paginate(10);
+        $lists = Uploads::where('user_id', Auth()->user()->id)->orderBy('created_at', 'DESC')->paginate(30);
         return $lists;
     }
     public function sharedIndex()
@@ -114,7 +114,9 @@ class UsersController extends Controller
         $email = Auth()->user()->email;
         $data = Uploads::
         // where('allowed', Auth()->user()->email)
-        whereJsonContains('allowed', $email)->get();
+        whereJsonContains('allowed', $email)
+        // ->orWhereJsonContains('allowed','public')
+        ->paginate(10);
         return $data;
     }
 }

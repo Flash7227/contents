@@ -10,7 +10,7 @@
             <el-form
                 ref="fileList"
                 :model="fileList"
-                label-width="120px"
+                label-width="140px"
                 size="mini"
                 :rules="rules"
             >
@@ -93,7 +93,20 @@
                         >#Нэмэх</el-button
                     >
                 </el-form-item>
-                <el-form-item label="Хуваалцах" prop="allowed">
+                <el-form-item label="Хуваалцах төрөл" prop="sharetype">
+                    <el-select
+                        v-model="fileList.sharetype"
+                    >
+                        <el-option
+                            v-for="(item, index) in sharetypes"
+                            :key="index"
+                            :label="item.label"
+                            :value="item.value"
+                        >
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="Хуваалцах" prop="allowed" v-if="fileList.sharetype == 'allowed'">
                     <el-select
                         v-model="fileList.allowed"
                         multiple
@@ -177,17 +190,18 @@
                     prop="size"
                     label="Хуваалцсан"
                     align="center"
-                    width="100"
+                    width="160"
                     header-align="center"
                 >
                     <template slot-scope="scope">
                         <el-popover
+
                             placement="right"
-                            title="Хуваалцсан жагсаалт"
-                            width="200"
+                            title="Сонгож хуваалцсан жагсаалт"
+                            width="300"
                             trigger="hover"
                             >
-                            <table class="table text-center">
+                            <table class="table text-center" v-if="scope.row.sharetype == 'allowed'">
                                 <tr v-for="(dat, index) in JSON.parse(scope.row.allowed)" :key="index">
                                     <td class="grey">{{index + 1}}</td>
                                     <td>
@@ -195,7 +209,15 @@
                                     </td>
                                 </tr>
                             </table>
-                            <el-button size="small" slot="reference">{{JSON.parse(scope.row.allowed).length}} <i class="el-icon-user"></i></el-button>
+                            <p v-else-if="scope.row.sharetype == 'public'">Бүх хүмүүст</p>
+                            <p v-else-if="scope.row.sharetype == 'onlyme'">Зөвхөн өөртөө</p>
+                            <p v-else-if="scope.row.sharetype == 'all'">Бүртгэлтэй бүх хүнд</p>
+                            <el-button size="small" slot="reference">
+                                <span v-if="scope.row.sharetype == 'public'">Бүх хүнд</span>
+                                <span v-if="scope.row.sharetype == 'all'">Бүртгэлтэй бүгдэд</span>
+                                <span v-if="scope.row.sharetype == 'onlyme'">Зөвхөн өөртөө</span>
+                                <span v-if="scope.row.sharetype == 'allowed'">{{JSON.parse(scope.row.allowed).length}} <i class="el-icon-user"></i></span>
+                            </el-button>
                         </el-popover>
                     </template>
                 </el-table-column>
@@ -239,7 +261,7 @@
             <el-form                
                 ref="invisModify"
                 :model="selected"
-                label-width="120px"
+                label-width="140px"
                 size="mini"
                 :rules="rules">
 
@@ -278,7 +300,20 @@
                         >#Нэмэх</el-button
                     >
                 </el-form-item>
-                <el-form-item label="Хуваалцах" prop="allowed">
+                <el-form-item label="Хуваалцах төрөл" prop="sharetype">
+                    <el-select
+                        v-model="selected.sharetype"
+                    >
+                        <el-option
+                            v-for="(item, index) in sharetypes"
+                            :key="index"
+                            :label="item.label"
+                            :value="item.value"
+                        >
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item v-if="selected.sharetype == 'allowed'" label="Хуваалцах жагсаалт" prop="allowed">
                     <el-select
                         v-model="selected.allowed"
                         multiple
@@ -343,6 +378,7 @@ export default {
                 desc: "",
                 type: "1",
                 dynamicTags: [],
+                sharetype:"public",
                 allowed: [],
                 url:"",
                 size:""
@@ -356,7 +392,8 @@ export default {
                 allowed: [],
                 url:"",
                 size:"",
-                download: ""
+                download: "",
+                sharetype:""
             },
             attachments: [],
             srcList: [],
@@ -377,6 +414,24 @@ export default {
                     value: "4",
                     label: "Нийтлэл",
                 },
+            ],
+            sharetypes: [
+                {
+                    value: "public",
+                    label: "Бүх хүнд",
+                },
+                {
+                    value: "all",
+                    label: "Бүртгэлтэй бүгдэд",
+                },
+                {
+                    value: "onlyme",
+                    label: "Зөвхөн өөртөө",
+                },
+                {
+                    value: "allowed",
+                    label: "Сонгож хуваалцах",
+                }
             ],
             emails: [],
             lists: {},
@@ -601,6 +656,7 @@ export default {
             this.fileList.size = "";
             this.fileList.id = "";
             this.fileList.download = "";
+            this.fileList.sharetype = "";
         },
         showInput(index) {
             if (index == 1) {
@@ -706,6 +762,7 @@ export default {
             this.selected.name = row.name;
             this.selected.dynamicTags = JSON.parse(row.tags);
             this.selected.download = row.download;
+            this.selected.sharetype = row.sharetype;
             this.dialogVisible = true;
         },
         uploader(editor)

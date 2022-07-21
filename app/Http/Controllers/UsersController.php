@@ -24,6 +24,7 @@ class UsersController extends Controller
             $desc = $form['desc'];
             $temp_tags = $form['dynamicTags'];
             $temp_allowed = $form['allowed'];
+            $sharetype = $form['sharetype'];
             $size = 0;
         }else{
             $name = $req->input('name');
@@ -32,6 +33,7 @@ class UsersController extends Controller
             $temp_tags = $req->input('dynamicTags');
             $temp_allowed = $req->input('allowed');
             $size = $req->input('size');
+            $sharetype = $req->input('sharetype');
 
             if(!$req->hasFile('file')){
                 return response()->json([
@@ -69,6 +71,7 @@ class UsersController extends Controller
             $upload->type = $type;
             $upload->url = $fileNameToStore;
             $upload->name = $name;
+            $upload->sharetype = $sharetype;
             $tags = [];
             if($temp_tags){
                 $tags = explode(",", $temp_tags);
@@ -101,6 +104,7 @@ class UsersController extends Controller
         }else{
             $upload->name = $form['name'];
             $upload->desc = $form['desc'];
+            $upload->sharetype = $form['sharetype'];
             $tags = [];
             if($form['dynamicTags']){
                 // $tags = explode(",", $form['dynamicTags']);

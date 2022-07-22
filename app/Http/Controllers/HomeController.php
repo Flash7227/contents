@@ -31,8 +31,11 @@ class HomeController extends Controller
     }
     public function uploadData()
     {
-        $uploadData = Uploads::where('sharetype', "public")->orderBy('created_at', 'DESC')->get();
-        return $uploadData;
+        $files = Uploads::where('sharetype', "public")->where('type', '1')->orderBy('created_at', 'DESC')->limit(3)->get();
+        $videos = Uploads::where('sharetype', "public")->where('type', '2')->orderBy('created_at', 'DESC')->limit(3)->get();
+        $posters = Uploads::where('sharetype', "public")->where('type', '3')->orderBy('created_at', 'DESC')->limit(3)->get();
+        $niitlels = Uploads::where('sharetype', "public")->where('type', '4')->orderBy('created_at', 'DESC')->limit(3)->get();
+        return [$files, $videos, $posters, $niitlels];
     }
     /// niitlel
     public function niitlelcompIndex()

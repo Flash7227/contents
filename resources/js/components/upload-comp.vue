@@ -144,6 +144,9 @@
         </el-card>
         <el-card class="mt-2">
             <p>Таны хуулсан файлууд</p>
+            <div class="text-right">
+                <span>Нийт: {{lists.total}} / Data: {{readableSize(dataused)}}</span>
+            </div>
             <el-table :data="lists.data" border style="width: 100%" @row-click="openDetails">
                 <el-table-column
                     type="index"
@@ -261,7 +264,7 @@
             <el-form                
                 ref="invisModify"
                 :model="selected"
-                label-width="140px"
+                label-width="160px"
                 size="mini"
                 :rules="rules">
 
@@ -341,7 +344,7 @@
                     <div>
                         <el-button @click="modify(0)" type="danger" icon="el-icon-delete" class="float-left" plain size="small">Устгах</el-button>
                         <el-button @click="downloadFile" type="success" icon="el-icon-download" class="float-left" plain size="small">Татах</el-button>
-                        <el-button @click="viewdata" type="info" icon="el-icon-picture" class="float-left" plain size="small">Үзэх</el-button>
+                        <el-button v-if="selected.type == 2 || selected.type == 3" @click="viewdata" type="info" icon="el-icon-picture" class="float-left" plain size="small">Үзэх</el-button>
                     </div>
                     <el-button @click="modify(1)" type="primary" icon="el-icon-edit" plain>Засах</el-button>
                 <!-- <div class="float-left">
@@ -360,11 +363,20 @@
             append-to-body
             :before-close="handleCloseView">
 
-            <video width="320" height="240" controls ref="video">
-                <source :src="selected.download" type="video/mp4" ref="source1"/>
-                <source :src="selected.download" :type="getExt()" ref="source2"/>
-                Your browser does not support the video tag.
-            </video>
+            <div v-if="selected.type == 2" class="text-center">
+                <video width="90%" height="auto" controls ref="video" >
+                    <source :src="selected.download" type="video/mp4" ref="source1"/>
+                    <source :src="selected.download" :type="getExt()" ref="source2"/>
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+            <div v-else-if="selected.type == 3" class="text-center demo-image__preview">
+                <el-image 
+                    style="width: 90%; height: auto"
+                    :src="selected.download" 
+                    :preview-src-list="[selected.download]">
+                </el-image>
+            </div>
 
     </el-dialog>
     </div>
@@ -469,6 +481,7 @@ export default {
                     toolbar: [ 'toggleImageCaption', 'imageTextAlternative', 'ImageStyle', 'ImageResize']
                 }
             },
+            dataused:""
         };
     },
     methods: {
@@ -478,7 +491,8 @@ export default {
                 .post("/user/upload/fetch")
                 .then((response) => {
                     this.loading = false;
-                    this.lists = response.data;
+                    this.lists = response.data[0];
+                    this.dataused = response.data[1];
                 })
                 .catch((error) => {
                     this.loading = false;
@@ -790,9 +804,11 @@ export default {
             };
         },
         async viewdata() {
-            this.loading = true;
             this.viewVisible = true;
-            const result = await this.viewAfter();
+            if(this.selected.type == 2){
+                this.loading = true;
+                const result = await this.viewAfter();
+            }
         },
         viewAfter() {
             return new Promise(resolve => {
@@ -832,12 +848,12 @@ export default {
             // }, 3000);  
         },
         handleCloseView(){
-            var video = this.$refs.video;
-            video.play();
-            video.pause();
-            // video.currentTime = 0;
-
-
+            if(this.selected.type == 2){
+                var video = this.$refs.video;
+                video.play();
+                video.pause();
+                // video.currentTime = 0;
+            }
             this.viewVisible = false;         
         },
         getExt(){

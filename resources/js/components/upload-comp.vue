@@ -972,6 +972,6 @@ export default {
     display: block;
     }
     .el-table .file-row{
-        background: #409EFF;
+        background: blue;
     }
 </style>

@@ -121,6 +121,7 @@ class UsersController extends Controller
             $upload->tags = json_encode($tags);
             $upload->allowed = json_encode($allowed);
             $upload->save();
+            //
         }
         return "success";
     }

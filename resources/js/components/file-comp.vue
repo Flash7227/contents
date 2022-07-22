@@ -1,14 +1,14 @@
 <template>
     <div class="container">
         <el-container>
-            <el-header class="container">
+            <!-- <el-header class="container">
             <el-breadcrumb separator=" ">
             <el-breadcrumb-item ><a href="/home/niitlel"><el-button size="mini" round>Нийтлэл</el-button></a></el-breadcrumb-item>
             <el-breadcrumb-item ><a href="/home/poster"><el-button size="mini" round>Постер</el-button></a></el-breadcrumb-item>
             <el-breadcrumb-item ><a href="/home/video"><el-button size="mini" round>Бичлэг</el-button></a></el-breadcrumb-item>
             <el-breadcrumb-item ><a href="/home/file"><el-button size="mini" round>Файл</el-button></a></el-breadcrumb-item>
             </el-breadcrumb>
-        </el-header>
+        </el-header> -->
             <el-main>
                 <el-card>
                     <el-table

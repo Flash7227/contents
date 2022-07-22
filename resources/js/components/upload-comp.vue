@@ -5,7 +5,7 @@
         :element-loading-text="loadText"
     >
 
-        <el-card>
+        <el-card v-if="persmissionCheck('upload')">
             <p>Шинэ файл хуулах</p>
             <el-form
                 ref="fileList"
@@ -65,7 +65,7 @@
                 <el-input v-model="fileList.desc"></el-input>
             </el-form-item> -->
 
-                <el-form-item label="Tags" prop="tags">
+                <el-form-item label="#Tag" prop="tags">
                     <el-tag
                         v-for="(tag,index) in fileList.dynamicTags"
                         :key="index"
@@ -90,7 +90,7 @@
                         class="button-new-tag"
                         size="small"
                         @click="showInput(1)"
-                        >#Нэмэх</el-button
+                        >Нэмэх</el-button
                     >
                 </el-form-item>
                 <el-form-item label="Хуваалцах төрөл" prop="sharetype">
@@ -120,6 +120,7 @@
                         default-first-option
                     >
                         <el-option
+                        
                             v-for="(item, index) in emails"
                             :key="index"
                             :label="item"
@@ -128,23 +129,30 @@
                         </el-option>
                     </el-select>
                 </el-form-item>
-
+                <el-form-item label="Хуулах лимит">
+                    <el-progress :text-inside="true" :stroke-width="15" :percentage="85" :color="customColors" :format="customProgressFormat"></el-progress>
+                </el-form-item>
                 <el-form-item>
-                    <el-form-item size="large">
-                        <el-button
-                            type="success"
-                            icon="el-icon-upload2"
-                            @click="submitUpload"
-                            >Хуулах</el-button
-                        >
-                        <el-button @click="resetForm()">Cancel</el-button>
-                    </el-form-item>
+                    <el-button
+                        plain
+                        round
+                        size="medium"
+                        type="success"
+                        icon="el-icon-upload2"
+                        @click="submitUpload"
+                        >Хуулах</el-button
+                    >
+                    <el-button size="medium" round @click="resetForm()">Cancel</el-button>
                 </el-form-item>
             </el-form>
+ 
         </el-card>
         <el-card class="mt-2">
             <p>Таны хуулсан файлууд</p>
-            <el-table :data="lists.data" border style="width: 100%" @row-click="openDetails">
+            <div class="text-right">
+                <small class="grey">Нийт: {{lists.total}}ш</small>
+            </div>
+            <el-table :data="lists.data" border style="width: 100%" @row-click="openDetails" :header-cell-style="tableHeaderColor" :row-class-name="tableRowClassName">
                 <el-table-column
                     type="index"
                     :index="indexMethod"
@@ -156,11 +164,15 @@
                     prop="type"
                     label="Төрөл"
                     width="110"
-                    align="center"
+                    align="left"
                     header-align="center"
                 >
                     <template slot-scope="scope">
-                        {{ typeName(scope.row.type) }}
+                        <i v-if="scope.row.type == 1" class="el-icon-document"></i>
+                        <i v-else-if="scope.row.type == 2" class="el-icon-video-camera-solid blue"></i>
+                        <i v-else-if="scope.row.type == 3" class="el-icon-picture green"></i>
+                        <i v-else-if="scope.row.type == 4" class="el-icon-reading yellow"></i>
+                        <span class="ml-1">{{ typeName(scope.row.type) }}</span>
                     </template>
                 </el-table-column>
                 <el-table-column
@@ -172,7 +184,7 @@
                 </el-table-column>
                 <el-table-column
                     prop="tags"
-                    label="Tags"
+                    label="#tag"
                     align="center"
                     header-align="center"
                 >
@@ -254,14 +266,14 @@
             class="my-2"
         ></pagination>
         <el-dialog
-            title="Action"
+            title="Дэлгэрэнгүй"
             :visible.sync="dialogVisible"
             width="90%"
             :before-close="handleClose">
             <el-form                
                 ref="invisModify"
                 :model="selected"
-                label-width="140px"
+                label-width="160px"
                 size="mini"
                 :rules="rules">
 
@@ -272,6 +284,23 @@
                 <el-form-item label="Нэр" prop="name">
                     <el-input v-model="selected.name"></el-input>
                 </el-form-item>
+                <el-form-item label="Cover зураг" prop="upload" v-if="selected.type == 4">
+                    <el-upload
+                        class="avatar-uploader"
+                        action="/user/upload/modify/cover"
+                        :show-file-list="false"
+                        :on-success="handleSuccess"
+                        :data="selected"
+                        accept="image/jpeg,image/gif,image/png"
+                        :on-error="handleError"
+                        :headers="{ 'X-CSRF-TOKEN': csrf }"
+                        :before-upload="beforeCoverUpload">
+                        <img v-if="selected.url != 'noimage123.png'" :src="selected.download" class="avatar">
+                        <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                    </el-upload>
+                    <small class="grey">Солиход шууд өөрчлөгдөнө!</small>
+                </el-form-item>
+
                 <el-form-item label="Tags" prop="tags">
                     <el-tag
                         v-for="(tag,index) in selected.dynamicTags"
@@ -341,9 +370,9 @@
                     <div>
                         <el-button @click="modify(0)" type="danger" icon="el-icon-delete" class="float-left" plain size="small">Устгах</el-button>
                         <el-button @click="downloadFile" type="success" icon="el-icon-download" class="float-left" plain size="small">Татах</el-button>
-                        <el-button @click="viewdata" type="info" icon="el-icon-picture" class="float-left" plain size="small">Үзэх</el-button>
+                        <el-button v-if="selected.type == 2 || selected.type == 3" @click="viewdata" type="info" icon="el-icon-picture" class="float-left" plain size="small">Үзэх</el-button>
                     </div>
-                    <el-button @click="modify(1)" type="primary" icon="el-icon-edit" plain>Засах</el-button>
+                    <el-button @click="modify(1)" type="primary" icon="el-icon-edit" size="small" plain>Засах</el-button>
                 <!-- <div class="float-left">
                     <el-button @click="modify" type="danger" icon="el-icon-delete">Устгах</el-button>
                     <el-button @click="downloadFile" type="success" icon="el-icon-download">Татах</el-button>  
@@ -354,17 +383,26 @@
             </span>
     </el-dialog>
     <el-dialog
-            title="Viewdata"
+            title="Үзэх"
             :visible.sync="viewVisible"
             width="90%"
             append-to-body
             :before-close="handleCloseView">
 
-            <video width="320" height="240" controls ref="video">
-                <source :src="selected.download" type="video/mp4" ref="source1"/>
-                <source :src="selected.download" :type="getExt()" ref="source2"/>
-                Your browser does not support the video tag.
-            </video>
+            <div v-if="selected.type == 2" class="text-center">
+                <video width="90%" height="auto" controls ref="video" >
+                    <source :src="selected.download" type="video/mp4" ref="source1"/>
+                    <source :src="selected.download" :type="getExt()" ref="source2"/>
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+            <div v-else-if="selected.type == 3" class="text-center demo-image__preview">
+                <el-image 
+                    style="width: 90%; height: auto"
+                    :src="selected.download" 
+                    :preview-src-list="[selected.download]">
+                </el-image>
+            </div>
 
     </el-dialog>
     </div>
@@ -395,7 +433,7 @@ export default {
                 desc: "",
                 type: "1",
                 dynamicTags: [],
-                sharetype:"public",
+                sharetype:"allowed",
                 allowed: [],
                 url:"",
                 size:""
@@ -469,6 +507,14 @@ export default {
                     toolbar: [ 'toggleImageCaption', 'imageTextAlternative', 'ImageStyle', 'ImageResize']
                 }
             },
+            dataused:"",
+            customColors: [
+                {color: '#a4edbc', percentage: 20},
+                {color: '#b3baf5', percentage: 40},
+                {color: '#6f7ad3', percentage: 60},
+                {color: '#f2e399', percentage: 90},
+                {color: '#f2c199', percentage: 100}
+            ]
         };
     },
     methods: {
@@ -478,7 +524,8 @@ export default {
                 .post("/user/upload/fetch")
                 .then((response) => {
                     this.loading = false;
-                    this.lists = response.data;
+                    this.lists = response.data[0];
+                    this.dataused = response.data[1];
                 })
                 .catch((error) => {
                     this.loading = false;
@@ -622,9 +669,27 @@ export default {
         addAttachment(file, fileList) {
             this.attachments.push(file);
         },
-        beforeAvatarUpload(file) {
+        beforeAvatarUpload(file, cover) {
+            console.log(cover)
             this.fileList.size = file.size;
             if(this.fileList.type == 4){
+                const isJPG =
+                file.type === "image/jpeg" || "image/png" || "image/gif";
+                const isLt2M = file.size / 1024 / 1024 < 2;
+                if (!isJPG) {
+                    this.$message.error("Avatar picture must be JPG format!");
+                    return false;
+                }
+                if (!isLt2M) {
+                    this.$message.error("Avatar picture size can not exceed 2MB!");
+                    return false;
+                }
+                return isJPG && isLt2M;
+            } 
+        },
+        beforeCoverUpload(file){
+            this.selected.size = file.size;
+            if(this.selected.type == 4){
                 const isJPG =
                 file.type === "image/jpeg" || "image/png" || "image/gif";
                 const isLt2M = file.size / 1024 / 1024 < 2;
@@ -790,9 +855,11 @@ export default {
             };
         },
         async viewdata() {
-            this.loading = true;
             this.viewVisible = true;
-            const result = await this.viewAfter();
+            if(this.selected.type == 2){
+                this.loading = true;
+                const result = await this.viewAfter();
+            }
         },
         viewAfter() {
             return new Promise(resolve => {
@@ -807,48 +874,63 @@ export default {
                 }, 1000);
             });
         },
-        handleViewAfter(){
-            this.loading = false;
-                var video = this.$refs.video;
-                var source = this.$refs.source;
-                // var source2 = this.$refs.source2;
-                console.log(video);
-                var source2 = document.getElementById('source2');
-                source.setAttribute('src', this.selected.download);
-                // source2.setAttribute('src', this.selected.download);
-                video.load();
-                console.log('consoling after 3sec');
-            // setTimeout(function () {
-            //     this.loading = false;
-            //     var video = this.$refs.video;
-            //     var source = this.$refs.source;
-            //     var source2 = this.$refs.source2;
-            //     console.log(video);
-            //     var source2 = document.getElementById('source2');
-            //     source.setAttribute('src', this.selected.download);
-            //     source2.setAttribute('src', this.selected.download);
-            //     video.load();
-            //     console.log('consoling after 3sec');
-            // }, 3000);  
-        },
         handleCloseView(){
-            var video = this.$refs.video;
-            video.play();
-            video.pause();
-            // video.currentTime = 0;
-
-
+            if(this.selected.type == 2){
+                var video = this.$refs.video;
+                video.play();
+                video.pause();
+                // video.currentTime = 0;
+            }
             this.viewVisible = false;         
         },
         getExt(){
             var url = this.selected.url.split('.');
             return 'video/'+url[url.length - 1];
+        },
+        tableHeaderColor({ row, column, rowIndex, columnIndex }) {
+            if (rowIndex === 0) {
+                return 'background-color:#82b4ed; color:white; text-transform:uppercase; letter-spacing:1px; font-weight:700; text-align:center; font-size:0.8em;' 
+                
+            }
+        },
+        customProgressFormat(percent){
+            console.log(percent);
+            return this.readableSize(this.dataused) + '/' + '20GB';
+        },
+        tableRowClassName({row, rowIndex}) {
+            console.log(row);
+            if (row.type === 1) {
+                return 'file-row';
+            } else if (row.type === 2) {
+                return 'video-row';
+            } else if (row.type === 3) {
+                return 'poster-row';
+            } else if (row.type === 4) {
+                return 'post-row';
+            }
+            return '';
+        },
+        persmissionCheck(type){
+            // console.log(JSON.parse(this.user).permissions);
+            if(type == 'upload'){
+                if(JSON.parse(this.user).permissions.includes('upload')){
+                    return true;
+                }
+            }else if(type=='public'){
+                if(!JSON.parse(this.user).permissions.includes('public')){
+                    var temp1 = this.sharetypes;
+                    var temp2 = this.sharetypes.splice(0, 1);
+                    this.sharetypes = temp1;
+                }
+            }
         }
     },
     created() {
         this.fetch();
     },
-    mounted() {},
+    mounted() {
+        this.persmissionCheck('public');
+    },
     props: {
         csrf: {
             type: String,
@@ -856,6 +938,9 @@ export default {
         states: {
             type: String,
         },
+        user:{
+            type:String
+        }
     },
 };
 </script>
@@ -887,6 +972,6 @@ export default {
     display: block;
     }
     .el-table .file-row{
-        background: blue;
+        background: #409EFF;
     }
 </style>

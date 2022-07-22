@@ -20,7 +20,12 @@ Route::group(['middleware' => 'auth', 'prefix' => '/user'], function(){
 });
 
 Route::group(['middleware' => 'auth', 'prefix' => '/admin'], function(){
-    Route::get('/users', 'AdminsController@usersIndex');
+    Route::get('/user', 'AdminsController@userIndex');
+    Route::post('/user', 'AdminsController@userEdit');
+    Route::get('/user/fetch', 'AdminsController@userFetch1');
+    Route::post('/user/fetch', 'AdminsController@userFetch');
+    
+    
     
 });
 

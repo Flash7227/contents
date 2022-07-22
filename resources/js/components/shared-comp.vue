@@ -1,12 +1,35 @@
 <template>
     <div class="container">
         <el-card>
+            <div style="margin: 20px 0;">
+                <el-radio-group v-model="selectedTag">
+                <el-radio-button v-for="(answer, index) in tags" :key="index">{{ tags.text }}</el-radio-button>
+                </el-radio-group>
+            </div>
+
+           
+            <!-- <select v-model="selectedTag">
+                <option v-for="option in tags" :value="option.value">
+                {{ option.text }}
+                </option>
+            </select> -->
+
+            <!-- <div v-for="(answer, index) in tags" :key="index">
+                <input type="radio" v-model="selectedTag">
+                {{ answer.text }}
+
+            </div> -->
+            
+
+
             <el-table
             style="text-align: center; width: 100%"
             class="card"
-            :data="data"
+            stripe
+            :data="data.data"
             border>
                 <el-table-column
+                prop="type"
                 label="Төрөл"
                 width="120"
                 align="center">
@@ -29,6 +52,28 @@
                 </template>
                 </el-table-column>
                 <el-table-column
+                prop="tags"
+                label="Түлхүүр үг/tag"
+                align="center"
+
+                :filters="allTags"
+                :filter-method="filterTag"
+                filter-placement="bottom-end"
+                
+                >
+                <template slot-scope="scope">
+                    <el-tag
+                    type="primary"
+                    class="mr-1 mb-1"
+                    v-for="(tag, index) in JSON.parse(scope.row.tags)"
+                     :key="index"
+                     disable-transitions>
+                        {{tag}}
+                    </el-tag>
+                </template>
+
+                </el-table-column>
+                <el-table-column
                 label="Огноо"
                 width="180"
                 align="center">
@@ -47,7 +92,8 @@
                         size="medium"
                         type="info"
                         plain
-                        @click="toView(scope.row.download), pickDetails(scope.row), dialogVisible = true
+                        :append-to-body="true"
+                        @click="pickDetails(scope.row), dialogVisible = true
                         ">үзэх
                         </el-button>
                         <el-button
@@ -58,30 +104,34 @@
                         </el-button>
 
                         <el-dialog
+                            :destroy-on-close="true"
                             title="Tips"
                             :visible.sync="dialogVisible"
-                            width="60%"
-                            destroy-on-close
+                            width="50%"
+                            
                             :before-close="handleClose">
-                            <span>
-                                <el-image 
+                            <span
                                     v-if="scope.row.download === types.download"
-                                    :src="types.download" 
-                                    :preview-src-list="[types.download]"
+                            >
+                                <el-image 
+                                    :src="scope.row.download" 
+                                    :preview-src-list="[scope.row.download]"
                                     >
                                 </el-image>
-                                <video
+                            </span>
+                            <span
                                     v-if="scope.row.download === types.download"
+                            >
+                                 <video
                                     ref="video" 
                                     class="video" 
-                                    width="100%" 
+                                    width="70%" 
                                     controls>
-                                    <source :src="scope.row.download" type="video/mp4">
+                                    <source :src="types.download" type="video/mp4">
                                 </video>
                             </span>
                             <span slot="footer" class="dialog-footer">
-                                <el-button @click="dialogVisible = false">Cancel</el-button>
-                                <el-button type="primary" @click="dialogVisible = false">Confirm</el-button>
+                                <el-button type="primary" @click="dialogVisible = false">done</el-button>
                             </span>
                         </el-dialog>
  
@@ -89,6 +139,13 @@
                 </el-table-column>
             </el-table>
         </el-card>
+        <pagination
+            :data="data"
+            @pagination-change-page="fetch"
+            :limit="3"
+            align="center"
+            class="my-2"
+        ></pagination>
     </div>
   
 </template>
@@ -98,7 +155,8 @@ export default {
     data(){
         return{
             dialogVisible: false,
-            data: [],
+            data: {},
+            allTags: [],
             types: {
                 file: '',
                 created_at:'',
@@ -106,12 +164,19 @@ export default {
                 id:'',
                 name:'',
                 size:'',
-                // tags:'',
+                tags:'',
                 type:'',
                 updated_at:'',
                 url:'',
                 user_id:'',
-            }
+            },
+            tags: [
+                { text: 'One11', value: 'A' },
+                { text: 'Two', value: 'B' },
+                { text: 'Three', value: 'C' }
+            ],
+            // radio3: 'New York',
+            selectedTag: ''
         }
 
     },
@@ -119,7 +184,8 @@ export default {
         fetch() {
             axios.post("/user/shared/fetch")
                 .then((response) => {
-                    this.data = response.data.data;
+                    this.data = response.data[0];
+                    this.allTags = response.data[1];
                 })
                 .catch((error) => {
                     console.log(error.response);
@@ -128,6 +194,7 @@ export default {
                         message: error.response.data.message,
                     });
                 });
+              
         },
 
         // forceFileDownload(response, title) {
@@ -140,8 +207,13 @@ export default {
         //     link.click()
         // },
 
-        toView(dwnld){
-            console.log(dwnld);
+        filterTag(value, row) {
+            console.log(value, row);
+            return row.tags;   
+        },
+        filterHandler(value, row, column) {
+            const property = column['property'];
+            return row[property] === value;
         },
 
         handleDownload(urlz, downloadz) {
@@ -164,7 +236,7 @@ export default {
             this.types.id = data.id;
             this.types.name = data.name;
             this.types.size = data.size;
-            // this.types.tags = data.tags;
+            this.types.tags = JSON.parse(data.tags);
             this.types.type = data.type;
             this.types.updated_at = data.updated_at;
             this.types.url = data.url;
@@ -191,6 +263,7 @@ export default {
 
     created() {
         this.fetch();
+
     },
     mounted(){
     },

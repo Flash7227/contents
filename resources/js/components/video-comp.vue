@@ -10,76 +10,30 @@
             </el-breadcrumb>
           </el-header>
             <el-main>
-                <el-row>
-                    <!-- video -->
-                    <el-col :span="6" v-for="(o, index) in 3" :key="o" :offset="index > 0 ? 3 : 0" >
-                      <!-- <el-card :body-style="{ padding: '0px' }"> -->
-                        <Media
-                          :kind="'video'"
-                          :isMuted="false"
-                          :src="'https://www.w3schools.com/html/mov_bbb.mp4'"
-
-                          :autoplay="true"
-                          :controls="true"
-                          :loop="true"
-                          @pause="handle"
-                          :ref="'video_player'"
-                          width="auto"
-                          ></Media>
-                        <div style="padding: 10px;">
-                          <span style="text-align: left; font-weight: bold;">bunny bear and butterfly</span>
-                          <div class="bottom clearfix">
-                            <time class="time">{{ currentDate }}</time>
-                          </div>
-                        </div>
-                      <!-- </el-card> -->
-                    </el-col>
-                    <el-col :span="6" v-for="(o, index) in 3" :key="o" :offset="index > 0 ? 3 : 0" >
-                      <!-- <el-card :body-style="{ padding: '0px' }"> -->
-                        <Media
-                          :kind="'video'"
-                          :isMuted="false"
-                          :src="'https://www.w3schools.com/html/mov_bbb.mp4'"
-
-                          :autoplay="true"
-                          :controls="true"
-                          :loop="true"
-                          @pause="handle"
-                          :ref="'video_player'"
-                          width="auto"
-                          ></Media>
-                        <div style="padding: 10px;">
-                          <span style="text-align: left; font-weight: bold;">bunny bear and butterfly</span>
-                          <div class="bottom clearfix">
-                            <time class="time">{{ currentDate }}</time>
-                          </div>
-                        </div>
-                      <!-- </el-card> -->
-                    </el-col>
-                    <el-col :span="6" v-for="(o, index) in 3" :key="o" :offset="index > 0 ? 3 : 0" >
-                      <!-- <el-card :body-style="{ padding: '0px' }"> -->
-                        <Media
-                          :kind="'video'"
-                          :isMuted="false"
-                          :src="'https://www.w3schools.com/html/mov_bbb.mp4'"
-
-                          :autoplay="true"
-                          :controls="true"
-                          :loop="true"
-                          @pause="handle"
-                          :ref="'video_player'"
-                          width="auto"
-                          ></Media>
-                        <div style="padding: 10px;">
-                          <span style="text-align: left; font-weight: bold;">bunny bear and butterfly</span>
-                          <div class="bottom clearfix">
-                            <time class="time">{{ currentDate }}</time>
-                          </div>
-                        </div>
-                      <!-- </el-card> -->
-                    </el-col>
-                    
-                </el-row>
+              <!-- video -->
+              <el-row>
+                <el-col :span="8" v-for="video in videoData" :key="video" >
+                  <Media
+                    style="width: 350px; height: 200px"
+                    :kind="'video'"
+                    :isMuted="false"
+                    :src="video.download"
+                    :autoplay="false"
+                    :controls="true"
+                    :loop="true"
+                    @pause="handle"
+                    :ref="'video_player'"
+                    width="auto"
+                    class="example"
+                    ></Media>
+                  <div style="padding: 10px;">
+                    <span style="text-align: left; font-weight: bold;">{{video.name}}</span>
+                    <div class="bottom clearfix">
+                      <time class="time">{{ dateformatter(video.created_at) }}</time>
+                    </div>
+                  </div>
+                </el-col>
+              </el-row>
             </el-main>
             
         </el-container>
@@ -91,6 +45,7 @@ import Media from "@dongido/vue-viaudio";
 export default {
   data() {
     return {
+      videoData:{},
       currentDate: new Date()
     };
   },
@@ -99,12 +54,47 @@ export default {
   },
   name: "Example",
   methods: {
+    getvideoData(){
+      axios
+      .get("/home/video/fetch")
+      .then((response) => {
+          this.loading = false;
+          this.videoData = response.data;
+          console.log(this.videoData);
+      })
+      .catch((error) => {
+          this.loading = false;
+          console.log(error.response);
+          this.$notify.error({
+              title: "Error",
+              message: error.response.data.message,
+          });
+      });
+    },
     handle() {
       setTimeout(() => {
         //this.$refs.video_player.play();
       },);
     },
+    dateformatter(date, short) {
+      if (short) {
+          // console.log(short, '---');
+          return moment(date).format("YYYY-MM-DD");
+      } else {
+          return moment(date).format("YYYY-MM-DD HH:mm");
+      }
+    },
   },
+  created() {
+        this.getvideoData();
+    },
+    mounted(){
+    },
+    props: {
+        csrf: {
+            type: String,
+        },
+    }
 };
 </script>
 
@@ -126,6 +116,14 @@ export default {
   .time {
     font-size: 13px;
     color: #999;
+  }
+  .grid-content {
+    border-radius: 4px;
+    min-height: 36px;
+  }
+  .row-bg {
+    padding: 10px 0;
+    background-color: #f9fafc;
   }
 
 </style>

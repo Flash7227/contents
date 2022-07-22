@@ -17,7 +17,7 @@ Vue.use(ElementUI, { locale })
 window.moment = require('moment');
 
 import CKEditor from '@ckeditor/ckeditor5-vue2';
-Vue.use( CKEditor );
+Vue.use(CKEditor);
 
 Vue.component('pagination', require('laravel-vue-pagination'));
 
@@ -26,6 +26,7 @@ Vue.component('pagination', require('laravel-vue-pagination'));
 Vue.component('upload-comp', require('./components/upload-comp.vue').default);
 Vue.component('home-comp', require('./components/home-comp.vue').default);
 Vue.component('shared-comp', require('./components/shared-comp.vue').default);
+Vue.component('admin-comp', require('./components/admin-comp.vue').default);
 
 
 
@@ -47,5 +48,5 @@ const app = new Vue({
 if (process.env.MIX_APP_ENV === 'production') {
     Vue.config.devtools = false;
     Vue.config.debug = false;
-    Vue.config.silent = true; 
+    Vue.config.silent = true;
 }

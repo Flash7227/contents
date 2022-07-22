@@ -7,6 +7,7 @@ use League\Flysystem\Filesystem;
 use App\User;
 use Illuminate\Http\Request;
 
+
 class UsersController extends Controller
 {
     public function uploadIndex()
@@ -124,7 +125,8 @@ class UsersController extends Controller
     public function uploadFetch(Request $req)
     {
         $lists = Uploads::where('user_id', Auth()->user()->id)->orderBy('created_at', 'DESC')->paginate(30);
-        return $lists;
+        $dataused = Uploads::where('user_id', Auth()->user()->id)->sum('size');
+        return [$lists, $dataused];
     }
     public function sharedIndex()
     {
@@ -137,7 +139,16 @@ class UsersController extends Controller
         // where('allowed', Auth()->user()->email)
         whereJsonContains('allowed', $email)
         // ->orWhereJsonContains('allowed','public')
-        ->paginate(10);
-        return $data;
+        ->paginate(100);
+        
+        $tags = Uploads::whereJsonContains('allowed', $email)
+        ->select('tags')
+        ->pluck('tags')
+        // ->toArray()
+        // ->merge('tags')
+        ;
+
+
+        return [$data , $tags];
     }
 }

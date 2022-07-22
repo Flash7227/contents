@@ -144,6 +144,9 @@
         </el-card>
         <el-card class="mt-2">
             <p>Таны хуулсан файлууд</p>
+            <div class="text-right">
+                <span>Нийт: {{lists.total}} / Data: {{readableSize(dataused)}}</span>
+            </div>
             <el-table :data="lists.data" border style="width: 100%" @row-click="openDetails">
                 <el-table-column
                     type="index"
@@ -261,7 +264,7 @@
             <el-form                
                 ref="invisModify"
                 :model="selected"
-                label-width="140px"
+                label-width="160px"
                 size="mini"
                 :rules="rules">
 
@@ -338,9 +341,12 @@
             </el-form>
    
             <span slot="footer" class="dialog-footer">
-                    <el-button @click="modify(0)" type="danger" icon="el-icon-delete" class="float-left">Устгах</el-button>
-                    <el-button @click="downloadFile" type="success" icon="el-icon-download" class="float-left">Татах</el-button>  
-                    <el-button @click="modify(1)" type="primary" icon="el-icon-edit">Засах</el-button>
+                    <div>
+                        <el-button @click="modify(0)" type="danger" icon="el-icon-delete" class="float-left" plain size="small">Устгах</el-button>
+                        <el-button @click="downloadFile" type="success" icon="el-icon-download" class="float-left" plain size="small">Татах</el-button>
+                        <el-button v-if="selected.type == 2 || selected.type == 3" @click="viewdata" type="info" icon="el-icon-picture" class="float-left" plain size="small">Үзэх</el-button>
+                    </div>
+                    <el-button @click="modify(1)" type="primary" icon="el-icon-edit" plain>Засах</el-button>
                 <!-- <div class="float-left">
                     <el-button @click="modify" type="danger" icon="el-icon-delete">Устгах</el-button>
                     <el-button @click="downloadFile" type="success" icon="el-icon-download">Татах</el-button>  
@@ -350,6 +356,29 @@
                 </div> -->
             </span>
     </el-dialog>
+    <el-dialog
+            title="Viewdata"
+            :visible.sync="viewVisible"
+            width="90%"
+            append-to-body
+            :before-close="handleCloseView">
+
+            <div v-if="selected.type == 2" class="text-center">
+                <video width="90%" height="auto" controls ref="video" >
+                    <source :src="selected.download" type="video/mp4" ref="source1"/>
+                    <source :src="selected.download" :type="getExt()" ref="source2"/>
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+            <div v-else-if="selected.type == 3" class="text-center demo-image__preview">
+                <el-image 
+                    style="width: 90%; height: auto"
+                    :src="selected.download" 
+                    :preview-src-list="[selected.download]">
+                </el-image>
+            </div>
+
+    </el-dialog>
     </div>
 </template>
 
@@ -357,7 +386,6 @@
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 // import Image from '@ckeditor/ckeditor5-image/src/image';
 // import ImageResize from '@ckeditor/ckeditor5-image/src/imageresize';
-
 import UploadAdapter from '../UploadAdapter';
 
 export default {
@@ -366,6 +394,7 @@ export default {
             loading: false,
             loadText: "Уншиж байна...",
             dialogVisible: false,
+            viewVisible: false,
             inputVisible: false,
             inputVisible2: false,
             inputValue: "",
@@ -452,6 +481,7 @@ export default {
                     toolbar: [ 'toggleImageCaption', 'imageTextAlternative', 'ImageStyle', 'ImageResize']
                 }
             },
+            dataused:""
         };
     },
     methods: {
@@ -461,7 +491,8 @@ export default {
                 .post("/user/upload/fetch")
                 .then((response) => {
                     this.loading = false;
-                    this.lists = response.data;
+                    this.lists = response.data[0];
+                    this.dataused = response.data[1];
                 })
                 .catch((error) => {
                     this.loading = false;
@@ -476,7 +507,7 @@ export default {
             this.$refs['fileList'].validate((valid) => {
                 if (valid) {
                     if (this.$refs.upload.uploadFiles.length > 0) {
-                            this.loading = true;
+                            // this.loading = true;
                             this.$refs.upload.submit();
                         }else{
                             if(this.fileList.type == 4){
@@ -613,9 +644,11 @@ export default {
                 const isLt2M = file.size / 1024 / 1024 < 2;
                 if (!isJPG) {
                     this.$message.error("Avatar picture must be JPG format!");
+                    return false;
                 }
                 if (!isLt2M) {
                     this.$message.error("Avatar picture size can not exceed 2MB!");
+                    return false;
                 }
                 return isJPG && isLt2M;
             }
@@ -750,8 +783,7 @@ export default {
             }        
         },
         handleClose(){
-            this.dialogVisible = false;
-            
+            this.dialogVisible = false;         
         },
         openDetails(row, column, event){
             this.selected.type = row.type;
@@ -771,6 +803,63 @@ export default {
                 return new UploadAdapter( loader, this.csrf);
             };
         },
+        async viewdata() {
+            this.viewVisible = true;
+            if(this.selected.type == 2){
+                this.loading = true;
+                const result = await this.viewAfter();
+            }
+        },
+        viewAfter() {
+            return new Promise(resolve => {
+                setTimeout(() => {
+                this.loading = false;
+                    var video = this.$refs.video;
+                    var source1 = this.$refs.source1;
+                    var source2 = this.$refs.source2;
+                    source1.setAttribute('src', this.selected.download);
+                    source2.setAttribute('src', this.selected.download);
+                    video.load();
+                }, 1000);
+            });
+        },
+        handleViewAfter(){
+            this.loading = false;
+                var video = this.$refs.video;
+                var source = this.$refs.source;
+                // var source2 = this.$refs.source2;
+                console.log(video);
+                var source2 = document.getElementById('source2');
+                source.setAttribute('src', this.selected.download);
+                // source2.setAttribute('src', this.selected.download);
+                video.load();
+                console.log('consoling after 3sec');
+            // setTimeout(function () {
+            //     this.loading = false;
+            //     var video = this.$refs.video;
+            //     var source = this.$refs.source;
+            //     var source2 = this.$refs.source2;
+            //     console.log(video);
+            //     var source2 = document.getElementById('source2');
+            //     source.setAttribute('src', this.selected.download);
+            //     source2.setAttribute('src', this.selected.download);
+            //     video.load();
+            //     console.log('consoling after 3sec');
+            // }, 3000);  
+        },
+        handleCloseView(){
+            if(this.selected.type == 2){
+                var video = this.$refs.video;
+                video.play();
+                video.pause();
+                // video.currentTime = 0;
+            }
+            this.viewVisible = false;         
+        },
+        getExt(){
+            var url = this.selected.url.split('.');
+            return 'video/'+url[url.length - 1];
+        }
     },
     created() {
         this.fetch();

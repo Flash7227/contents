@@ -2,12 +2,72 @@
 
 namespace App\Http\Controllers;
 
+use App\Uploads;
+use App\User;
+use Storage;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
 
 class AdminsController extends Controller
 {
-    public function usersIndex()
-    {
-        return view('admin.users');
+
+    public function userIndex(){
+        if(Auth()->user()->role === 1){
+            return view('admin.admin');
+        }else {
+            return redirect()->back();
+        }
+        
     }
+
+    public function userFetch(){
+        $users = User::paginate(10);
+        return $users;
+    }
+
+
+    public function userEdit(Request $request){
+        
+        if($request->input('delete')){
+            $user = User::find($request->input('id'));
+            if($user->delete()){
+                return 'success';
+            };
+        }else{
+            $form = $request->input('form');
+            if(isset($form['id'])){
+                $user = User::find($form['id']);
+            }else{
+                $user = new User;
+            }
+            // if($user = User::create([
+            //     'name' => $request['form']['name'],
+            //     'email' => $request['form']['email'],
+            //     'permissions' => json_encode($request['form']['permissions']),
+            //     'role' => $request['form']['role'],
+            //     'password' => Hash::make($request['form']['password']),
+            // ])
+            // ){
+            //     return "user created successfuly";
+            // }
+            
+
+            $user->fill(
+                [
+                    'name' => $request['form']['name'],
+                    'email' => $request['form']['email'],
+                    'permissions' => ($request['form']['permissions']),
+                    'role' => $request['form']['role'],
+                    'password' => Hash::make($request['form']['password']),
+                ]);
+
+            if($user->save()){
+                return 'success';
+            }
+        }
+        return 'error';
+    }
+
+
+    
 }

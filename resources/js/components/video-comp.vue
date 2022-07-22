@@ -1,42 +1,41 @@
 <template>
     <div class="container">
-        <el-container>
-          <el-header>
+      <el-container>
+        <el-header class="container">
             <el-breadcrumb separator=" ">
-              <el-breadcrumb-item ><a href="/home/niitlel"><el-button size="mini" round>Нийтлэл</el-button></a></el-breadcrumb-item>
-              <el-breadcrumb-item ><a href="/home/poster"><el-button size="mini" round>Постер</el-button></a></el-breadcrumb-item>
-              <el-breadcrumb-item ><a href="/home/video"><el-button size="mini" round>Бичлэг</el-button></a></el-breadcrumb-item>
-              <el-breadcrumb-item ><a href="/home/file"><el-button size="mini" round>Файл</el-button></a></el-breadcrumb-item>
+            <el-breadcrumb-item ><a href="/home/niitlel"><el-button size="mini" round>Нийтлэл</el-button></a></el-breadcrumb-item>
+            <el-breadcrumb-item ><a href="/home/poster"><el-button size="mini" round>Постер</el-button></a></el-breadcrumb-item>
+            <el-breadcrumb-item ><a href="/home/video"><el-button size="mini" round>Бичлэг</el-button></a></el-breadcrumb-item>
+            <el-breadcrumb-item ><a href="/home/file"><el-button size="mini" round>Файл</el-button></a></el-breadcrumb-item>
             </el-breadcrumb>
-          </el-header>
-            <el-main>
-              <!-- video -->
-              <el-row>
-                <el-col :span="8" v-for="video in videoData" :key="video" >
-                  <Media
-                    style="width: 350px; height: 200px"
-                    :kind="'video'"
-                    :isMuted="false"
-                    :src="video.download"
-                    :autoplay="false"
-                    :controls="true"
-                    :loop="true"
-                    @pause="handle"
-                    :ref="'video_player'"
-                    width="auto"
-                    class="example"
-                    ></Media>
-                  <div style="padding: 10px;">
-                    <span style="text-align: left; font-weight: bold;">{{video.name}}</span>
-                    <div class="bottom clearfix">
-                      <time class="time">{{ dateformatter(video.created_at) }}</time>
-                    </div>
+        </el-header>
+          <el-main>
+            <!-- video -->
+            <el-row>
+              <el-col :span="8" v-for="video in videoData" :key="video">
+                <Media
+                  style="width: 350px; height: 200px"
+                  :kind="'video'"
+                  :isMuted="false"
+                  :src="video.download"
+                  :autoplay="false"
+                  :controls="true"
+                  :loop="true"
+                  @pause="handle"
+                  :ref="'video_player'"
+                  width="auto"
+                  class="example"
+                  ></Media>
+                <div style="padding: 10px;">
+                  <span style="text-align: left; font-weight: bold;">{{video.name}}</span>
+                  <div class="bottom clearfix">
+                    <time class="time">{{ dateformatter(video.created_at) }}</time>
                   </div>
-                </el-col>
-              </el-row>
-            </el-main>
-            
-        </el-container>
+                </div>
+              </el-col>
+            </el-row>
+          </el-main>
+      </el-container>
     </div> 
 </template>
 <script>
@@ -101,6 +100,7 @@ export default {
 <style>
   .example {
     text-align: center;
+    
   }
   .Media {
     width: 100%;

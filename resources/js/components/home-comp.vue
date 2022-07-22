@@ -1,25 +1,31 @@
 <template>
   <div class="container">
+    <el-header class="container">
+      <el-breadcrumb separator=" ">
+      <el-breadcrumb-item ><a href="/home/niitlel"><el-button size="mini" round>Нийтлэл</el-button></a></el-breadcrumb-item>
+      <el-breadcrumb-item ><a href="/home/poster"><el-button size="mini" round>Постер</el-button></a></el-breadcrumb-item>
+      <el-breadcrumb-item ><a href="/home/video"><el-button size="mini" round>Бичлэг</el-button></a></el-breadcrumb-item>
+      <el-breadcrumb-item ><a href="/home/file"><el-button size="mini" round>Файл</el-button></a></el-breadcrumb-item>
+      </el-breadcrumb>
+    </el-header>
     <el-container>
-      <el-header>
-        <!-- <el-menu :default-active="activeIndex"  mode="horizontal" @select="handleSelect">
-          <el-menu-item index="1"><el-button>НИЙТЛЭЛ</el-button></el-menu-item>
-          <el-menu-item index="2">ПОСТЕР</el-menu-item>
-          <el-menu-item index="3">БИЧЛЭГ</el-menu-item>
-          <el-menu-item index="4">ФАЙЛ</el-menu-item>
-        </el-menu> -->
-        <el-breadcrumb separator=" ">
-          <el-breadcrumb-item ><a href="/home/niitlel"><el-button size="mini" round>Нийтлэл</el-button></a></el-breadcrumb-item>
-          <el-breadcrumb-item ><a href="/home/poster"><el-button size="mini" round>Постер</el-button></a></el-breadcrumb-item>
-          <el-breadcrumb-item ><a href="/home/video"><el-button size="mini" round>Бичлэг</el-button></a></el-breadcrumb-item>
-          <el-breadcrumb-item ><a href="/home/file"><el-button size="mini" round>Файл</el-button></a></el-breadcrumb-item>
-        </el-breadcrumb>
-      </el-header>
       <el-main>
-        <el-carousel indicator-position="outside">
-            <el-carousel-item v-for="item in 4" :key="item">
-            <h3>{{ item }}</h3>
-            </el-carousel-item>
+        <!-- <el-carousel indicator-position="outside">
+          <el-carousel-item v-for="(niitlel, item) in niitlels" :key="item">
+            <el-image 
+              style="width: 700px; height:300px;" 
+              :src="niitlel.download"
+                :preview-src-list="[niitlel.download]">
+            </el-image>
+          </el-carousel-item>
+        </el-carousel> -->
+        <el-carousel :interval="4000" type="card" height="200px">
+          <el-carousel-item v-for="(niitlel, item) in niitlels" :key="item">
+            <el-image 
+              :src="niitlel.download"
+                :preview-src-list="[niitlel.download]">
+            </el-image>
+          </el-carousel-item>
         </el-carousel>
         <el-row>
           <!-- Nittlel -->
@@ -99,56 +105,6 @@
           </el-col>
         </el-row>
       </el-main>
-      <el-footer>
-        <div class="row">
-          <div class="col-md-6">
-              <h5>Холбоос</h5>
-              <div class="row">
-
-                  <div class="col-md-6">
-                      <ul class="list links">
-                          <li><a href="http://crc.gov.mn">Байгууллагын веб хуудас</a></li>
-                          <li><a href="https://zipcode.mn/">Шуудангийн нэгдсэн кодын систем</a></li>
-                          <li><a href="http://www.black-list.mn//">Зөрчилтэй домайны жагсаалт </a></li>
-                      </ul>
-                  </div>
-                  <div class="col-md-6">
-                      <ul class="list links">
-                          <li><a href="http://www.facebook.com/crcmongol">Facebook холбоос</a></li>
-                          <li><a href="http://www.twitter.com/crcmn">Twitter холбоос</a></li>
-                      </ul>
-                  </div>
-              </div>
-          </div>
-          <div class="col-md-6">
-              <h5>Холбоо барих</h5>
-              <div class="row">
-                  <div class="col-md-6">
-                      <div class="c-info" style="margin-top: 15px">
-                          <i class="fa fa-map-marker"></i>
-                          Метро бизнес төв А-блок 5 давхар Д.Сүхбаатарын гудамж-13 Сүхбаатар дүүрэг, Улаанбаатар 14201-0033
-                      </div>
-                  </div>
-                  <div class="col-md-6">
-                      <div class="c-info">
-                          <i class="fa fa-envelope-o"></i>
-                          <a href="mailto:info@crc.gov.mn">info@crc.gov.mn</a>
-                      </div>
-                      <div class="c-info">
-                          <i class="fa fa-phone"></i>
-                          +976-11-304258
-                          <br>
-                          1800-1858
-                      </div>
-                      <div class="c-info">
-                          <i class="fa fa-fax"></i>
-                          +976-11-327720
-                      </div>
-                  </div>
-              </div>
-          </div>
-        </div>
-      </el-footer>
     </el-container>
   </div> 
 </template>
@@ -157,12 +113,12 @@
   export default {
     data () {
       return {
-        loading: true,
-        currentDate: '2021-06-01',
-        lists: [],
         activeIndex: '',
         activeName: '',
-        uploadData:{},
+        files:{},
+        videos:{},
+        posters:{},
+        niitlels:{},
          url:'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg',
         srcList: [
           'https://fuss10.elemecdn.com/8/27/f01c15bb73e1ef3793e64e6b7bbccjpeg.jpeg',
@@ -181,13 +137,15 @@
       handleClick(tab, event) {
         console.log(tab, event);
       },
-      getUpload(page=1){
+      getUpload(){
         axios
-        .get("/home/getupload?page=1")
+        .get("/home/getupload")
         .then((response) => {
             this.loading = false;
-            this.uploadData = response.data;
-            console.log(this.uploadData);
+            this.files = response.data[0];
+            this.videos = response.data[1];
+            this.posters = response.data[2];
+            this.niitlels = response.data[3];
         })
         .catch((error) => {
             this.loading = false;
@@ -209,20 +167,20 @@
 <style>
   .el-breadcrumb {
     border-bottom: solid 1px #475669; 
-    border-top: solid 1px #475669;
+    /* border-top: solid 1px #475669; */
     padding: 10px;
     
   }
   .el-carousel__item h3 {
     color: #475669;
-    font-size: 18px;
+    font-size: 14px;
     opacity: 0.75;
-    line-height: 300px;
+    line-height: 200px;
     margin: 0;
   }
 
   .el-carousel__item:nth-child(2n) {
-    background-color: #d3dce6;
+    background-color: #99a9bf;
   }
 
   .el-carousel__item:nth-child(2n+1) {

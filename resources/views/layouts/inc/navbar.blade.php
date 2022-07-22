@@ -42,7 +42,9 @@
                 <i class="el-icon-user-solid"></i> {{ Auth::user()->name }}
             </a>
             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                <a class="dropdown-item" href="/admin/users">Хэрэглэгчид</a>
+              @if(Auth()->user()->role === 1)
+              <a class="dropdown-item" href="/admin/user">Хэрэглэгчид</a>
+              @endif
                 <a class="dropdown-item" href="{{ route('logout') }}"
                    onclick="event.preventDefault();
                                  document.getElementById('logout-form').submit();">

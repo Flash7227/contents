@@ -7,6 +7,7 @@ use League\Flysystem\Filesystem;
 use App\User;
 use Illuminate\Http\Request;
 
+
 class UsersController extends Controller
 {
     public function uploadIndex()
@@ -137,7 +138,16 @@ class UsersController extends Controller
         // where('allowed', Auth()->user()->email)
         whereJsonContains('allowed', $email)
         // ->orWhereJsonContains('allowed','public')
-        ->paginate(10);
-        return $data;
+        ->paginate(100);
+        
+        $tags = Uploads::whereJsonContains('allowed', $email)
+        ->select('tags')
+        ->pluck('tags')
+        // ->toArray()
+        // ->merge('tags')
+        ;
+
+
+        return [$data , $tags];
     }
 }

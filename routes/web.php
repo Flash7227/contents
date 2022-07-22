@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 
 Auth::routes();
-Auth::routes(['login' => false]);
+
 Route::get('/', 'HomeController@welcome');
 
 

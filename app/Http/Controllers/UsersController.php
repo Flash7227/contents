@@ -125,18 +125,7 @@ class UsersController extends Controller
     public function uploadFetch(Request $req)
     {
         $lists = Uploads::where('user_id', Auth()->user()->id)->orderBy('created_at', 'DESC')->paginate(30);
-        $email = Auth()->user()->email;
-        $permissions = User::select('permissions')->where('email',$email)->get();
-        $array = [];
-        foreach($permissions as $perm){
-            foreach($perm as $per){
-                
-            }
-            $array[] = $perm;
-        }
-        $array = $array[0];
-        
-        return [$lists, $array];
+        return $lists;
     }
     public function sharedIndex()
     {
@@ -157,8 +146,7 @@ class UsersController extends Controller
         // ->toArray()
         // ->merge('tags')
         ;
-        
-       
+
 
         return [$data , $tags];
     }

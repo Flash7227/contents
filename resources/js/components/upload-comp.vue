@@ -8,7 +8,6 @@
         <el-card>
             <p>Шинэ файл хуулах</p>
             <el-form
-            
                 ref="fileList"
                 :model="fileList"
                 label-width="140px"
@@ -388,7 +387,6 @@ export default {
             inputVisible2: false,
             inputValue: "",
             inputValue2: "",
-            perms: [],
             fileList: {
                 id: "",
                 dataType: "0",
@@ -454,7 +452,6 @@ export default {
             ],
             emails: [],
             lists: {},
-            
             rules: {
                 name: [
                     { required: true, message: 'Заавал бөглөнө үү!', trigger: 'blur' }
@@ -481,8 +478,7 @@ export default {
                 .post("/user/upload/fetch")
                 .then((response) => {
                     this.loading = false;
-                    this.lists = response.data[0];
-                    this.perms = response.data[1];
+                    this.lists = response.data;
                 })
                 .catch((error) => {
                     this.loading = false;

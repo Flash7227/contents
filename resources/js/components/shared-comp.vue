@@ -3,19 +3,22 @@
         <el-card>
             <div style="margin: 20px 0;">
                 <el-radio-group v-model="selectedTag">
-                <el-radio-button value="[]">Бүгд</el-radio-button>
-                <el-radio-button v-for="(value, index) in allTags" :key="index" :label="value" :value="value" >{{ value }}</el-radio-button>
+                <el-radio-button v-for="(answer, index) in tags" :key="index">{{ tags.text }}</el-radio-button>
                 </el-radio-group>
             </div>
 
            
-            <select v-model="selectedTag">
-                <option v-for="(answer, index) in allTags" :key="index">
-                {{ answer }}
+            <!-- <select v-model="selectedTag">
+                <option v-for="option in tags" :value="option.value">
+                {{ option.text }}
                 </option>
-            </select>
+            </select> -->
 
-         
+            <!-- <div v-for="(answer, index) in tags" :key="index">
+                <input type="radio" v-model="selectedTag">
+                {{ answer.text }}
+
+            </div> -->
             
 
 
@@ -52,6 +55,11 @@
                 prop="tags"
                 label="Түлхүүр үг/tag"
                 align="center"
+
+                :filters="allTags"
+                :filter-method="filterTag"
+                filter-placement="bottom-end"
+                
                 >
                 <template slot-scope="scope">
                     <el-tag
@@ -63,6 +71,7 @@
                         {{tag}}
                     </el-tag>
                 </template>
+
                 </el-table-column>
                 <el-table-column
                 label="Огноо"
@@ -75,9 +84,8 @@
                 </el-table-column>
                 <el-table-column
                     label="Үйлдэл"
-                    width="200"
-                    align="right"
-                    header-align="center">
+                    width="400"
+                    align="center">
                     <template slot-scope="scope">
                         <el-button
                         v-if="scope.row.type === 3 || scope.row.type === 2"
@@ -95,7 +103,37 @@
                         @click="handleDownload(scope.row.url, scope.row.download)">татах
                         </el-button>
 
-                        
+                        <el-dialog
+                            :destroy-on-close="true"
+                            title="Tips"
+                            :visible.sync="dialogVisible"
+                            width="50%"
+                            
+                            :before-close="handleClose">
+                            <span
+                                    v-if="scope.row.download === types.download"
+                            >
+                                <el-image 
+                                    :src="scope.row.download" 
+                                    :preview-src-list="[scope.row.download]"
+                                    >
+                                </el-image>
+                            </span>
+                            <span
+                                    v-if="scope.row.download === types.download"
+                            >
+                                 <video
+                                    ref="video" 
+                                    class="video" 
+                                    width="70%" 
+                                    controls>
+                                    <source :src="types.download" type="video/mp4">
+                                </video>
+                            </span>
+                            <span slot="footer" class="dialog-footer">
+                                <el-button type="primary" @click="dialogVisible = false">done</el-button>
+                            </span>
+                        </el-dialog>
  
                     </template>
                 </el-table-column>
@@ -108,36 +146,6 @@
             align="center"
             class="my-2"
         ></pagination>
-
-        <el-dialog
-        :destroy-on-close="true"
-        title="Tips"
-        :visible.sync="dialogVisible"
-        width="50%">
-            <span
-            v-if="types.type == 3"
-            >
-                <el-image 
-                :src="types.download" 
-                :preview-src-list="[types.download]"
-                >
-            </el-image>
-            </span>
-            <span
-            v-if="types.type == 2"
-            >
-                <video
-                    ref="video" 
-                    class="video" 
-                    width="100%" 
-                    controls>
-                    <source :src="types.download" type="video/mp4">
-                </video>
-            </span>
-            <span slot="footer" class="dialog-footer">
-                <el-button type="primary" @click="dialogVisible = false">done</el-button>
-            </span>
-        </el-dialog>
     </div>
   
 </template>
@@ -163,7 +171,9 @@ export default {
                 user_id:'',
             },
             tags: [
-                
+                { text: 'One11', value: 'A' },
+                { text: 'Two', value: 'B' },
+                { text: 'Three', value: 'C' }
             ],
             // radio3: 'New York',
             selectedTag: ''
@@ -176,7 +186,6 @@ export default {
                 .then((response) => {
                     this.data = response.data[0];
                     this.allTags = response.data[1];
-                    this.collectTags();
                 })
                 .catch((error) => {
                     console.log(error.response);
@@ -188,21 +197,15 @@ export default {
               
         },
 
-        collectTags(){
-            var tags = this.data.data;
-            var array = [];
-            tags.forEach(e => {
-
-                JSON.parse(e.tags).forEach( a => {
-                    array.push(a);
-                    console.log(a);
-                })
-            });
-
-            this.allTags = array
-
-
-        },
+        // forceFileDownload(response, title) {
+        //     console.log(response, title)
+        //     const url = window.URL.createObjectURL(new Blob([response.data]))
+        //     const link = document.createElement('a')
+        //     link.href = url
+        //     link.setAttribute('download', title)
+        //     document.body.appendChild(link)
+        //     link.click()
+        // },
 
         filterTag(value, row) {
             console.log(value, row);
@@ -249,7 +252,13 @@ export default {
                 return moment(date).format("YYYY-MM-DD HH:mm");
             }
         },
-       
+        handleClose(done) {
+            this.$confirm('Are you sure to close this dialog?')
+            .then(_ => {
+                done();
+            })
+            .catch(_ => {});
+        },
     },
 
     created() {
@@ -272,6 +281,5 @@ export default {
 .card {
     text-align: center;
 }
-
 
 </style>

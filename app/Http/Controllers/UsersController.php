@@ -98,8 +98,10 @@ class UsersController extends Controller
         $type = $req->input('type');
         $upload = Uploads::find($form['id']);
         if($type == 'del'){
-            if (Storage::exists('/public/uploads/'.$upload->url)) {
-                Storage::delete('/public/uploads/'.$upload->url);
+            if($upload->url != 'noimage123.png'){
+                if (Storage::exists('/public/uploads/'.$upload->url)) {
+                    Storage::delete('/public/uploads/'.$upload->url);
+                }
             }
             $upload->delete();
         }else{
@@ -122,21 +124,60 @@ class UsersController extends Controller
         }
         return "success";
     }
+    public function uploadModifyCover(Request $req)
+    {
+        if($req->hasFile('file')){
+            $file = $req->file('file');
+            if(!$file->isValid()){
+                return response()->json([
+                    'error' => 'File is not valid!'
+                ]);
+            }
+            $id = $req->input('id');
+            $size = $req->input('size');
+            $sharetype = $req->input('sharetype');
+            $filenamewithExt= $file->getClientOriginalName();
+            //get just filename
+            $filename = pathinfo($filenamewithExt,PATHINFO_FILENAME);
+            $time = Auth()->user()->id.'_'.time();
+            $filename = $filename.'_'.$time;
+            //get jsut extension
+            $extension = $file->guessClientExtension();
+            //file name to store
+            $fileNameToStore = $filename.'.'.$extension;
+            //Upload Image
+            // $path = $file->storeAs('public/uploads/', $fileNameToStore);
+            $disk = Storage::disk('local');
+            $disk->putFileAs('/public/uploads', $file, $fileNameToStore);
+            if($disk){
+                $upload = Uploads::find($id);
+                if($upload->url != 'noimage123.png'){
+                    if (Storage::exists('/public/uploads/'.$upload->url)) {
+                        Storage::delete('/public/uploads/'.$upload->url);
+                    }
+                }
+                $upload->url = $fileNameToStore;
+                $upload->size = $size;
+                $upload->save();
+                return "success";
+            }else{
+                return response()->json([
+                    'error' => 'Unable to save!'
+                ]);
+            }
+        }else{
+            return response()->json([
+                'error' => 'No File Uploaded'
+            ]);
+        }
+        
+        
+    }
     public function uploadFetch(Request $req)
     {
         $lists = Uploads::where('user_id', Auth()->user()->id)->orderBy('created_at', 'DESC')->paginate(30);
-        $email = Auth()->user()->email;
-        $permissions = User::select('permissions')->where('email',$email)->get();
-        $array = [];
-        foreach($permissions as $perm){
-            foreach($perm as $per){
-                
-            }
-            $array[] = $perm;
-        }
-        $array = $array[0];
-        
-        return [$lists, $array];
+        $dataused = Uploads::where('user_id', Auth()->user()->id)->sum('size');
+        return [$lists, $dataused];
     }
     public function sharedIndex()
     {
@@ -157,8 +198,7 @@ class UsersController extends Controller
         // ->toArray()
         // ->merge('tags')
         ;
-        
-       
+
 
         return [$data , $tags];
     }

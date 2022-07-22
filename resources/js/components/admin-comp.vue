@@ -157,7 +157,9 @@ export default {
                     }
             ],
 
-            permissions:['public', 'upload', 'user_modify'],
+            permissions:['public', 'share'],
+    
+
         }
     },
     methods:{

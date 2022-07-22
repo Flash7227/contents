@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Route;
 Auth::routes();
 
 Route::get('/', 'HomeController@welcome');
-Route::get('/', 'HomeController@homecompIndex');
+
 
 //Tseverhen ajiltsgaay
 // TVROOM 
@@ -29,4 +29,19 @@ Route::group(['middleware' => 'auth', 'prefix' => '/admin'], function(){
     
 });
 
+Route::group(['middleware' => 'auth', 'prefix' => '/home'], function(){
+    Route::get('/home', 'HomeController@homecompIndex');
+    Route::get('/getupload', 'HomeController@uploadData');
+    Route::get('/niitlel', 'HomeController@niitlelcompIndex');
+    Route::get('/niitlel/fetch', 'HomeController@niitlelFetch');
+    Route::get('/poster', 'HomeController@postercompIndex');
+    Route::get('/poster/fetch', 'HomeController@posterFetch');
+    Route::get('/video', 'HomeController@videocompIndex');
+    Route::get('/video/fetch', 'HomeController@videoFetch');
+    Route::get('/file', 'HomeController@filecompIndex');
+    Route::get('/file/fetch', 'HomeController@fileFetch');
+    
+});
+
+    
 Route::post('/ckeditor/upload', 'CkeditorController@upload')->name('ckeditor.upload');

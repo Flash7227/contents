@@ -31,33 +31,50 @@ class HomeController extends Controller
     }
     public function uploadData()
     {
-        $uploadData = Uploads::where('allowed', '["public"]')->orderBy('created_at', 'DESC')->get();
+        $uploadData = Uploads::where('sharetype', "public")->orderBy('created_at', 'DESC')->get();
         return $uploadData;
     }
+    /// niitlel
     public function niitlelcompIndex()
     {
-        $uploadData = Uploads::where('allowed', '["public"]')->orderBy('created_at', 'DESC')->get();
+       // $uploadData = Uploads::where('sharetype', "public")->orderBy('created_at', 'DESC')->get();
         return view('files.niitlel');
     }
+    public function niitlelFetch()
+    {
+        $getniitlel = Uploads::where('sharetype', "public")->where('type', '4')->orderBy('created_at', 'DESC')->get();
+        return $getniitlel;
+    }
+    //poster
     public function postercompIndex()
     {
-        $uploadData = Uploads::where('allowed', '["public"]')->orderBy('created_at', 'DESC')->get();
         return view('files.poster');
     }
+    public function posterFetch()
+    {
+        $getposter = Uploads::where('sharetype', "public")->where('type', '3')->orderBy('created_at', 'DESC')->get();
+        return $getposter;
+    }
+    //video
     public function videocompIndex()
     {
-        $uploadData = Uploads::where('allowed', '["public"]')->orderBy('created_at', 'DESC')->get();
         return view('files.video');
     }
+    public function videoFetch()
+    {
+        $getvideo = Uploads::where('sharetype', "public")->where('type', '2')->orderBy('created_at', 'DESC')->get();
+        return $getvideo;
+    }
+
+    ///file
     public function filecompIndex()
     {
-        //$files = Uploads::where('allowed', '["public"]')->where('type', '1')->orderBy('created_at', 'DESC')->get();
         return view('files.file');
     }
-    public function getFiles()
+    public function fileFetch()
     {
-        $uploadData = Uploads::where('allowed', '["public"]')->where('type', '1')->orderBy('created_at', 'DESC')->get();
-        return $uploadData;
+        $getfile = Uploads::where('sharetype', "public")->where('type', '1')->orderBy('created_at', 'DESC')->get();
+        return $getfile;
     }
     
 }

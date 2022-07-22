@@ -28,9 +28,13 @@ Route::group(['middleware' => 'auth', 'prefix' => '/home'], function(){
     Route::get('/home', 'HomeController@homecompIndex');
     Route::get('/getupload', 'HomeController@uploadData');
     Route::get('/niitlel', 'HomeController@niitlelcompIndex');
+    Route::get('/niitlel/fetch', 'HomeController@niitlelFetch');
     Route::get('/poster', 'HomeController@postercompIndex');
+    Route::get('/poster/fetch', 'HomeController@posterFetch');
     Route::get('/video', 'HomeController@videocompIndex');
+    Route::get('/video/fetch', 'HomeController@videoFetch');
     Route::get('/file', 'HomeController@filecompIndex');
+    Route::get('/file/fetch', 'HomeController@fileFetch');
     
 });
 

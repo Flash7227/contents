@@ -65,7 +65,7 @@
                 <el-input v-model="fileList.desc"></el-input>
             </el-form-item> -->
 
-                <el-form-item label="Tags" prop="tags">
+                <el-form-item label="#Tag" prop="tags">
                     <el-tag
                         v-for="(tag,index) in fileList.dynamicTags"
                         :key="index"
@@ -90,7 +90,7 @@
                         class="button-new-tag"
                         size="small"
                         @click="showInput(1)"
-                        >#Нэмэх</el-button
+                        >Нэмэх</el-button
                     >
                 </el-form-item>
                 <el-form-item label="Хуваалцах төрөл" prop="sharetype">
@@ -128,7 +128,9 @@
                         </el-option>
                     </el-select>
                 </el-form-item>
-
+           <el-form-item label="Хуулах лимит">
+                <el-progress :text-inside="true" :stroke-width="15" :percentage="85" :color="customColors" :format="customProgressFormat"></el-progress>
+            </el-form-item>
                 <el-form-item>
                     <el-form-item size="large">
                         <el-button
@@ -141,13 +143,14 @@
                     </el-form-item>
                 </el-form-item>
             </el-form>
+ 
         </el-card>
         <el-card class="mt-2">
             <p>Таны хуулсан файлууд</p>
             <div class="text-right">
-                <span>Нийт: {{lists.total}} / Data: {{readableSize(dataused)}}</span>
+                <small class="grey">Нийт: {{lists.total}}ш</small>
             </div>
-            <el-table :data="lists.data" border style="width: 100%" @row-click="openDetails">
+            <el-table :data="lists.data" border style="width: 100%" @row-click="openDetails" :header-cell-style="tableHeaderColor">
                 <el-table-column
                     type="index"
                     :index="indexMethod"
@@ -175,7 +178,7 @@
                 </el-table-column>
                 <el-table-column
                     prop="tags"
-                    label="Tags"
+                    label="#tag"
                     align="center"
                     header-align="center"
                 >
@@ -257,7 +260,7 @@
             class="my-2"
         ></pagination>
         <el-dialog
-            title="Action"
+            title="Дэлгэрэнгүй"
             :visible.sync="dialogVisible"
             width="90%"
             :before-close="handleClose">
@@ -275,6 +278,23 @@
                 <el-form-item label="Нэр" prop="name">
                     <el-input v-model="selected.name"></el-input>
                 </el-form-item>
+                <el-form-item label="Cover зураг" prop="upload" v-if="selected.type == 4">
+                    <el-upload
+                        class="avatar-uploader"
+                        action="/user/upload/modify/cover"
+                        :show-file-list="false"
+                        :on-success="handleSuccess"
+                        :data="selected"
+                        accept="image/jpeg,image/gif,image/png"
+                        :on-error="handleError"
+                        :headers="{ 'X-CSRF-TOKEN': csrf }"
+                        :before-upload="beforeCoverUpload">
+                        <img v-if="selected.url != 'noimage123.png'" :src="selected.download" class="avatar">
+                        <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                    </el-upload>
+                    <small class="grey">Солиход шууд өөрчлөгдөнө!</small>
+                </el-form-item>
+
                 <el-form-item label="Tags" prop="tags">
                     <el-tag
                         v-for="(tag,index) in selected.dynamicTags"
@@ -346,7 +366,7 @@
                         <el-button @click="downloadFile" type="success" icon="el-icon-download" class="float-left" plain size="small">Татах</el-button>
                         <el-button v-if="selected.type == 2 || selected.type == 3" @click="viewdata" type="info" icon="el-icon-picture" class="float-left" plain size="small">Үзэх</el-button>
                     </div>
-                    <el-button @click="modify(1)" type="primary" icon="el-icon-edit" plain>Засах</el-button>
+                    <el-button @click="modify(1)" type="primary" icon="el-icon-edit" size="small" plain>Засах</el-button>
                 <!-- <div class="float-left">
                     <el-button @click="modify" type="danger" icon="el-icon-delete">Устгах</el-button>
                     <el-button @click="downloadFile" type="success" icon="el-icon-download">Татах</el-button>  
@@ -357,7 +377,7 @@
             </span>
     </el-dialog>
     <el-dialog
-            title="Viewdata"
+            title="Үзэх"
             :visible.sync="viewVisible"
             width="90%"
             append-to-body
@@ -481,7 +501,14 @@ export default {
                     toolbar: [ 'toggleImageCaption', 'imageTextAlternative', 'ImageStyle', 'ImageResize']
                 }
             },
-            dataused:""
+            dataused:"",
+            customColors: [
+                {color: '#5cb87a', percentage: 20},
+                {color: '#1989fa', percentage: 40},
+                {color: '#6f7ad3', percentage: 60},
+                {color: '#e6a23c', percentage: 90},
+                {color: '#f56c6c', percentage: 100}
+            ]
         };
     },
     methods: {
@@ -636,9 +663,27 @@ export default {
         addAttachment(file, fileList) {
             this.attachments.push(file);
         },
-        beforeAvatarUpload(file) {
+        beforeAvatarUpload(file, cover) {
+            console.log(cover)
             this.fileList.size = file.size;
             if(this.fileList.type == 4){
+                const isJPG =
+                file.type === "image/jpeg" || "image/png" || "image/gif";
+                const isLt2M = file.size / 1024 / 1024 < 2;
+                if (!isJPG) {
+                    this.$message.error("Avatar picture must be JPG format!");
+                    return false;
+                }
+                if (!isLt2M) {
+                    this.$message.error("Avatar picture size can not exceed 2MB!");
+                    return false;
+                }
+                return isJPG && isLt2M;
+            } 
+        },
+        beforeCoverUpload(file){
+            this.selected.size = file.size;
+            if(this.selected.type == 4){
                 const isJPG =
                 file.type === "image/jpeg" || "image/png" || "image/gif";
                 const isLt2M = file.size / 1024 / 1024 < 2;
@@ -859,6 +904,16 @@ export default {
         getExt(){
             var url = this.selected.url.split('.');
             return 'video/'+url[url.length - 1];
+        },
+        tableHeaderColor({ row, column, rowIndex, columnIndex }) {
+            if (rowIndex === 0) {
+                return 'background-color:#409EFF; color:white; text-transform:uppercase; letter-spacing:1px; font-weight:700; text-align:center; font-size:0.8em;' 
+                
+            }
+        },
+        customProgressFormat(percent){
+            console.log(percent);
+            return this.readableSize(this.dataused) + '/' + '20GB';
         }
     },
     created() {
@@ -876,7 +931,30 @@ export default {
 };
 </script>
 <style scoped>
-.el-form .el-select {
-    width: 100%;
-}
+    .el-form .el-select {
+        width: 100%;
+    }
+    .avatar-uploader .el-upload {
+    border: 1px dashed #d9d9d9;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    }
+    .avatar-uploader .el-upload:hover {
+    border-color: #409EFF;
+    }
+    .avatar-uploader-icon {
+    font-size: 28px;
+    color: #8c939d;
+    width: 178px;
+    height: 178px;
+    line-height: 178px;
+    text-align: center;
+    }
+    .avatar {
+    width: 178px;
+    height: 178px;
+    display: block;
+    }
 </style>

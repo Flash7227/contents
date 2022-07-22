@@ -2,15 +2,15 @@
     <div class="container">
         <el-card>
             <div style="margin: 20px 0;">
-                <el-radio-group v-model="selectedTag">
-                <el-radio-button value="[]">Бүгд</el-radio-button>
-                <el-radio-button v-for="(value, index) in allTags" :key="index" :label="value" :value="value" >{{ value }}</el-radio-button>
+                <el-radio-group v-model="selectedTag" @change="tagHandler">
+                <el-radio-button value="">Бүгд</el-radio-button>
+                <el-radio-button  v-for="(value, index) in allTags" :key="index" :label="value" :value="value" >{{ value }}</el-radio-button>
                 </el-radio-group>
             </div>
 
            
             <select v-model="selectedTag">
-                <option v-for="(answer, index) in allTags" :key="index">
+                <option v-for="(answer, index) in allTags" :key="index" @click="testFunc()">
                 {{ answer }}
                 </option>
             </select>
@@ -188,6 +188,11 @@ export default {
               
         },
 
+        tagHandler(value) { 
+            console.log(value);
+            
+        },
+
         collectTags(){
             var tags = this.data.data;
             var array = [];
@@ -195,7 +200,6 @@ export default {
 
                 JSON.parse(e.tags).forEach( a => {
                     array.push(a);
-                    console.log(a);
                 })
             });
 

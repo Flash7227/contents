@@ -5,7 +5,7 @@
         :element-loading-text="loadText"
     >
 
-        <el-card>
+        <el-card v-if="persmissionCheck('upload')">
             <p>Шинэ файл хуулах</p>
             <el-form
                 ref="fileList"
@@ -120,6 +120,7 @@
                         default-first-option
                     >
                         <el-option
+                        
                             v-for="(item, index) in emails"
                             :key="index"
                             :label="item"
@@ -128,19 +129,20 @@
                         </el-option>
                     </el-select>
                 </el-form-item>
-           <el-form-item label="Хуулах лимит">
-                <el-progress :text-inside="true" :stroke-width="15" :percentage="85" :color="customColors" :format="customProgressFormat"></el-progress>
-            </el-form-item>
+                <el-form-item label="Хуулах лимит">
+                    <el-progress :text-inside="true" :stroke-width="15" :percentage="85" :color="customColors" :format="customProgressFormat"></el-progress>
+                </el-form-item>
                 <el-form-item>
-                    <el-form-item size="large">
-                        <el-button
-                            type="success"
-                            icon="el-icon-upload2"
-                            @click="submitUpload"
-                            >Хуулах</el-button
-                        >
-                        <el-button @click="resetForm()">Cancel</el-button>
-                    </el-form-item>
+                    <el-button
+                        plain
+                        round
+                        size="medium"
+                        type="success"
+                        icon="el-icon-upload2"
+                        @click="submitUpload"
+                        >Хуулах</el-button
+                    >
+                    <el-button size="medium" round @click="resetForm()">Cancel</el-button>
                 </el-form-item>
             </el-form>
  
@@ -150,7 +152,7 @@
             <div class="text-right">
                 <small class="grey">Нийт: {{lists.total}}ш</small>
             </div>
-            <el-table :data="lists.data" border style="width: 100%" @row-click="openDetails" :header-cell-style="tableHeaderColor">
+            <el-table :data="lists.data" border style="width: 100%" @row-click="openDetails" :header-cell-style="tableHeaderColor" :row-class-name="tableRowClassName">
                 <el-table-column
                     type="index"
                     :index="indexMethod"
@@ -162,11 +164,15 @@
                     prop="type"
                     label="Төрөл"
                     width="110"
-                    align="center"
+                    align="left"
                     header-align="center"
                 >
                     <template slot-scope="scope">
-                        {{ typeName(scope.row.type) }}
+                        <i v-if="scope.row.type == 1" class="el-icon-document"></i>
+                        <i v-else-if="scope.row.type == 2" class="el-icon-video-camera-solid blue"></i>
+                        <i v-else-if="scope.row.type == 3" class="el-icon-picture green"></i>
+                        <i v-else-if="scope.row.type == 4" class="el-icon-reading yellow"></i>
+                        <span class="ml-1">{{ typeName(scope.row.type) }}</span>
                     </template>
                 </el-table-column>
                 <el-table-column
@@ -427,7 +433,7 @@ export default {
                 desc: "",
                 type: "1",
                 dynamicTags: [],
-                sharetype:"public",
+                sharetype:"allowed",
                 allowed: [],
                 url:"",
                 size:""
@@ -503,11 +509,11 @@ export default {
             },
             dataused:"",
             customColors: [
-                {color: '#5cb87a', percentage: 20},
-                {color: '#1989fa', percentage: 40},
+                {color: '#a4edbc', percentage: 20},
+                {color: '#b3baf5', percentage: 40},
                 {color: '#6f7ad3', percentage: 60},
-                {color: '#e6a23c', percentage: 90},
-                {color: '#f56c6c', percentage: 100}
+                {color: '#f2e399', percentage: 90},
+                {color: '#f2c199', percentage: 100}
             ]
         };
     },
@@ -868,30 +874,6 @@ export default {
                 }, 1000);
             });
         },
-        handleViewAfter(){
-            this.loading = false;
-                var video = this.$refs.video;
-                var source = this.$refs.source;
-                // var source2 = this.$refs.source2;
-                console.log(video);
-                var source2 = document.getElementById('source2');
-                source.setAttribute('src', this.selected.download);
-                // source2.setAttribute('src', this.selected.download);
-                video.load();
-                console.log('consoling after 3sec');
-            // setTimeout(function () {
-            //     this.loading = false;
-            //     var video = this.$refs.video;
-            //     var source = this.$refs.source;
-            //     var source2 = this.$refs.source2;
-            //     console.log(video);
-            //     var source2 = document.getElementById('source2');
-            //     source.setAttribute('src', this.selected.download);
-            //     source2.setAttribute('src', this.selected.download);
-            //     video.load();
-            //     console.log('consoling after 3sec');
-            // }, 3000);  
-        },
         handleCloseView(){
             if(this.selected.type == 2){
                 var video = this.$refs.video;
@@ -907,19 +889,48 @@ export default {
         },
         tableHeaderColor({ row, column, rowIndex, columnIndex }) {
             if (rowIndex === 0) {
-                return 'background-color:#409EFF; color:white; text-transform:uppercase; letter-spacing:1px; font-weight:700; text-align:center; font-size:0.8em;' 
+                return 'background-color:#82b4ed; color:white; text-transform:uppercase; letter-spacing:1px; font-weight:700; text-align:center; font-size:0.8em;' 
                 
             }
         },
         customProgressFormat(percent){
             console.log(percent);
             return this.readableSize(this.dataused) + '/' + '20GB';
+        },
+        tableRowClassName({row, rowIndex}) {
+            console.log(row);
+            if (row.type === 1) {
+                return 'file-row';
+            } else if (row.type === 2) {
+                return 'video-row';
+            } else if (row.type === 3) {
+                return 'poster-row';
+            } else if (row.type === 4) {
+                return 'post-row';
+            }
+            return '';
+        },
+        persmissionCheck(type){
+            // console.log(JSON.parse(this.user).permissions);
+            if(type == 'upload'){
+                if(JSON.parse(this.user).permissions.includes('upload')){
+                    return true;
+                }
+            }else if(type=='public'){
+                if(!JSON.parse(this.user).permissions.includes('public')){
+                    var temp1 = this.sharetypes;
+                    var temp2 = this.sharetypes.splice(0, 1);
+                    this.sharetypes = temp1;
+                }
+            }
         }
     },
     created() {
         this.fetch();
     },
-    mounted() {},
+    mounted() {
+        this.persmissionCheck('public');
+    },
     props: {
         csrf: {
             type: String,
@@ -927,6 +938,9 @@ export default {
         states: {
             type: String,
         },
+        user:{
+            type:String
+        }
     },
 };
 </script>
@@ -956,5 +970,8 @@ export default {
     width: 178px;
     height: 178px;
     display: block;
+    }
+    .el-table .file-row{
+        background: #409EFF;
     }
 </style>

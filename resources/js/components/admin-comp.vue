@@ -58,7 +58,7 @@
                 width="200"
                 align="center" header-align="center">
                 <template slot-scope="scope">
-                    {{ roleValue(scope.row.storage_limit) }}
+                    {{ storageLimitValue(scope.row.storage_limit) }}
                 </template>
             </el-table-column>
 
@@ -97,10 +97,35 @@
                     </el-select>
                 </el-form-item>
 
+                <el-form-item label="Хэрэглэгчийн файл хуулах хэмжээ" prop="storage_limit">
+                    <!-- <el-select v-model="form.storage_limit" placeholder="сонгох">
+                        <el-option v-for="limit in storage_limit" :key="limit.value" :label="limit.label" :value="limit.value"></el-option>
+                    </el-select> -->
+                    <!-- <el-radio-group v-model="form.storage_limit" size="small">
+                        <el-radio label="1073741824" border>1GB</el-radio>
+                        <el-radio label="5368709120" border>5GB</el-radio>
+                        <el-radio label="10737418240" border>10GB</el-radio>
+                    </el-radio-group> -->
+                    <div>
+
+                        <el-select v-model="storage_limit_type" placeholder="сонгох">
+                        <el-option v-for="size in sizes" :key="size.value" :label="size.label" :value="size.value"></el-option>
+                    </el-select>
+
+                    <el-input
+                        type="number"
+                        placeholder="файл оруулах хэмжээг бичих"
+                        v-model="form.storage_limit"
+                        clearable>
+                        </el-input>
+                    </div>
+
+                </el-form-item>
+
                 <el-form-item 
                 v-if="form.password != null"
                 label="Нууц үг" prop="password">
-                    <el-input type="password" v-model="form.password" autocomplete="off"></el-input>
+                    <el-input type="password" v-model="form.password" autocomplete="off" placeholder="Нууц үг шинээр оруулах" show-password></el-input>
                 </el-form-item>
                 
                 <el-form-item>
@@ -147,7 +172,7 @@ export default {
                     role: [
                         { required: true, message: 'Заавал бөглөх', trigger: 'blur' }
                     ],
-                    password: [
+                    storage_limit: [
                         { required: true, message: 'Заавал бөглөх', trigger: 'blur' }
                     ]
             },
@@ -167,14 +192,23 @@ export default {
                     }
             ],
 
-            permissions:['public', 'share'],
-    
+            sizes: [
+                {
+                    value: "gb",
+                    label: "GB",
+                },
+                {
+                    value: "mb",
+                    label: "MB",
+                }
+            ],
+            storage_limit_type:'',
 
+            permissions:['public', 'share'],
         }
     },
     methods:{
        
-
         fetch(page = 1){
                 this.loading = true;
                 axios.post("/admin/user/fetch?page=" + page, {search: this.search})
@@ -200,6 +234,7 @@ export default {
                     this.form.email = data.email;
                     this.form.role = data.role;
                     this.form.permissions = data.permissions;
+                    this.form.storage_limit = data.storage_limit;
                     this.invisDetail = true;
                 }else{
                     this.cancelDetail();
@@ -216,6 +251,16 @@ export default {
                             cancelButtonText: 'Cancel',
                             type: 'warning'
                         }).then(() => {
+                            var valueType =  this.storage_limit_type;
+                            var value = this.form.storage_limit;
+                            if(valueType === 'gb'){
+                                var convertToByte = (value * 1073741824); 
+                            }
+                            else if(valueType === 'mb'){
+                                var convertToByte = (value * 1048576); 
+                            }
+                            this.form.storage_limit =  convertToByte;
+
                             this.loading = true;
                             axios.post("/admin/user", {form: this.form})
                             .then(response => {
@@ -245,7 +290,8 @@ export default {
                                     message: error.response.data.message
                                 });
                             });
-                        }).catch(() => {
+                        })
+                        .catch(() => {
                             this.$message({
                                 type: 'info',
                                 message: 'Цуцлагдлаа!'
@@ -263,6 +309,7 @@ export default {
                 this.form.email = "";
                 this.form.role = "";
                 this.form.permissions = [];
+                this.form.storage_limit = "";
                 this.form.password = "";
                 this.invisDetail = false;
         },
@@ -310,31 +357,39 @@ export default {
                 });
         },
 
-        permissionsValue(dat){
-                if(dat){
-                    return dat.join(', ');
-                }
-                return dat;
+        permissionsValue(data){
+            if(data){
+                return data.join(', ');
+            }
+            return data;
+        },
 
-            },
-
-        
-        
+        storageLimitValue(value){
+            if(value != 0){
+                var i = Math.floor( Math.log(value) / Math.log(1024) );
+                return ( value / Math.pow(1024, i) ).toFixed(2) * 1 + ' ' + ['B', 'kB', 'MB', 'GB', 'TB'][i];
+            }     
+            if(value == 0){
+                return value = '0';
+            }else{
+                return value = value;
+            }
+        },
 
         roleValue(value){
              
-                if(value === null){
-                    return value = 'null';
-                }else if(value === 1){
-                    return value = 'Админ';
-                }else if(value === 0){
-                    return value = 'Энгийн хэрэглэгч';
-                }else if(value === 2){
-                    return value == 'Дотоод ажилтан';
-                }else{
-                    return value === 'Хоосон'
-                }
-            },
+            if(value === null){
+                return value = 'null';
+            }else if(value === 1){
+                return value = 'Админ';
+            }else if(value === 0){
+                return value = 'Энгийн хэрэглэгч';
+            }else if(value === 2){
+                return value == 'Дотоод ажилтан';
+            }else{
+                return value === 'Хоосон'
+            }
+        },
 
     },
     

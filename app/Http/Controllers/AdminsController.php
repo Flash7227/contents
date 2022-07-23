@@ -27,7 +27,6 @@ class AdminsController extends Controller
 
 
     public function userEdit(Request $request){
-        
         if($request->input('delete')){
             $user = User::find($request->input('id'));
             if($user->delete()){
@@ -51,15 +50,27 @@ class AdminsController extends Controller
             //     return "user created successfuly";
             // }
             
-
-            $user->fill(
-                [
-                    'name' => $request['form']['name'],
-                    'email' => $request['form']['email'],
-                    'permissions' => ($request['form']['permissions']),
-                    'role' => $request['form']['role'],
-                    'password' => Hash::make($request['form']['password']),
-                ]);
+                // return $form['password'];
+                if($form['password']){
+                    $user->fill(
+                    [
+                        'name' => $request['form']['name'],
+                        'email' => $request['form']['email'],
+                        'permissions' => ($request['form']['permissions']),
+                        'role' => $request['form']['role'],
+                        'storage_limit' => $request['form']['storage_limit'],
+                        'password' => Hash::make($request['form']['password']),
+                    ]);
+                }else {
+                    $user->fill(
+                        [
+                            'name' => $request['form']['name'],
+                            'email' => $request['form']['email'],
+                            'permissions' => ($request['form']['permissions']),
+                            'role' => $request['form']['role'],
+                            'storage_limit' => $request['form']['storage_limit'],
+                        ]);
+                }
 
             if($user->save()){
                 return 'success';

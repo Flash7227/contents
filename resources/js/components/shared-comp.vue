@@ -160,8 +160,8 @@ export default {
 
     },
     methods:{
-        fetch() {
-            axios.post("/user/shared/fetch")
+        fetch(page = 1) {
+            axios.post("/user/shared/fetch?page=" + page)
                 .then((response) => {
                     this.data = response.data[0];
                     this.allTags = response.data[1];

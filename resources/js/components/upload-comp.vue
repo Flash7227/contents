@@ -4,8 +4,6 @@
         v-loading.fullscreen.lock="loading"
         :element-loading-text="loadText"
     >
-
-
         <el-card v-if="persmissionCheck('upload')">
             <p class="text-right">Шинэ файл хуулах</p>
             <el-form
@@ -68,10 +66,6 @@
                 <el-form-item label="Нэр" prop="name">
                     <el-input v-model="fileList.name"></el-input>
                 </el-form-item>
-
-                <!-- <el-form-item label="Тайлбар" prop="desc">
-                <el-input v-model="fileList.desc"></el-input>
-            </el-form-item> -->
 
                 <el-form-item label="#Tag" prop="tags">
                     <el-tag

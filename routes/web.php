@@ -30,7 +30,10 @@ Route::group(['middleware' => 'auth', 'prefix' => '/admin'], function(){
     //profile
     Route::get('/profile', 'AdminsController@profileIndex');
     Route::get('/profile/upload', 'AdminsController@profileUpload');
-
+    //uploads
+    Route::get('/uploads', 'AdminsController@uploadIndex');
+    Route::post('/uploads/fetch', 'AdminsController@uploadFetch');
+    Route::post('/uploads/modify', 'AdminsController@uploadModify');
 });
 
 Route::group(['middleware' => 'auth', 'prefix' => '/home'], function(){

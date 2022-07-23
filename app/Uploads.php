@@ -1,7 +1,7 @@
 <?php
 
 namespace App;
-
+use App\User;
 use Illuminate\Database\Eloquent\Model;
 
 class Uploads extends Model
@@ -18,5 +18,10 @@ class Uploads extends Model
                 return '/storage/uploads/' . $this->attributes['url'];
             }
         }
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
     }
 }

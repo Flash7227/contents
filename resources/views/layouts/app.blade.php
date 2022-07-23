@@ -25,9 +25,9 @@
     <link href="/include/main.css" rel="stylesheet">
 </head>
 <body>
-    <div id="app">
+    <div id="app" class="app">
         @include('layouts.inc.navbar')
-        <main class="py-4">
+        <main>
             @yield('content')
         </main>
         <!-- <el-footer class="container">

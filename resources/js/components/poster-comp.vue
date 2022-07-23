@@ -1,20 +1,12 @@
 <template>
     <div class="container">
         <el-container>
-          <!-- <el-header class="container">
-            <el-breadcrumb separator=" ">
-            <el-breadcrumb-item ><a href="/home/niitlel"><el-button size="mini" round>Нийтлэл</el-button></a></el-breadcrumb-item>
-            <el-breadcrumb-item ><a href="/home/poster"><el-button size="mini" round>Постер</el-button></a></el-breadcrumb-item>
-            <el-breadcrumb-item ><a href="/home/video"><el-button size="mini" round>Бичлэг</el-button></a></el-breadcrumb-item>
-            <el-breadcrumb-item ><a href="/home/file"><el-button size="mini" round>Файл</el-button></a></el-breadcrumb-item>
-            </el-breadcrumb>
-          </el-header> -->
             <el-main>
                 <el-card>
                     <el-table
                     style="text-align: center; width: 100%"
                     class="card"
-                    :data="postersData"
+                    :data="postersData.data"
                     border>
                         <el-table-column
                         label="Төрөл"
@@ -99,6 +91,13 @@
                         </el-table-column>
                     </el-table>
                 </el-card>
+                <pagination
+                    :data="postersData"
+                    @pagination-change-page="getPosterData"
+                    :limit="1"
+                    align="center"
+                    class="my-2"
+                ></pagination>
             </el-main>
             
         </el-container>
@@ -109,7 +108,7 @@
     data () {
       return {
         dialogVisible: false,
-        postersData:[],
+        postersData:{},
         types: {
             file: '',
             created_at:'',
@@ -126,9 +125,9 @@
       }
     },
     methods: {
-      getPosterData(){
+      getPosterData(page=1){
         axios
-        .get("/home/poster/fetch")
+        .get("/home/poster/fetch?page=" + page)
         .then((response) => {
             this.loading = false;
             this.postersData = response.data;

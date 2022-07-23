@@ -183,7 +183,7 @@ class UsersController extends Controller
     }
     public function uploadFetch(Request $req)
     {
-        $lists = Uploads::where('user_id', Auth()->user()->id)->orderBy('created_at', 'DESC')->paginate(30);
+        $lists = Uploads::where('user_id', Auth()->user()->id)->orderBy('created_at', 'DESC')->paginate(15);
         $dataused = Uploads::where('user_id', Auth()->user()->id)->sum('size');
         return [$lists, $dataused];
     }

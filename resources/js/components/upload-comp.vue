@@ -7,7 +7,7 @@
 
 
         <el-card v-if="persmissionCheck('upload')">
-            <p>Шинэ файл хуулах</p>
+            <p class="text-right">Шинэ файл хуулах</p>
             <el-form
                 ref="fileList"
                 :model="fileList"
@@ -34,6 +34,7 @@
                         use-custom-image-handler
                         @image-added="handleImageAdded"
                         :editorOptions="editorSettings"
+                        :editor-toolbar="editorSettings.customToolbar"
                         v-model="fileList.desc"/>
                 </el-form-item>
 
@@ -137,7 +138,7 @@
                     </el-select>
                 </el-form-item>
                 <el-form-item label="Хуулах лимит">
-                    <el-progress :text-inside="true" :stroke-width="15" :percentage="85" :color="customColors" :format="customProgressFormat"></el-progress>
+                    <el-progress :text-inside="true" :stroke-width="15" :percentage="datapercent" :color="customColors" :format="customProgressFormat"></el-progress>
                 </el-form-item>
                 <el-form-item>
                     <el-button
@@ -155,7 +156,7 @@
  
         </el-card>
         <el-card class="mt-2">
-            <p>Таны хуулсан файлууд</p>
+            <p class="text-left">Таны хуулсан файлууд</p>
             <div class="text-right">
                 <small class="grey">Нийт: {{lists.total}}ш</small>
             </div>
@@ -286,11 +287,11 @@
 
                 <el-form-item label="Нийтлэл" prop="desc" v-if="selected.type==4">
                     <!-- <ckeditor :editor="editor" v-model="selected.desc" :config="editorConfig"></ckeditor> -->
-                          <vue-editor
+                        <vue-editor
                         id="editor2"
                         use-custom-image-handler
                         @image-added="handleImageAdded"
-                        :editorOptions="editorSettings"
+                        :editor-toolbar="editorSettings.customToolbar"
                         v-model="selected.desc"/>
                 </el-form-item>
 
@@ -422,19 +423,53 @@
 </template>
 
 <script>
-import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
-import UploadAdapter from '../UploadAdapter';
+// import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+// import UploadAdapter from '../UploadAdapter';
 import { VueEditor, Quill } from 'vue2-editor'
 import ImageResize from 'quill-image-resize-vue'
 Quill.register('modules/imageResize', ImageResize)
+const quillTable = require('vue-quill-table');
+ 
+Quill.register(quillTable.TableCell);
+Quill.register(quillTable.TableRow);
+Quill.register(quillTable.Table);
+Quill.register(quillTable.Contain);
+Quill.register('modules/table', quillTable.TableModule);
+const maxRows = 10;
+const maxCols = 5;
+const tableOptions = [];
+for (let r = 1; r <= maxRows; r++) {
+    for (let c = 1; c <= maxCols; c++) {
+        tableOptions.push('newtable_' + r + '_' + c);
+    }
+}
+
 export default {
     data() {
         return {
             editorSettings: {
-          modules: {
-            imageResize: {}
-          }
-        },
+                modules: {
+                    imageResize: {},
+                    table: {}
+                },
+                customToolbar: [
+                    [{ header: [false, 1, 2, 3, 4, 5, 6] }],
+                    ["bold", "italic", "underline", "strike"], // toggled buttons
+                    [
+                        { align: "" },
+                        { align: "center" },
+                        { align: "right" },
+                        { align: "justify" }
+                    ],
+                    ["blockquote", "code-block"],
+                    [{ list: "ordered" }, { list: "bullet" }, { list: "check" }],
+                    [{ indent: "-1" }, { indent: "+1" }], // outdent/indent
+                    [{ color: [] }, { background: [] }], // dropdown with defaults from theme
+                    ["link", "image", "video"],
+                    ["clean"], // remove formatting button
+                     [{table: tableOptions}, {table: 'append-row'}, {table: 'append-col'}],
+                ]
+            },
             loading: false,
             loadText: "Уншиж байна...",
             dialogVisible: false,
@@ -451,7 +486,7 @@ export default {
                 desc: "",
                 type: "1",
                 dynamicTags: [],
-                sharetype:"allowed",
+                sharetype:"all",
                 allowed: [],
                 url:"",
                 size:""
@@ -513,7 +548,7 @@ export default {
                     { required: true, message: 'Заавал бөглөнө үү!', trigger: 'blur' }
                 ],           
             },
-            editor: ClassicEditor,
+            // editor: ClassicEditor,
             editorConfig:{
                 // plugins: [ Image, ImageResize],
                 extraPlugins: [this.uploader],
@@ -525,6 +560,7 @@ export default {
                     toolbar: [ 'toggleImageCaption', 'imageTextAlternative', 'ImageStyle', 'ImageResize']
                 }
             },
+            datapercent:0,
             dataused:"",
             customColors: [
                 {color: '#a4edbc', percentage: 20},
@@ -536,14 +572,15 @@ export default {
         };
     },
     methods: {
-        fetch() {
+        fetch(page = 1) {
             this.loading = true;
             axios
-                .post("/user/upload/fetch")
+                .post("/user/upload/fetch?page=" + page)
                 .then((response) => {
                     this.loading = false;
                     this.lists = response.data[0];
                     this.dataused = response.data[1];
+                    this.storageLimitCalculator();
                 })
                 .catch((error) => {
                     this.loading = false;
@@ -687,9 +724,14 @@ export default {
         addAttachment(file, fileList) {
             this.attachments.push(file);
         },
-        beforeAvatarUpload(file, cover) {
-            console.log(cover)
+        beforeAvatarUpload(file) {
             this.fileList.size = file.size;
+            var percent = (this.dataused + file.size) * 100 / parseInt(JSON.parse(this.user).storage_limit);
+            // console.log(percent);
+            if(percent > 100){
+                this.$message.error(this.readableSize(file.size)+ "! Upload limit is exceeded, can not upload!");
+                return false;
+            }
             if(this.fileList.type == 4){
                 const isJPG =
                 file.type === "image/jpeg" || "image/png" || "image/gif";
@@ -907,13 +949,17 @@ export default {
         },
         tableHeaderColor({ row, column, rowIndex, columnIndex }) {
             if (rowIndex === 0) {
-                return 'background-color:#82b4ed; color:white; text-transform:uppercase; letter-spacing:1px; font-weight:700; text-align:center; font-size:0.8em;' 
-                
+                return 'background-color:#82b4ed; color:white; text-transform:uppercase; letter-spacing:1px; font-weight:700; text-align:center; font-size:0.8em; padding: 1em 0;' 
             }
         },
         customProgressFormat(percent){
-            console.log(percent);
-            return this.readableSize(this.dataused) + '/' + '20GB';
+            var percent = this.dataused * 100 / parseInt(JSON.parse(this.user).storage_limit);
+            if(percent > 100){
+                return 'Over the limit! ' + this.readableSize(this.dataused) + '/' + this.readableSize(parseInt(JSON.parse(this.user).storage_limit));
+            }else{
+                return this.readableSize(this.dataused) + '/' + this.readableSize(parseInt(JSON.parse(this.user).storage_limit));
+            }
+            
         },
         tableRowClassName({row, rowIndex}) {
             // console.log(row);
@@ -942,34 +988,36 @@ export default {
                 }
             }
         },
+        storageLimitCalculator(){
+            var percent = this.dataused * 100 / parseInt(JSON.parse(this.user).storage_limit);
+            if(percent > 100){
+                this.datapercent = 100;
+            }else{
+                this.datapercent = percent;
+            }
+        },
         handleImageAdded(file, Editor, cursorLocation, resetUploader) {
-        // An example of using FormData
-        // NOTE: Your key could be different such as:
-        // formData.append('file', file)
-        console.log('triggering shit');
-        var formData = new FormData();
-        formData.append("upload", file);
-
-        axios({
-            url: "/vue2/upload",
-            method: "POST",
-            headers:{
-                'X-CSRF-TOKEN': this.csrf
-            },
-            data: formData
-        })
-            .then(result => {
-            const url = result.data.url; // Get url from response
-            Editor.insertEmbed(cursorLocation, "image", url);
-            resetUploader();
-            })
-            .catch(err => {
-            console.log(err);
+            var formData = new FormData();
+            formData.append("upload", file);
+            axios({
+                url: "/vue2/upload",
+                method: "POST",
+                headers:{
+                    'X-CSRF-TOKEN': this.csrf
+                },
+                data: formData
+            }).then(result => {
+                const url = result.data.url; // Get url from response
+                Editor.insertEmbed(cursorLocation, "image", url);
+                resetUploader();
+            }).catch(err => {
+                console.log(err);
             });
         }
     },
     created() {
         this.fetch();
+       
     },
     mounted() {
         this.persmissionCheck('public');

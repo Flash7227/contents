@@ -1,20 +1,13 @@
 <template>
     <div class="container">
         <el-container>
-            <!-- <el-header class="container">
-            <el-breadcrumb separator=" ">
-            <el-breadcrumb-item ><a href="/home/niitlel"><el-button size="mini" round>Нийтлэл</el-button></a></el-breadcrumb-item>
-            <el-breadcrumb-item ><a href="/home/poster"><el-button size="mini" round>Постер</el-button></a></el-breadcrumb-item>
-            <el-breadcrumb-item ><a href="/home/video"><el-button size="mini" round>Бичлэг</el-button></a></el-breadcrumb-item>
-            <el-breadcrumb-item ><a href="/home/file"><el-button size="mini" round>Файл</el-button></a></el-breadcrumb-item>
-            </el-breadcrumb>
-        </el-header> -->
             <el-main>
-                <el-card>
+                <el-row>
+                    <el-col :span="24">
                     <el-table
                     style="text-align: center; width: 100%"
                     class="card"
-                    :data="filesData"
+                    :data="filesData.data"
                     border
                     size="small">
                         <el-table-column
@@ -99,14 +92,15 @@
                             </template>
                         </el-table-column>
                     </el-table>
-                </el-card>
-                <!-- <pagination
+                    </el-col>
+                </el-row>
+                <pagination
                     :data="filesData"
                     @pagination-change-page="getfilesData"
-                    :limit="1"
+                    :limit="3"
                     align="center"
                     class="my-2"
-                ></pagination> -->
+                ></pagination>
             </el-main>
             
         </el-container>
@@ -117,7 +111,7 @@
     data () {
       return {
         dialogVisible: false,
-        filesData:[],
+        filesData:{},
         types: {
             file: '',
             created_at:'',
@@ -134,9 +128,9 @@
       }
     },
     methods: {
-      getfilesData(){
+      getfilesData(page=1){
         axios
-        .get("/home/file/fetch")
+        .get("/home/file/fetch?page=" + page)
         .then((response) => {
             this.loading = false;
             this.filesData = response.data;

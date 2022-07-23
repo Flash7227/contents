@@ -1,36 +1,35 @@
 <template>
-    <div class="container">
-      <!-- <el-header class="container">
-            <el-breadcrumb separator=" ">
-            <el-breadcrumb-item ><a href="/home/niitlel"><el-button size="mini" round>Нийтлэл</el-button></a></el-breadcrumb-item>
-            <el-breadcrumb-item ><a href="/home/poster"><el-button size="mini" round>Постер</el-button></a></el-breadcrumb-item>
-            <el-breadcrumb-item ><a href="/home/video"><el-button size="mini" round>Бичлэг</el-button></a></el-breadcrumb-item>
-            <el-breadcrumb-item ><a href="/home/file"><el-button size="mini" round>Файл</el-button></a></el-breadcrumb-item>
-            </el-breadcrumb>
-        </el-header> -->
+    <div class="container" style="text-align:center">
         <el-container>
             <el-main>
-              <el-row class="row-bg" justify="space-around" style="text-align: center">
-                <el-col :span="6" v-for="(niitlel, ind) in niitlelData" :key="ind" style="margin: 0.3cm">
-                  <div class="grid-content bg-purple">
-                    <el-card :body-style="{ padding: '0px' }" class="card">
-                      <el-image 
-                        style="width: 300px; height:300px;" 
-                        :src="niitlel.download"
-                          :preview-src-list="[niitlel.download]">
-                      </el-image>
-                      <div style="padding: 10px;">
-                        <span style="text-align: left; font-weight: bold;">{{niitlel.name}}</span>
-                        <div class="bottom clearfix">
-                          <time class="time">{{ dateformatter(niitlel.created_at) }}</time>
-                            <el-button type="text" class="button" @click="handleDownload(niitlel.url, niitlel.download)"><i class="el-icon-download"></i></el-button>
-                        </div>
-                      </div>
-                    </el-card>
+              <el-row justify="space-around">
+                <el-col :span="6" v-for="(niitlel, index) in uploadData.data" :key="index">
+                  <div class="glass">
+                    <h3><i class="el-icon-tickets" style="font-size: 2em; color: #ffff"></i></h3>
+                    <p style="font-size: 1em; color: #ffff;">Нийтлэл</p>
+                     <el-link @click="pickDetails(niitlel), dialogVisible = true" :underline="false" style="font-size: 10px; color: #ffff;">{{niitlel.name}}</el-link>
+                    <time class="time">{{dateformatter(niitlel.created_at)}}</time>
+                    <el-dialog
+                      :title=selected.name
+                      append-to-body
+                      :visible.sync="dialogVisible"
+                      width="80%"
+                      :before-close="handleClose">
+                      <span v-html="selected.desc"></span>
+                      <span slot="footer" class="dialog-footer">
+                        <el-button @click="dialogVisible = false">Хаах</el-button>
+                      </span>
+                    </el-dialog>
                   </div>
                 </el-col>
               </el-row>
-                
+              <pagination
+                :data="uploadData"
+                @pagination-change-page="getData"
+                :limit="6"
+                align="center"
+                class="my-2"
+            ></pagination>
             </el-main>
         </el-container>
     </div> 
@@ -39,21 +38,19 @@
  export default {
     data () {
       return {
-        niitlelData:{},
-        url:'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg',
-        srcList: [
-          'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg'
-        ]
+        dialogVisible: false,
+        uploadData:{},
+        selected:{},
       }
     },
     methods: {
-      getNiitlelData(){
+      getData(page=1){
         axios
-        .get("/home/niitlel/fetch")
+        .get("/home/niitlel/fetch?page="+page)
         .then((response) => {
             this.loading = false;
-            this.niitlelData = response.data;
-            console.log(this.niitlelData);
+            this.uploadData = response.data;
+            console.log(this.uploadData);
         })
         .catch((error) => {
             this.loading = false;
@@ -64,24 +61,18 @@
             });
         });
       },
-      setLoading() {
-        this.loading = true
-        setTimeout(() => (this.loading = false), 2000)
-      },
-      handleSelect(key, keyPath) {
-        console.log(key, keyPath);
-      },
-      handleClick(tab, event) {
-        console.log(tab, event);
+      
+      handleClose(){
+          this.dialogVisible = false;         
       },
       
       dateformatter(date, short) {
-          if (short) {
-              // console.log(short, '---');
-              return moment(date).format("YYYY-MM-DD");
-          } else {
-              return moment(date).format("YYYY-MM-DD HH:mm");
-          }
+        if (short) {
+            // console.log(short, '---');
+            return moment(date).format("YYYY-MM-DD");
+        } else {
+            return moment(date).format("YYYY-MM-DD HH:mm");
+        }
       },
       handleDownload(urlz, downloadz) {
         var url = urlz;
@@ -94,9 +85,23 @@
         link.click();
         link.remove();
       },
+      pickDetails(data){
+        this.selected.file = data.file;
+        this.selected.created_at = data.created_at;
+        this.selected.download = data.download;
+        this.selected.id = data.id;
+        this.selected.desc = data.desc;
+        this.selected.name = data.name;
+        this.selected.size = data.size;
+        this.selected.tags = JSON.parse(data.tags);
+        this.selected.type = data.type;
+        this.selected.updated_at = data.updated_at;
+        this.selected.url = data.url;
+        this.selected.user_id = data.user_id;
+      },
     },
     created() {
-        this.getNiitlelData();
+        this.getData();
     },
     mounted(){
     },

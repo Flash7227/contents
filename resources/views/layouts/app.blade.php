@@ -7,7 +7,7 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Laravel') }}</title>
+    <title>Харилцаа Холбооны Зохицуулах Хороо</title>
 
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}" defer></script>
@@ -21,13 +21,13 @@
     <!-- Styles -->
     @yield('logincss')
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
-    <link rel="icon" type="image/png" href="/imgs/meta.png" />
+    <link rel="icon" type="image/png" href="/imgs/khoroo2.png" />
     <link href="/include/main.css" rel="stylesheet">
 </head>
 <body>
-    <div id="app">
+    <div id="app" class="app">
         @include('layouts.inc.navbar')
-        <main class="py-4">
+        <main>
             @yield('content')
         </main>
         <!-- <el-footer class="container">

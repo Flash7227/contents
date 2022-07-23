@@ -1,3 +1,16 @@
 .el-header{
     padding: 0 0;
 }
+
+.glass{
+    background: rgba(23, 100, 183, 0.8);
+    border-radius: 16px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(0px);
+    -webkit-backdrop-filter: blur(0px);
+    border: 1px solid rgba(10, 10, 133, 0.94);
+    height: 150px;
+    width: 230px;
+    /* height: 100%; */
+}
+

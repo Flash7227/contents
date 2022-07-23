@@ -18,6 +18,7 @@ Route::group(['middleware' => 'auth', 'prefix' => '/user'], function(){
     //shared
     Route::get('/shared', 'UsersController@sharedIndex');
     Route::post('/shared/fetch', 'UsersController@sharedFetch');
+    Route::post('/shared/fetchByTag', 'UsersController@fetchByTag');
 });
 
 Route::group(['middleware' => 'auth', 'prefix' => '/admin'], function(){

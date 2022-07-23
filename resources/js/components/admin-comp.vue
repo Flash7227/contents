@@ -76,42 +76,50 @@
 
         <pagination :data="list" @pagination-change-page="fetch" :limit="3" align="center" class="my-2"></pagination>
 
-        <el-dialog title="Хэрэглэгчийн мэдээлэл" :visible.sync="invisDetail" width="70%">
+        <el-dialog title="Хэрэглэгчийн мэдээлэл" :visible.sync="invisDetail" width="50%">
             <el-form :model="form" ref="formData" :rules="rules"  label-position="top">
-                <el-form-item label="Нэр" prop="name">
-                    <el-input v-model="form.name" autocomplete="off"></el-input>
-                </el-form-item>
-                <el-form-item label="И-мэйл" prop="email">
-                    <el-input v-model="form.email" autocomplete="off"></el-input>
-                </el-form-item>
+                <el-row type="flex" justify="center">
+                    <el-col :span="8">
+                        <el-form-item label="Нэр" prop="name">
+                            <el-input v-model="form.name" autocomplete="off"></el-input>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+                    <el-row type="flex" justify="center">
+                        <el-col :span="8">
+                            <el-form-item label="И-мэйл" prop="email">
+                                <el-input v-model="form.email" autocomplete="off"></el-input>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
 
-                <el-form-item label="Зөвшөөрөл" prop="permissions">
-                    <el-select v-model="form.permissions" multiple placeholder="сонгох">
-                        <el-option v-for="permission in permissions" :key="permission" :label="permission" :value="permission"></el-option>
-                    </el-select>
-                </el-form-item>
+                    <el-row type="flex" justify="center">
+                        <el-col :span="8">
+                            <el-form-item label="Зөвшөөрөл" prop="permissions">
+                                <el-select v-model="form.permissions" multiple placeholder="сонгох">
+                                    <el-option v-for="permission in permissions" :key="permission" :label="permission" :value="permission"></el-option>
+                                </el-select>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
 
-                <el-form-item label="Зэрэглэл" prop="role">
-                    <el-select v-model="form.role" placeholder="сонгох">
-                        <el-option v-for="role in roles" :key="role.value" :label="role.label" :value="role.value"></el-option>
-                    </el-select>
-                </el-form-item>
-
+                
+                <el-row type="flex" justify="center">
+                     <el-col :span="8">
+                        <el-form-item label="Зэрэглэл" prop="role">
+                            <el-select v-model="form.role" placeholder="сонгох">
+                                <el-option v-for="role in roles" :key="role.value" :label="role.label" :value="role.value"></el-option>
+                            </el-select>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+                <el-row type="flex" justify="center">
+                     <el-col :span="8">
                 <el-form-item label="Хэрэглэгчийн файл хуулах хэмжээ" prop="storage_limit">
-                    <!-- <el-select v-model="form.storage_limit" placeholder="сонгох">
-                        <el-option v-for="limit in storage_limit" :key="limit.value" :label="limit.label" :value="limit.value"></el-option>
-                    </el-select> -->
-                    <!-- <el-radio-group v-model="form.storage_limit" size="small">
-                        <el-radio label="1073741824" border>1GB</el-radio>
-                        <el-radio label="5368709120" border>5GB</el-radio>
-                        <el-radio label="10737418240" border>10GB</el-radio>
-                    </el-radio-group> -->
                     <div>
-
                         <el-select v-model="storage_limit_type" placeholder="сонгох">
                         <el-option v-for="size in sizes" :key="size.value" :label="size.label" :value="size.value"></el-option>
                     </el-select>
-
                     <el-input
                         type="number"
                         placeholder="файл оруулах хэмжээг бичих"
@@ -119,15 +127,20 @@
                         clearable>
                         </el-input>
                     </div>
-
                 </el-form-item>
-
+                </el-col>
+                </el-row>
+                <el-row type="flex" justify="center">
+                     <el-col :span="8">
                 <el-form-item 
                 v-if="form.password != null"
                 label="Нууц үг" prop="password">
                     <el-input type="password" v-model="form.password" autocomplete="off" placeholder="Нууц үг шинээр оруулах" show-password></el-input>
                 </el-form-item>
-                
+                     </el-col>
+                </el-row>
+                <el-row type="flex" justify="center">
+                     <el-col :span="8">
                 <el-form-item>
                     <el-button class="float-right" type="primary" @click="submitForm('formData')">
                         <span v-if="form.id">Засах</span>
@@ -135,6 +148,8 @@
                     </el-button>
                     <el-button class="float-right mr-2" @click="cancelDetail()">Хаах</el-button>
                 </el-form-item>
+                     </el-col>
+                </el-row>
             </el-form>
         </el-dialog>
         </el-card>
@@ -204,7 +219,7 @@ export default {
             ],
             storage_limit_type:'',
 
-            permissions:['public', 'share'],
+            permissions:['public', 'upload', 'user_modify'],
         }
     },
     methods:{
@@ -234,7 +249,7 @@ export default {
                     this.form.email = data.email;
                     this.form.role = data.role;
                     this.form.permissions = data.permissions;
-                    this.form.storage_limit = data.storage_limit;
+                    this.form.storage_limit = '';
                     this.invisDetail = true;
                 }else{
                     this.cancelDetail();

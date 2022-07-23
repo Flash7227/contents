@@ -1,14 +1,59 @@
 <template>
-    <div class="container">
+    <div class="container"
+        v-loading.fullscreen.lock="loading"
+        :element-loading-text="loadText"
+    >
         <el-card>
             <div style="margin: 20px 0;">
                 <el-radio-group v-model="selectedTag" @change="tagHandler">
-                <el-radio-button value="">Бүгд</el-radio-button>
-                <el-radio-button  v-for="(value, index) in allTags" :key="index" :label="value" :value="value" >{{ value }}</el-radio-button>
+                <el-radio-button value="">#Бүгд</el-radio-button>
+                <el-radio-button  v-for="(value, index) in allTags" :key="index" :label="value" :value="value" >#{{ value }}</el-radio-button>
                 </el-radio-group>
             </div>
 
+
+            <el-form :inline="true" label-width="90px">
+              <el-form-item label="нэр">
+                <div class="block">
+                  <el-input v-model="search.name" placeholder="нэрээр хайх"></el-input>
+                </div>
+              </el-form-item>
+              <el-form-item label="төрөл">
+                <div class="block">
+                    <el-select v-model="search.type" placeholder="Select">
+                        <el-option
+                        v-for="fileType in fileTypes"
+                        :key="fileType.value"
+                        :label="fileType.label"
+                        :value="fileType.value">
+                        </el-option>
+                    </el-select>
+                </div>
+              </el-form-item>
+              <el-form-item label="таг">
+                <div class="block">
+                    <el-input v-model="search.tag" placeholder="тагаар хайх"></el-input>
+                </div>
+              </el-form-item>
+              <el-form-item label="огноо">
+                <el-date-picker
+                    v-model="search.date"
+                    type="date"
+                    :localTime="false"
+                    format="yyyy-MM-dd"
+                    value-format="yyyy-MM-dd"
+                    placeholder="огноогоор хайх"
+                    :clearable="true">
+                  </el-date-picker>
+              </el-form-item>
+              <el-form-item>
+                <el-button type="primary" icon="el-icon-search" @click="searchFunc"></el-button>
+              </el-form-item>
+            </el-form>
+                
+
             <el-table
+            header-cell-class-name="my-header"
             style="text-align: center; width: 100%"
             class="card"
             stripe
@@ -49,7 +94,7 @@
                     v-for="(tag, index) in JSON.parse(scope.row.tags)"
                      :key="index"
                      disable-transitions>
-                        {{tag}}
+                        #{{tag}}
                     </el-tag>
                 </template>
                 </el-table-column>
@@ -135,6 +180,8 @@
 export default {
     data(){
         return{
+            loading: false,
+            loadText: "Уншиж байна...",
             dialogVisible: false,
             data: {},
             allTags: [],
@@ -151,20 +198,39 @@ export default {
                 url:'',
                 user_id:'',
             },
-            tags: [
-                
+            fileTypes: [
+                {
+                    value: 1,
+                    label: "Файл",
+                },
+                {
+                    value: 2,
+                    label: "Видео",
+                },
+                {
+                    value: 3,
+                    label: "Постер",
+                },
+                {
+                    value: 4,
+                    label: "Пост",
+                },
             ],
-            // radio3: 'New York',
-            selectedTag: ''
-        }
+            selectedTag: '',
 
+            search: {
+                type:'',
+                name:'',
+                tag:'',
+                date:''
+            }
+        }
     },
     methods:{
         fetch(page = 1) {
             axios.post("/user/shared/fetch?page=" + page)
                 .then((response) => {
                     this.data = response.data[0];
-                    this.allTags = response.data[1];
                     this.collectTags();
                 })
                 .catch((error) => {
@@ -174,6 +240,28 @@ export default {
                         message: error.response.data.message,
                     });
                 });
+        },
+
+        searchFunc(){
+            axios.post("/user/shared/fetchSearch", { search: this.search})
+                .then((response) => {
+                    this.loading = false;
+                    if(response.data){
+                        console.log(response.data);
+                        this.data = response.data[0];
+                    }else{
+                        console.log(response.data);
+                        this.fetch();
+                    }
+                })
+                .catch((error) => {
+                    console.log(error.response);
+                    this.$notify.error({
+                        title: "Error",
+                        message: error.response.data.message,
+                    });
+                });
+
         },
 
         tagHandler(value) { 
@@ -282,5 +370,17 @@ export default {
     text-align: center;
 }
 
+.my-header{
+    background: #3897e4 !important;
+    color: white;
+    text-transform: uppercase;
+    font-size: 0.9em;
+    line-height: auto;
+  }
+
+  .demo-input-label {
+    display: inline-block;
+    width: 130px;
+  }
 
 </style>

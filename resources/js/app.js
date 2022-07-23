@@ -27,6 +27,7 @@ Vue.component('upload-comp', require('./components/upload-comp.vue').default);
 Vue.component('home-comp', require('./components/home-comp.vue').default);
 Vue.component('shared-comp', require('./components/shared-comp.vue').default);
 Vue.component('admin-comp', require('./components/admin-comp.vue').default);
+Vue.component('profile-comp', require('./components/profile-comp.vue').default);
 
 
 

@@ -198,7 +198,7 @@ class UsersController extends Controller
         // where('allowed', Auth()->user()->email)
         whereJsonContains('allowed', $email)
         // ->orWhereJsonContains('allowed','public')
-        ->paginate(100);
+        ->paginate(10);
         
         $tags = Uploads::whereJsonContains('allowed', $email)
         ->select('tags')
@@ -219,5 +219,32 @@ class UsersController extends Controller
         ->paginate(100);
         // return [$email, $tag];
         return $data;
+    }
+
+    public function fetchSearch(Request $req){
+        $email = Auth()->user()->email;
+        $search = $req->input('search');
+        $name = $search['name'];
+        $type = $search['type'];
+        $tag = $search['tag'];
+        $created_at = $search['date'];
+
+        $data = Uploads::query();
+        $data->whereJsonContains('allowed', $email);
+        if($name){
+            $data->where('name', $name);
+        };
+        if($type){
+            $data->where('type', $type);
+        };
+        if($tag){
+            $data->whereJsonContains('tags', [$tag]);
+        };
+        if($created_at){
+            $data->whereDate('created_at', $created_at);
+        };
+
+        $data=$data->paginate(10);
+        return [$data];
     }
 }

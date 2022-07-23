@@ -19,6 +19,7 @@ Route::group(['middleware' => 'auth', 'prefix' => '/user'], function(){
     Route::get('/shared', 'UsersController@sharedIndex');
     Route::post('/shared/fetch', 'UsersController@sharedFetch');
     Route::post('/shared/fetchByTag', 'UsersController@fetchByTag');
+    Route::post('/shared/fetchSearch', 'UsersController@fetchSearch');
 });
 
 Route::group(['middleware' => 'auth', 'prefix' => '/admin'], function(){
@@ -26,9 +27,10 @@ Route::group(['middleware' => 'auth', 'prefix' => '/admin'], function(){
     Route::post('/user', 'AdminsController@userEdit');
     Route::get('/user/fetch', 'AdminsController@userFetch1');
     Route::post('/user/fetch', 'AdminsController@userFetch');
-    
-    
-    
+    //profile
+    Route::get('/profile', 'AdminsController@profileIndex');
+    Route::get('/profile/upload', 'AdminsController@profileUpload');
+
 });
 
 Route::group(['middleware' => 'auth', 'prefix' => '/home'], function(){

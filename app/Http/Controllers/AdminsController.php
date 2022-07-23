@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Uploads;
 use App\User;
 use Storage;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
 
@@ -56,7 +57,7 @@ class AdminsController extends Controller
                     [
                         'name' => $request['form']['name'],
                         'email' => $request['form']['email'],
-                        'permissions' => ($request['form']['permissions']),
+                        'permissions' => $request['form']['permissions'],
                         'role' => $request['form']['role'],
                         'storage_limit' => $request['form']['storage_limit'],
                         'password' => Hash::make($request['form']['password']),
@@ -66,7 +67,7 @@ class AdminsController extends Controller
                         [
                             'name' => $request['form']['name'],
                             'email' => $request['form']['email'],
-                            'permissions' => ($request['form']['permissions']),
+                            'permissions' => $request['form']['permissions'],
                             'role' => $request['form']['role'],
                             'storage_limit' => $request['form']['storage_limit'],
                         ]);
@@ -77,6 +78,16 @@ class AdminsController extends Controller
             }
         }
         return 'error';
+    }
+
+    public function profileIndex(){
+        return view('admin.profile');
+    }
+
+    public function profileUpload(Request $req){
+        $data =  Auth::user();
+
+        return [$data];
     }
 
 

@@ -5,6 +5,7 @@
         :element-loading-text="loadText"
     >
 
+
         <el-card v-if="persmissionCheck('upload')">
             <p>Шинэ файл хуулах</p>
             <el-form
@@ -27,7 +28,13 @@
                 </el-form-item>
 
                 <el-form-item label="Нийтлэл" prop="desc" v-if="fileList.type==4">
-                    <ckeditor :editor="editor" v-model="fileList.desc" :config="editorConfig"></ckeditor>
+                    <!-- <ckeditor :editor="editor" v-model="fileList.desc" :config="editorConfig"></ckeditor> -->
+                      <vue-editor
+                        id="editor"
+                        use-custom-image-handler
+                        @image-added="handleImageAdded"
+                        :editorOptions="editorSettings"
+                        v-model="fileList.desc"/>
                 </el-form-item>
 
                 <el-form-item :label="fileList.type != 4 ? 'Файл' :'Нүүр зураг'" prop="upload">
@@ -278,7 +285,13 @@
                 :rules="rules">
 
                 <el-form-item label="Нийтлэл" prop="desc" v-if="selected.type==4">
-                    <ckeditor :editor="editor" v-model="selected.desc" :config="editorConfig"></ckeditor>
+                    <!-- <ckeditor :editor="editor" v-model="selected.desc" :config="editorConfig"></ckeditor> -->
+                          <vue-editor
+                        id="editor2"
+                        use-custom-image-handler
+                        @image-added="handleImageAdded"
+                        :editorOptions="editorSettings"
+                        v-model="selected.desc"/>
                 </el-form-item>
 
                 <el-form-item label="Нэр" prop="name">
@@ -410,13 +423,18 @@
 
 <script>
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
-// import Image from '@ckeditor/ckeditor5-image/src/image';
-// import ImageResize from '@ckeditor/ckeditor5-image/src/imageresize';
 import UploadAdapter from '../UploadAdapter';
-
+import { VueEditor, Quill } from 'vue2-editor'
+import ImageResize from 'quill-image-resize-vue'
+Quill.register('modules/imageResize', ImageResize)
 export default {
     data() {
         return {
+            editorSettings: {
+          modules: {
+            imageResize: {}
+          }
+        },
             loading: false,
             loadText: "Уншиж байна...",
             dialogVisible: false,
@@ -898,7 +916,7 @@ export default {
             return this.readableSize(this.dataused) + '/' + '20GB';
         },
         tableRowClassName({row, rowIndex}) {
-            console.log(row);
+            // console.log(row);
             if (row.type === 1) {
                 return 'file-row';
             } else if (row.type === 2) {
@@ -923,6 +941,31 @@ export default {
                     this.sharetypes = temp1;
                 }
             }
+        },
+        handleImageAdded(file, Editor, cursorLocation, resetUploader) {
+        // An example of using FormData
+        // NOTE: Your key could be different such as:
+        // formData.append('file', file)
+        console.log('triggering shit');
+        var formData = new FormData();
+        formData.append("upload", file);
+
+        axios({
+            url: "/vue2/upload",
+            method: "POST",
+            headers:{
+                'X-CSRF-TOKEN': this.csrf
+            },
+            data: formData
+        })
+            .then(result => {
+            const url = result.data.url; // Get url from response
+            Editor.insertEmbed(cursorLocation, "image", url);
+            resetUploader();
+            })
+            .catch(err => {
+            console.log(err);
+            });
         }
     },
     created() {

@@ -1,137 +1,164 @@
 <template>
-  <div class="container">
-    <!-- <el-header class="container">
-      <el-breadcrumb separator=" ">
-      <el-breadcrumb-item ><a href="/home/niitlel"><el-button size="mini" round>Нийтлэл</el-button></a></el-breadcrumb-item>
-      <el-breadcrumb-item ><a href="/home/poster"><el-button size="mini" round>Постер</el-button></a></el-breadcrumb-item>
-      <el-breadcrumb-item ><a href="/home/video"><el-button size="mini" round>Бичлэг</el-button></a></el-breadcrumb-item>
-      <el-breadcrumb-item ><a href="/home/file"><el-button size="mini" round>Файл</el-button></a></el-breadcrumb-item>
-      </el-breadcrumb>
-    </el-header> -->
-    <el-container>
+<div class="container">
+  <el-container style="text-align:center">
       <el-main>
-        <el-carousel :interval="4000" type="card" height="200px">
-          <el-carousel-item v-for="(niitlel, item) in niitlels" :key="item">
-            <el-image 
-              :src="niitlel.download"
-              :preview-src-list="[niitlel.download]">
-            </el-image>
-          </el-carousel-item>
-        </el-carousel>
-        <el-row>
-          <!-- Бичлэг -->
-          <el-card>
-            <el-col content-position="right">
-              <el-badge value="шинэ" class="item">
-                <el-button onclick="location.href='/home/video'" size="small" type="default" icon="el-icon-film">БИЧЛЭГ</el-button>
-              </el-badge>
-            </el-col>
-            <el-col :span="8" v-for="(video, index) in videos" :key="index">
-              <Media
-                style="width: 300px; height: 200px"
-                :kind="'video'"
-                :isMuted="false"
-                :src="video.download"
-                :autoplay="false"
-                :controls="true"
-                :loop="true"
-                @pause="handle"
-                :ref="'video_player'"
-                width="auto"
-                class="example"
-              ></Media>
-              <div style="padding: 10px;">
-                <span style="text-align: left; font-weight: bold;">{{video.name}}</span>
-                <div class="bottom clearfix">
-                  <time class="time">{{ dateformatter(video.created_at) }}</time>
-                </div>
+        <el-row :gutter="20">
+          <el-col :span="24">
+            <el-carousel :interval="4000" type="card" height="400px">
+                <el-carousel-item v-for="(poster, item) in posters" :key="item">
+                  <el-image 
+                    :src="poster.download"
+                    :preview-src-list="[poster.download]">
+                  </el-image>
+                </el-carousel-item>
+            </el-carousel>
+            <el-badge is-dot class="item" type="warning">
+              <el-button onclick="location.href='/home/video'" size="small">Бичлэг</el-button>
+            </el-badge>
+            <el-badge is-dot class="item" type="primary">
+              <el-button onclick="location.href='/home/niitlel'" size="small">Нийтлэл</el-button>
+            </el-badge>
+            <el-badge is-dot class="item" type="warning">
+              <el-button onclick="location.href='/home/poster'" size="small">Постер</el-button>
+            </el-badge>
+            <el-badge is-dot class="item" type="primary">
+              <el-button onclick="location.href='/home/file'" size="small">Файл</el-button>
+            </el-badge>
+          </el-col>
+        </el-row>
+        <!-- Нийтлэл -->
+        <el-row :gutter="20">
+          <el-col :span="24">
+            <el-col :span="6" v-for="(niitlel, index) in niitlels" :key="index" >
+              <div  class="glass">
+                <h3><i class="el-icon-tickets" style="font-size: 2em; color: #ffff"></i></h3>
+                <p style="font-size: 1em; color: #ffff;">Нийтлэл</p>
+                <!-- <el-link @click="pickDetails(niitlel), dialogVisible = true" type="warning">{{niitlel.name}}</el-link> -->
+                 <el-link @click="pickDetails(niitlel), dialogVisible = true" :underline="false" style="font-size: 10px; color: #ffff;">{{niitlel.name}}</el-link>
+                  <time class="time">{{dateformatter(niitlel.created_at)}}</time>
+                <el-dialog
+                  :title=selected.name
+                  append-to-body
+                  :visible.sync="dialogVisible"
+                  width="80%"
+                  :before-close="handleClose">
+                  <span v-html="selected.desc"></span>
+                  <span slot="footer" class="dialog-footer">
+                    <el-button @click="dialogVisible = false">Хаах</el-button>
+                  </span>
+                </el-dialog>
               </div>
             </el-col>
-
-            <el-col :span="24" style="margin: 2px; padding-top: 5px;">
-              
-                <el-divider content-position="left">
-                  <el-badge value="шинэ" class="item">
-                    <el-button onclick="location.href='/home/niitlel'" size="small" type="default" icon="el-icon-tickets">Нийтлэл</el-button>
-                  </el-badge>
-                </el-divider> 
-                <div v-for="(niitlel, index) in niitlels" :key="index" class="text item">
-                <el-card shadow="hover">
-                  <!-- <el-button type="text" @click="centerDialogVisible = true">{{niitlel.name}}</el-button>
-                  <time class="time" style="float: right; padding: 3px 0">{{ dateformatter(niitlel.created_at) }}</time>
-                  <el-dialog
-                    title="Warning"
-                    :visible.sync="centerDialogVisible"
-                    width="850px"
-                    center>
-                    <span>{{niitlel.desc}}</span>
-                  </el-dialog> -->
-
-                  <el-button type="text" @click="dialog1 = true">{{niitlel.name}}</el-button>
-  
-                  <el-dialog
-                    title="Нийтлэл"
-                    append-to-body
-                    :visible.sync="dialog1"
-                    width="80%"
-                    :before-close="handleClose">
-                    <h3>{{niitlel.name}}</h3>
-                    <p>{{niitlel.desc}}</p>
-                    <span slot="footer" class="dialog-footer">
-                      <el-button @click="dialogVisible = false">Cancel</el-button>
-                      <el-button type="primary" @click="dialogVisible = false">Confirm</el-button>
-                    </span>
-                  </el-dialog>
-                </el-card>
-                  
-                </div>
-              
-            </el-col>
-            <!-- Постер -->
-            <el-col class="col-md-12">
-              <el-divider content-position="right"> 
-                <el-badge value="шинэ" class="item">
-                  <el-button onclick="location.href='/home/poster'"  size="small" type="default" icon="el-icon-files">ПОСТЕР</el-button>
-                  </el-badge>
-              </el-divider> 
-              <el-col :span="6" v-for="(poster, ind) in posters" :key="ind" style="margin: 1cm">
-                <div class="grid-content bg-purple">
-                  <el-card :body-style="{ padding: '0px' }" class="card">
-                    <el-image 
-                       style="width: 300px; height: 250px;"
-                      :src="poster.download"
-                        :preview-src-list="[poster.download]">
-                    </el-image>
-                    <div style="padding: 10px;">
-                      <span style="text-align: right; font-weight: bold;">{{poster.name}}</span>
-                      <div class="bottom clearfix">
-                        <time class="time">{{ dateformatter(poster.created_at) }}</time>
-                          <el-button  size="small" type="success" class="button" @click="handleDownload(poster.url, poster.download)" circle><i class="el-icon-download"></i></el-button>
-                      </div>
-                    </div>
-                  </el-card>
-                </div>
-              </el-col>
-              <!-- Файл -->
-              <!-- <el-col :span="6">
-                <el-card  shadow="hover" style="padding: 2px">
-                  <el-divider content-position="left"> 
-                    <el-badge value="шинэ" class="item">
-                      <el-button onclick="location.href='/home/file'" size="small" type="default" icon="el-icon-files">ФАЙЛ</el-button>
-                      </el-badge>
-                  </el-divider>
-                  <div v-for="(file, index) in files" :key="index" class="text item">
-                    <el-button type="text"  @click="handleDownload(file.url, file.download)">{{file.name}}</el-button>
-                  </div>
-                </el-card>
-              </el-col> -->
-            </el-col>
-          </el-card>
-          
+          </el-col>
         </el-row>
-      </el-main>
-    </el-container>
-  </div> 
+        <!-- Бичлэг -->
+        <el-row :gutter="20">
+          <el-col :span="8" v-for="(video, index) in videos" :key="index">
+            <Media
+              style="width: 300px; height: 200px;"
+              :kind="'video'"
+              :isMuted="false"
+              :src="video.download"
+              :autoplay="false"
+              :controls="true"
+              :loop="true"
+              @pause="handle"
+              :ref="'video_player'"
+              width="auto"
+              class="example"
+            ></Media>
+            <div style="padding: 1px;">
+              <span style="text-align: left;">{{video.name}}</span>
+              <div class="bottom clearfix">
+                <time class="time">{{ dateformatter(video.created_at) }}</time>
+              </div>
+            </div>
+          </el-col>
+        </el-row>
+        <el-row :glutter="20">
+          <!-- Постер -->
+          <el-col :span="14">
+            <el-card class="box-card">
+              <div slot="header" class="clearfix">
+                <!-- <span>Card name</span> -->
+                <el-button style="float: left; padding: 3px 0" type="default" icon="el-icon-edit"> Постер</el-button>
+              </div>
+              <div>
+                  <el-table
+                    :data="posters"
+                    style="width: 100%">
+                    <el-table-column type="expand">
+                      <template slot-scope="scope">
+                         <p> URL: {{ scope.row.url }}</p>
+                        <el-button
+                          size="small"
+                          type="success"
+                          round
+                          @click="handleDownload(scope.row.url, scope.row.download)"><i class="el-icon-download"></i>
+                          </el-button>
+                      </template>
+                    </el-table-column>
+                    <el-table-column
+                      label="Огноо"
+                    >
+                    <template slot-scope="scope">
+                      <span size="medium">{{ dateformatter(scope.row.created_at)}}</span>
+                    </template>
+                    </el-table-column>
+                    <el-table-column
+                      label="Нэр">
+                      <template slot-scope="scope">
+                        <span size="medium">{{ scope.row.name }}</span>
+                      </template>
+                    </el-table-column>
+                  </el-table>
+              </div>
+            </el-card>
+          </el-col>
+          <!-- Файл -->
+          <el-col :span="10">
+          <el-card class="box-card">
+              <div slot="header" class="clearfix">
+                <el-button style="float: right; padding: 3px 0" type="default" icon="el-icon-files"> Файл</el-button>
+              </div>
+              <div>
+                <el-table
+                    :data="files"
+                    style="width: 100%">
+                    <el-table-column type="expand">
+                      <template slot-scope="scope">
+                         <p> URL: {{ scope.row.url }}</p>
+                        <el-button
+                          size="small"
+                          type="success"
+                          round
+                          @click="handleDownload(scope.row.url, scope.row.download)"><i class="el-icon-download"></i>
+                          </el-button>
+                      </template>
+                    </el-table-column>
+                    <el-table-column
+                      label="Огноо"
+                    >
+                    <template slot-scope="scope">
+                      <span size="medium">{{ dateformatter(scope.row.created_at)}}</span>
+                    </template>
+                    </el-table-column>
+                    <el-table-column
+                      label="Нэр">
+                      <template slot-scope="scope">
+                        <span size="medium">{{ scope.row.name }}</span>
+                      </template>
+                    </el-table-column>
+                  </el-table>
+                
+              </div>
+            </el-card>
+
+          </el-col>
+        </el-row>
+    </el-main>
+  </el-container>
+  </div>
 </template>
 
 <script>
@@ -140,21 +167,17 @@ import Media from "@dongido/vue-viaudio";
   export default {
     data () {
       return {
-        dialog1: false,
+        dialogVisible: false,
         files:{},
         videos:{},
         posters:{},
         niitlels:{},
-         url:'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg',
-        srcList: [
-          'https://fuss10.elemecdn.com/8/27/f01c15bb73e1ef3793e64e6b7bbccjpeg.jpeg',
-          'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg'
-        ]
+        selected:{},
       }
     },
     methods: {
       handleClose(){
-          this.dialog1 = false;         
+          this.dialogVisible = false;         
       },
       handleDownload(urlz, downloadz) {
         var url = urlz;
@@ -179,6 +202,20 @@ import Media from "@dongido/vue-viaudio";
         } else {
             return moment(date).format("YYYY-MM-DD HH:mm");
         }
+      },
+      pickDetails(data){
+        this.selected.file = data.file;
+        this.selected.created_at = data.created_at;
+        this.selected.download = data.download;
+        this.selected.id = data.id;
+        this.selected.desc = data.desc;
+        this.selected.name = data.name;
+        this.selected.size = data.size;
+        this.selected.tags = JSON.parse(data.tags);
+        this.selected.type = data.type;
+        this.selected.updated_at = data.updated_at;
+        this.selected.url = data.url;
+        this.selected.user_id = data.user_id;
       },
       getUpload(){
         axios
@@ -208,6 +245,7 @@ import Media from "@dongido/vue-viaudio";
 </script>
 
 <style>
+
   .el-carousel__item h3 {
     color: #475669;
     font-size: 14px;
@@ -224,55 +262,18 @@ import Media from "@dongido/vue-viaudio";
     background-color: #d3dce6;
   }
 
-  .text {
-    font-size: 14px;
-  }
-
-  .item {
-    margin-bottom: 18px;
-  }
-
-  .clearfix:before,
-  .clearfix:after {
-    display: table;
-    content: "";
-  }
-  .clearfix:after {
-    clear: both
-  }
-
-  .box-card {
-    width: 1000px;
-  }
-
+  
 /* card image */
   .time {
     font-size: 13px;
-    color: #999;
+    color: #E6A23C !important;
+    text-align: left !important
   }
   
-  .bottom {
+  /* .bottom {
     margin-top: 10px;
     line-height: 9px;
-  }
+  } */
 
-  .button {
-    padding: 0;
-    float: right;
-  }
-
-  .image {
-    width: 100%;
-    display: block;
-  }
-
-  .clearfix:before,
-  .clearfix:after {
-      display: table;
-      content: "";
-  }
   
-  .clearfix:after {
-      clear: both
-  }
 </style>

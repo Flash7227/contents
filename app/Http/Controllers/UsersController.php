@@ -206,8 +206,18 @@ class UsersController extends Controller
         // ->toArray()
         // ->merge('tags')
         ;
+        return [$data];
+    }
 
-
-        return [$data , $tags];
+    public function fetchByTag(Request $request){
+        $tag = $request['selectedTag'];
+        $email = Auth()->user()->email;
+        $data = Uploads::
+        // where('allowed', Auth()->user()->email)
+        whereJsonContains('allowed', $email)
+        ->whereJsonContains('tags',$tag)
+        ->paginate(100);
+        // return [$email, $tag];
+        return $data;
     }
 }

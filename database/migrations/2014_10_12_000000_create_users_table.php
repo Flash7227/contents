@@ -20,7 +20,8 @@ class CreateUsersTable extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->integer('role')->default(0);
-            $table->json('permissions')->nullable();
+            $table->json('permissions');
+            $table->string('storage_limit');
             $table->rememberToken();
             $table->timestamps();
         });
@@ -28,6 +29,8 @@ class CreateUsersTable extends Migration
             array(
                 'name' => 'Administrator',
                 'email' => 'admin@admin.admin',
+                'permissions' => [],
+                'storage_limit' => '0',
                 'password' =>  Hash::make('12345678'),
                 'role' => 1
             )

@@ -7,7 +7,7 @@
 
 
         <el-card v-if="persmissionCheck('upload')">
-            <p>Шинэ файл хуулах</p>
+            <p class="text-right">Шинэ файл хуулах</p>
             <el-form
                 ref="fileList"
                 :model="fileList"
@@ -156,7 +156,7 @@
  
         </el-card>
         <el-card class="mt-2">
-            <p>Таны хуулсан файлууд</p>
+            <p class="text-left">Таны хуулсан файлууд</p>
             <div class="text-right">
                 <small class="grey">Нийт: {{lists.total}}ш</small>
             </div>
@@ -287,11 +287,11 @@
 
                 <el-form-item label="Нийтлэл" prop="desc" v-if="selected.type==4">
                     <!-- <ckeditor :editor="editor" v-model="selected.desc" :config="editorConfig"></ckeditor> -->
-                          <vue-editor
+                        <vue-editor
                         id="editor2"
                         use-custom-image-handler
                         @image-added="handleImageAdded"
-                        :editorOptions="editorSettings"
+                        :editor-toolbar="editorSettings.customToolbar"
                         v-model="selected.desc"/>
                 </el-form-item>
 
@@ -726,7 +726,7 @@ export default {
         },
         beforeAvatarUpload(file) {
             this.fileList.size = file.size;
-            var percent = this.dataused + file.size * 100 / parseInt(JSON.parse(this.user).storage_limit);
+            var percent = (this.dataused + file.size) * 100 / parseInt(JSON.parse(this.user).storage_limit);
             // console.log(percent);
             if(percent > 100){
                 this.$message.error(this.readableSize(file.size)+ "! Upload limit is exceeded, can not upload!");

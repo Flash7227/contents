@@ -75,11 +75,19 @@ class UsersController extends Controller
             $upload->sharetype = $sharetype;
             $tags = [];
             if($temp_tags){
-                $tags = explode(",", $temp_tags);
+                if(!is_array($temp_tags)){
+                    $tags = explode(",", $temp_tags);
+                }else{
+                    $tags = $temp_tags;
+                }
             };
             $allowed = [];
             if($temp_allowed){
-                $allowed = explode(",", $temp_allowed);
+                if (!is_array($temp_allowed)) {
+                    $allowed = explode(",", $temp_allowed);
+                }else{
+                    $allowed = $temp_allowed;
+                }
             }
             $upload->tags = json_encode($tags);
             $upload->allowed = json_encode($allowed);

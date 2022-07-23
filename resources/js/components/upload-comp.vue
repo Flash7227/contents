@@ -137,7 +137,7 @@
                     </el-select>
                 </el-form-item>
                 <el-form-item label="Хуулах лимит">
-                    <el-progress :text-inside="true" :stroke-width="15" :percentage="85" :color="customColors" :format="customProgressFormat"></el-progress>
+                    <el-progress :text-inside="true" :stroke-width="15" :percentage="datapercent" :color="customColors" :format="customProgressFormat"></el-progress>
                 </el-form-item>
                 <el-form-item>
                     <el-button
@@ -525,6 +525,7 @@ export default {
                     toolbar: [ 'toggleImageCaption', 'imageTextAlternative', 'ImageStyle', 'ImageResize']
                 }
             },
+            datapercent:0,
             dataused:"",
             customColors: [
                 {color: '#a4edbc', percentage: 20},
@@ -544,6 +545,7 @@ export default {
                     this.loading = false;
                     this.lists = response.data[0];
                     this.dataused = response.data[1];
+                    this.storageLimitCalculator();
                 })
                 .catch((error) => {
                     this.loading = false;
@@ -907,13 +909,17 @@ export default {
         },
         tableHeaderColor({ row, column, rowIndex, columnIndex }) {
             if (rowIndex === 0) {
-                return 'background-color:#82b4ed; color:white; text-transform:uppercase; letter-spacing:1px; font-weight:700; text-align:center; font-size:0.8em;' 
-                
+                return 'background-color:#82b4ed; color:white; text-transform:uppercase; letter-spacing:1px; font-weight:700; text-align:center; font-size:0.8em; padding: 1em 0;' 
             }
         },
         customProgressFormat(percent){
-            console.log(percent);
-            return this.readableSize(this.dataused) + '/' + '20GB';
+            var percent = this.dataused * 100 / parseInt(JSON.parse(this.user).storage_limit);
+            if(percent > 100){
+                return 'Over the limit! ' + this.readableSize(this.dataused) + '/' + this.readableSize(parseInt(JSON.parse(this.user).storage_limit));
+            }else{
+                return this.readableSize(this.dataused) + '/' + this.readableSize(parseInt(JSON.parse(this.user).storage_limit));
+            }
+            
         },
         tableRowClassName({row, rowIndex}) {
             // console.log(row);
@@ -942,34 +948,36 @@ export default {
                 }
             }
         },
+        storageLimitCalculator(){
+            var percent = this.dataused * 100 / parseInt(JSON.parse(this.user).storage_limit);
+            if(percent > 100){
+                this.datapercent = 100;
+            }else{
+                this.datapercent = percent;
+            }
+        },
         handleImageAdded(file, Editor, cursorLocation, resetUploader) {
-        // An example of using FormData
-        // NOTE: Your key could be different such as:
-        // formData.append('file', file)
-        console.log('triggering shit');
-        var formData = new FormData();
-        formData.append("upload", file);
-
-        axios({
-            url: "/vue2/upload",
-            method: "POST",
-            headers:{
-                'X-CSRF-TOKEN': this.csrf
-            },
-            data: formData
-        })
-            .then(result => {
-            const url = result.data.url; // Get url from response
-            Editor.insertEmbed(cursorLocation, "image", url);
-            resetUploader();
-            })
-            .catch(err => {
-            console.log(err);
+            var formData = new FormData();
+            formData.append("upload", file);
+            axios({
+                url: "/vue2/upload",
+                method: "POST",
+                headers:{
+                    'X-CSRF-TOKEN': this.csrf
+                },
+                data: formData
+            }).then(result => {
+                const url = result.data.url; // Get url from response
+                Editor.insertEmbed(cursorLocation, "image", url);
+                resetUploader();
+            }).catch(err => {
+                console.log(err);
             });
         }
     },
     created() {
         this.fetch();
+       
     },
     mounted() {
         this.persmissionCheck('public');

@@ -41,22 +41,32 @@
                     {{ permissionsValue(scope.row.permissions) }}
                 </template>
             </el-table-column>
+
             <el-table-column
                 prop="role"
                 label="Зэрэглэл"
                 width="200"
-                align="center" header-align="center"
-                >
+                align="center" header-align="center">
                 <template slot-scope="scope">
                     {{ roleValue(scope.row.role) }}
                 </template>
             </el-table-column>
+
+            <el-table-column
+                prop="storage_limit"
+                label="боломжит файл хуулах хэмжээ"
+                width="200"
+                align="center" header-align="center">
+                <template slot-scope="scope">
+                    {{ roleValue(scope.row.storage_limit) }}
+                </template>
+            </el-table-column>
+
             <el-table-column
                 prop="edit"
                 label="Үйлдэл"
                 width="250"
-                align="center" header-align="center"
-                >
+                align="center" header-align="center">
                 <template slot-scope="scope">
                     <el-button  icon="el-icon-edit" type="primary" plain @click="openDetail(scope.row)" size="small">Засах</el-button>
                     <el-button  icon="el-icon-delete" type="danger" plain @click="deleteForm(scope.row.id)" size="small">Устгах</el-button>
@@ -65,7 +75,6 @@
         </el-table>
 
         <pagination :data="list" @pagination-change-page="fetch" :limit="3" align="center" class="my-2"></pagination>
-
 
         <el-dialog title="Хэрэглэгчийн мэдээлэл" :visible.sync="invisDetail" width="70%">
             <el-form :model="form" ref="formData" :rules="rules"  label-position="top">
@@ -120,6 +129,7 @@ export default {
                 email:'',
                 role:'',
                 permissions:[],
+                storage_limit:'',
                 password: ''
             },
             allTags:[],
@@ -184,7 +194,6 @@ export default {
             
 
         openDetail(data){
-            console.log(data);
                 if(data){
                     this.form.id = data.id;
                     this.form.name = data.name;
@@ -302,7 +311,6 @@ export default {
         },
 
         permissionsValue(dat){
-            console.log(dat);
                 if(dat){
                     return dat.join(', ');
                 }

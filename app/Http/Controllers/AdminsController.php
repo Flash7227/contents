@@ -58,6 +58,7 @@ class AdminsController extends Controller
                     'email' => $request['form']['email'],
                     'permissions' => ($request['form']['permissions']),
                     'role' => $request['form']['role'],
+                    'storage_limit' => $request['form']['storage_limit'],
                     'password' => Hash::make($request['form']['password']),
                 ]);
 

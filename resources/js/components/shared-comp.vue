@@ -4,12 +4,12 @@
         :element-loading-text="loadText"
     >
         <el-card>
-            <div style="margin: 20px 0;">
+            <!-- <div style="margin: 20px 0;">
                 <el-radio-group v-model="selectedTag" @change="tagHandler">
                 <el-radio-button value="">#Бүгд</el-radio-button>
                 <el-radio-button  v-for="(value, index) in allTags" :key="index" :label="value" :value="value" >#{{ value }}</el-radio-button>
                 </el-radio-group>
-            </div>
+            </div> -->
 
 
             <el-form :inline="true" label-width="90px">
@@ -20,12 +20,13 @@
               </el-form-item>
               <el-form-item label="төрөл">
                 <div class="block">
-                    <el-select v-model="search.type" placeholder="Select">
+                    <el-select v-model="search.type" placeholder="Select" clearable>
                         <el-option
                         v-for="fileType in fileTypes"
                         :key="fileType.value"
                         :label="fileType.label"
-                        :value="fileType.value">
+                        :value="fileType.value"
+                        >
                         </el-option>
                     </el-select>
                 </div>
@@ -47,11 +48,11 @@
                   </el-date-picker>
               </el-form-item>
               <el-form-item>
-                <el-button type="primary" icon="el-icon-search" @click="searchFunc"></el-button>
+                <el-button type="primary" plain icon="el-icon-search" @click="searchFunc">хайх</el-button>
               </el-form-item>
             </el-form>
                 
-
+            <p>Нийт: {{ data.total }}</p>
             <el-table
             header-cell-class-name="my-header"
             style="text-align: center; width: 100%"
@@ -59,6 +60,13 @@
             stripe
             :data="data.data"
             border>
+                <el-table-column
+                    type="index"
+                    :index="indexMethod"
+                    align="center"
+                    header-align="center"
+                >
+                </el-table-column>
                 <el-table-column
                 prop="type"
                 label="Төрөл"
@@ -70,6 +78,7 @@
                         <span v-if="scope.row.type === 1" size="medium">Файл</span>
                         <span v-if="scope.row.type === 2" size="medium">Видео</span>
                         <span v-if="scope.row.type === 3" size="medium">Зураг</span>
+                        <span v-if="scope.row.type === 4" size="medium">Нийтлэл</span>
                     </div>
                 </template>
                 </el-table-column>
@@ -109,24 +118,23 @@
                 </el-table-column>
                 <el-table-column
                     label="Үйлдэл"
-                    width="200"
+                    width="100"
                     align="right"
                     header-align="center">
                     <template slot-scope="scope">
                         <el-button
                         v-if="scope.row.type === 3 || scope.row.type === 2"
-                        size="medium"
-                        type="info"
-                        plain
+                        size="small"
+                        circle
                         :append-to-body="true"
                         @click="pickDetails(scope.row), dialogVisible = true
-                        ">үзэх
+                        "><i class="el-icon-view"></i>
                         </el-button>
                         <el-button
-                        size="medium"
+                        size="small"
                         type="success"
-                        plain
-                        @click="handleDownload(scope.row.url, scope.row.download)">татах
+                        circle
+                        @click="handleDownload(scope.row.url, scope.row.download)"><i class="el-icon-download"></i>
                         </el-button>
 
                         
@@ -213,7 +221,7 @@ export default {
                 },
                 {
                     value: 4,
-                    label: "Пост",
+                    label: "Нийтлэл",
                 },
             ],
             selectedTag: '',
@@ -265,12 +273,16 @@ export default {
         },
 
         tagHandler(value) { 
+            console.log(value);
             axios.post("/user/shared/fetchByTag", { selectedTag: value})
                 .then((response) => {
                     if(response.data.total > 0){
                         console.log(response.data);
                         this.data = response.data;
                     }else if(response.data.total < 1){
+                        console.log(response.data);
+                        this.fetch();
+                    }else {
                         console.log(response.data);
                         this.fetch();
                     }
@@ -345,6 +357,12 @@ export default {
             } else {
                 return moment(date).format("YYYY-MM-DD HH:mm");
             }
+        },
+
+        indexMethod(index) {
+            return (
+                (this.data.current_page - 1) * this.data.per_page + index + 1
+            );
         },
        
     },

@@ -1,65 +1,73 @@
 
 
 <template>
-    <div >
-      <el-card>
-        <el-image  
-          :src="'/storage/uploads/' + info.profile" 
-          :preview-src-list="avatar">
-        </el-image>
-        <el-descriptions class="margin-top" title="" :column="1" border>
-        <el-descriptions-item>
-          <template slot="label">
-          <i class="el-icon-user"></i>
-          Нэр
-          </template>
-          {{ this.info.name }}
-          </el-descriptions-item>
-          <el-descriptions-item>
-            <template slot="label">
-              <i class="el-icon-files"></i>
-            </template>
-              {{ roleValue(this.info.role) }}
-            
-          </el-descriptions-item>
-          
-          <el-descriptions-item>
-            <template slot="label">
-              <i class="el-icon-notebook-2"></i>
-              И-мэйл
-            </template>
-            {{ this.info.email }}
-          </el-descriptions-item>
-          <el-descriptions-item>
-            <template slot="label">
-              <i class="el-icon-notebook-2"></i>
-              Үйлдэлийн эрх
-            </template>
-            {{ permissionsValue(this.info.permissions) }}
-          </el-descriptions-item>
-          <el-descriptions-item>
-            <template slot="label">
-              <i class="el-icon-notebook-2"></i>
-              Ашиглах боломтой дата хэмжээ
-            </template>
-            {{ storageLimitValue(this.info.storage_limit) }}
-          </el-descriptions-item>
-          <el-descriptions-item>
-            <template slot="label">
-              <i class="el-icon-date"></i>
-              Үүсгэсэн огноо
-            </template>
-            {{ dateformatter(this.info.created_at) }}
-          </el-descriptions-item>
-        </el-descriptions>
-        <el-button
-                  type="primary"
-                  icon="el-icon-picture"
-                  style="margin-top:12px;"
-                  round
-                  plain
-                  @click="imageModal()">зураг солих</el-button>
-      </el-card>
+    <div class="div">
+
+        <el-row :gutter="20">
+            <el-col :span="12" :offset="6">
+                <div class="grid-content bg-purple">
+                    <el-card class="card">
+                        <el-image  
+                        :src="'/storage/uploads/' + info.avatar" 
+                        :preview-src-list="avatar">
+                        </el-image>
+                        <el-descriptions class="margin-top" title="" :column="1" border>
+                        <el-descriptions-item>
+                        <template slot="label">
+                        <i class="el-icon-user"></i>
+                        Нэр
+                        </template>
+                        {{ this.info.name }}
+                        </el-descriptions-item>
+                        <el-descriptions-item>
+                            <template slot="label">
+                            <i class="el-icon-files"></i>
+                            </template>
+                            {{ roleValue(this.info.role) }}
+                            
+                        </el-descriptions-item>
+                        
+                        <el-descriptions-item>
+                            <template slot="label">
+                            <i class="el-icon-notebook-2"></i>
+                            И-мэйл
+                            </template>
+                            {{ this.info.email }}
+                        </el-descriptions-item>
+                        <el-descriptions-item>
+                            <template slot="label">
+                            <i class="el-icon-notebook-2"></i>
+                            Үйлдэлийн эрх
+                            </template>
+                            {{ permissionsValue(this.info.permissions) }}
+                        </el-descriptions-item>
+                        <el-descriptions-item>
+                            <template slot="label">
+                            <i class="el-icon-notebook-2"></i>
+                            Ашиглах боломтой дата хэмжээ
+                            </template>
+                            {{ storageLimitValue(this.info.storage_limit) }}
+                        </el-descriptions-item>
+                        <el-descriptions-item>
+                            <template slot="label">
+                            <i class="el-icon-date"></i>
+                            Үүсгэсэн огноо
+                            </template>
+                            {{ dateformatter(this.info.created_at) }}
+                        </el-descriptions-item>
+                        </el-descriptions>
+                        <el-button
+                                type="primary"
+                                icon="el-icon-picture"
+                                style="margin-top:12px;"
+                                
+                                plain
+                                @click="imageModal()">зураг солих</el-button>
+                    </el-card>
+
+                </div>
+            </el-col>
+        </el-row>
 
       <el-form :model="current" label-width="50px" class="demo-form">
         <div class="modal fade" id="img" tabindex="-1" aria-labelledby="imgLabel"   aria-hidden="true">     
@@ -73,12 +81,10 @@
               </div>
               <div class="modal-body">
                 <el-col :span="20">
-                <div class="form-group">
-                </div>
-                <el-form-item label="" prop="role_id">
+                <el-form-item>
                 <el-upload
                 ref="upload"
-                action="/createuser/user/image"
+                action="/admin/profile/avatar"
                 list-type="picture-card"
                 :file-list="attachments"
                 :data="fileList"
@@ -104,12 +110,12 @@
                 <el-button
                   style="margin-left: 10px;"
                   type="success"
-                  round
+                  
                   plain
                   @click="submitUpload"
                   icon="el-icon-upload2"
                 >Хадгалах</el-button>
-                <el-button type="info" plain round data-dismiss="modal">Цуцлах</el-button>
+                <el-button type="info" plain data-dismiss="modal">Цуцлах</el-button>
               </div>
             </div>
           </div>
@@ -130,14 +136,19 @@
           permissions: [],
           role: '',
           email: '',
-          storage_limit:''
+          storage_limit:'',
+          created_at: ''
         },
         
         avatar: [],
         attachments: [],
         fileList: {
+            id:'',
           dataType: "0",     
-          oldFilePath: ""
+          oldFilePath: "",
+          name:'',
+          url:'',
+          size:''
         },
         current: {
           id:'',
@@ -151,7 +162,7 @@
             axios.get("/admin/profile/upload")
                 .then((response) => {
                     this.info = response.data[0];
-                    this.avatar = response.data[1];
+                    this.fileList = response.data[1];
                 })
                 .catch((error) => {
                     console.log(error.response);
@@ -161,23 +172,24 @@
                     });
                 });
         },
-      dateformatter(date) {
-          return moment(date).format("YYYY-MM-DD");
-      },
+      dateformatter(date, short) {
+            if (short) {
+                // console.log(short, '---');
+                return moment(date).format("YYYY-MM-DD");
+            } else {
+                return moment(date).format("YYYY-MM-DD HH:mm");
+            }
+        },
 
        // ~~~~~~~~~~~~~~~~~~~~~~~~~~~UPLOAD start~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     imageModal(){
         $('#img').modal('show');
         this.current.id = this.info.id;
-        this.fileList.id = this.info.id;
+        // this.avatar.id = this.info.id;
         console.log(this.info.id);
         this.$emit('toReload');
     },
-    addAttachment(file, fileList) {
-        this.attachments.push(file);
-        console.log(file);
-        // console.log(fileList);
-    },
+    
     handleExceed(files, fileList) {
         this.$message({
             message:
@@ -275,14 +287,14 @@
     background: none;
     padding: 10px;
     text-align: center;
-    width:450px;
-    margin-left:80px;
-    margin-top:20px;
-
+    width:600px;
+    /* margin-left:80px;
+     */
+    margin-top:50px;
   }
   .el-image{
-    width: 100px;
-    height:100px;
+    width: 15rem;
+    height:15rem;
     border: black;
   }
   
@@ -290,4 +302,5 @@
     text-align:left;
     font-size:18px;
   }
+
 </style>

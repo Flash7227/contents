@@ -103,7 +103,6 @@
                         </el-col>
                     </el-row>
 
-                
                 <el-row type="flex" justify="center">
                      <el-col :span="8">
                         <el-form-item label="Зэрэглэл" prop="role">
@@ -113,6 +112,7 @@
                         </el-form-item>
                     </el-col>
                 </el-row>
+
                 <el-row type="flex" justify="center">
                      <el-col :span="8">
                 <el-form-item label="Хэрэглэгчийн файл хуулах хэмжээ" prop="storage_limit">
@@ -120,12 +120,7 @@
                         <el-select v-model="storage_limit_type" placeholder="сонгох">
                         <el-option v-for="size in sizes" :key="size.value" :label="size.label" :value="size.value"></el-option>
                     </el-select>
-                    <el-input
-                        type="number"
-                        placeholder="файл оруулах хэмжээг бичих"
-                        v-model="form.storage_limit"
-                        clearable>
-                        </el-input>
+                    <el-input type="text" placeholder="файл оруулах хэмжээг бичих" v-model="form.storage_limit" clearable></el-input>
                     </div>
                 </el-form-item>
                 </el-col>
@@ -133,7 +128,6 @@
                 <el-row type="flex" justify="center">
                      <el-col :span="8">
                 <el-form-item 
-                v-if="form.password != null"
                 label="Нууц үг" prop="password">
                     <el-input type="password" v-model="form.password" autocomplete="off" placeholder="Нууц үг шинээр оруулах" show-password></el-input>
                 </el-form-item>
@@ -218,6 +212,7 @@ export default {
                 }
             ],
             storage_limit_type:'',
+            temporary_storage_limit: '',
 
             permissions:['public', 'upload', 'user_modify'],
         }
@@ -249,7 +244,8 @@ export default {
                     this.form.email = data.email;
                     this.form.role = data.role;
                     this.form.permissions = data.permissions;
-                    this.form.storage_limit = '';
+                    this.form.storage_limit = data.storage_limit;
+                    this.temporary_storage_limit = this.storageLimitValue(data.storage_limit);
                     this.invisDetail = true;
                 }else{
                     this.cancelDetail();

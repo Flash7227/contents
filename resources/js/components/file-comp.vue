@@ -41,6 +41,7 @@
                                 <el-button type="primary" icon="el-icon-search" @click="searchFunc"></el-button>
                             </el-form-item>
                         </el-form>
+                        <p style="text-align:left">Нийт: {{ filesData.total }}</p>
                         <el-table
                             style="text-align: center; width: 100%"
                             class="card"

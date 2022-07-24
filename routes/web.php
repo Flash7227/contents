@@ -33,6 +33,10 @@ Route::group(['middleware' => 'auth', 'prefix' => '/admin'], function(){
     //upload
     Route::post('/profile/avatar', 'AdminsController@avatarUpload');
 
+    //uploads
+    Route::get('/uploads', 'AdminsController@uploadIndex');
+    Route::post('/uploads/fetch', 'AdminsController@uploadFetch');
+    Route::post('/uploads/modify', 'AdminsController@uploadModify');
 });
 
 Route::group(['middleware' => 'auth', 'prefix' => '/home'], function(){

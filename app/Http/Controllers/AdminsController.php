@@ -125,10 +125,47 @@ class AdminsController extends Controller
 
 
     }
-        
-  
+
+    public function uploadIndex()
+    {
+        return view('admin.uploads');
+    }
+    public function uploadFetch(Request $req)
+    {
+        $upload = Uploads::with('user')->orderBy('created_at', 'DESC')->paginate(15);
+        $storage = Uploads::sum('size');
+        return [$upload,$storage];
+    }
+    public function uploadModify(Request $req)
+    {
+        $form = $req->input('form');
+        $type = $req->input('type');
+        $upload = Uploads::find($form['id']);
+        if($type == 'del'){
+            if($upload->url != 'noimage123.png'){
+                if (Storage::exists('/public/uploads/'.$upload->url)) {
+                    Storage::delete('/public/uploads/'.$upload->url);
+                }
+            }
+            $upload->delete();
+        }else{
+            // $upload->name = $form['name'];
+            // $upload->desc = $form['desc'];
+            // $upload->sharetype = $form['sharetype'];
+            // $tags = [];
+            // if($form['dynamicTags']){
+            //     // $tags = explode(",", $form['dynamicTags']);
+            //     $tags = $form['dynamicTags'];
+            // };
+            // $allowed = [];
+            // if($form['allowed']){
+            //     // $allowed = explode(",", $form['allowed']);
+            //     $allowed = $form['allowed'];
+            // }
+            // $upload->tags = json_encode($tags);
+            // $upload->allowed = json_encode($allowed);
+            // $upload->save();
+        }
+        return "success";
+    }
 }
-
-
-    
-

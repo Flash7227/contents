@@ -29,7 +29,7 @@ Vue.component('shared-comp', require('./components/shared-comp.vue').default);
 Vue.component('admin-comp', require('./components/admin-comp.vue').default);
 Vue.component('profile-comp', require('./components/profile-comp.vue').default);
 
-
+Vue.component('admin-uploads-comp', require('./components/admin-uploads-comp.vue').default);
 
 
 ////attachments components

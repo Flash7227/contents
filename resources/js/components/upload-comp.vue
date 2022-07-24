@@ -4,8 +4,6 @@
         v-loading.fullscreen.lock="loading"
         :element-loading-text="loadText"
     >
-
-
         <el-card v-if="persmissionCheck('upload')">
             <p class="text-right">Шинэ файл хуулах</p>
             <el-form
@@ -68,10 +66,6 @@
                 <el-form-item label="Нэр" prop="name">
                     <el-input v-model="fileList.name"></el-input>
                 </el-form-item>
-
-                <!-- <el-form-item label="Тайлбар" prop="desc">
-                <el-input v-model="fileList.desc"></el-input>
-            </el-form-item> -->
 
                 <el-form-item label="#Tag" prop="tags">
                     <el-tag
@@ -382,18 +376,11 @@
    
             <span slot="footer" class="dialog-footer">
                     <div>
-                        <el-button @click="modify(0)" type="danger" icon="el-icon-delete" class="float-left" plain size="small">Устгах</el-button>
-                        <el-button @click="downloadFile" type="success" icon="el-icon-download" class="float-left" plain size="small">Татах</el-button>
-                        <el-button v-if="selected.type == 2 || selected.type == 3" @click="viewdata" type="info" icon="el-icon-picture" class="float-left" plain size="small">Үзэх</el-button>
+                        <el-button @click="modify(0)" type="danger" icon="el-icon-delete" class="float-left" circle></el-button>
+                        <el-button v-if="selected.type != 4" @click="downloadFile" type="success" icon="el-icon-download" class="float-left" circle></el-button>
+                        <el-button v-if="selected.type == 2 || selected.type == 3" @click="viewdata" icon="el-icon-view" circle class="float-left"></el-button>
                     </div>
-                    <el-button @click="modify(1)" type="primary" icon="el-icon-edit" size="small" plain>Засах</el-button>
-                <!-- <div class="float-left">
-                    <el-button @click="modify" type="danger" icon="el-icon-delete">Устгах</el-button>
-                    <el-button @click="downloadFile" type="success" icon="el-icon-download">Татах</el-button>  
-                </div>
-                <div class="float-right">
-                    
-                </div> -->
+                    <el-button @click="modify(1)" type="primary" icon="el-icon-edit" plain>Засах</el-button>
             </span>
     </el-dialog>
     <el-dialog
@@ -732,6 +719,10 @@ export default {
                 this.$message.error(this.readableSize(file.size)+ "! Upload limit is exceeded, can not upload!");
                 return false;
             }
+            if(file.size > 16106127360){
+                this.$message.error("MAX UPLOAD LIMIT AT A TIME IS 15GB!");
+                return false;
+            }
             if(this.fileList.type == 4){
                 const isJPG =
                 file.type === "image/jpeg" || "image/png" || "image/gif";
@@ -746,6 +737,7 @@ export default {
                 }
                 return isJPG && isLt2M;
             } 
+            this.loading = true;
         },
         beforeCoverUpload(file){
             this.selected.size = file.size;
@@ -800,7 +792,7 @@ export default {
             this.fileList.size = "";
             this.fileList.id = "";
             this.fileList.download = "";
-            this.fileList.sharetype = "";
+            this.fileList.sharetype = "all";
         },
         showInput(index) {
             if (index == 1) {

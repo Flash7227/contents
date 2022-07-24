@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 use App\Uploads;
+use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Database\Eloquent\Collection;
+
 
 class HomeController extends Controller
 {
@@ -40,13 +43,32 @@ class HomeController extends Controller
     /// niitlel
     public function niitlelcompIndex()
     {
-       // $uploadData = Uploads::where('sharetype', "public")->orderBy('created_at', 'DESC')->get();
         return view('files.niitlel');
     }
     public function niitlelFetch()
     {
         $getniitlel = Uploads::where('sharetype', "public")->where('type', '4')->orderBy('created_at', 'DESC')->paginate(9);
         return $getniitlel;
+    }
+    public function niitlelSearch(Request $req){
+        $search = $req->input('search');
+        $name = $search['name'];
+        $created_at = $search['date'];
+
+        $data = Uploads::query();
+        $data->where('sharetype', "public")->where('type', '4');
+    
+        if($name){
+            $data->where('name', $name);
+        };
+        if($created_at){
+            $data->whereDate('created_at', $created_at);
+        };
+        $data = $data->paginate(10);
+
+
+        return [$data];
+
     }
     //poster
     public function postercompIndex()
@@ -55,8 +77,28 @@ class HomeController extends Controller
     }
     public function posterFetch()
     {
-        $getposter = Uploads::where('sharetype', "public")->where('type', '3')->orderBy('created_at', 'DESC')->paginate(2);
+        $getposter = Uploads::where('sharetype', "public")->where('type', '3')->orderBy('created_at', 'DESC')->paginate(10);
         return $getposter;
+    }
+    public function posterSearch(Request $req){
+        $search = $req->input('search');
+        $name = $search['name'];
+        $created_at = $search['date'];
+
+        $data = Uploads::query();
+        $data->where('sharetype', "public")->where('type', '3');
+    
+        if($name){
+            $data->where('name', $name);
+        };
+        if($created_at){
+            $data->whereDate('created_at', $created_at);
+        };
+        $data = $data->paginate(10);
+
+
+        return [$data];
+
     }
     //video
     public function videocompIndex()
@@ -68,6 +110,26 @@ class HomeController extends Controller
         $getvideo = Uploads::where('sharetype', "public")->where('type', '2')->orderBy('created_at', 'DESC')->paginate(9);
         return $getvideo;
     }
+    public function videoSearch(Request $req){
+        $search = $req->input('search');
+        $name = $search['name'];
+        $created_at = $search['date'];
+
+        $data = Uploads::query();
+        $data->where('sharetype', "public")->where('type', '2');
+    
+        if($name){
+            $data->where('name', $name);
+        };
+        if($created_at){
+            $data->whereDate('created_at', $created_at);
+        };
+        $data = $data->paginate(10);
+
+
+        return [$data];
+
+    }
 
     ///file
     public function filecompIndex()
@@ -76,8 +138,28 @@ class HomeController extends Controller
     }
     public function fileFetch()
     {
-        $getfile = Uploads::where('sharetype', "public")->where('type', '1')->orderBy('created_at', 'DESC')->paginate(5);
+        $getfile = Uploads::where('sharetype', "public")->where('type', '1')->orderBy('created_at', 'DESC')->paginate(10);
         return $getfile;
+    }
+    public function fileSearch(Request $req){
+        $search = $req->input('search');
+        $name = $search['name'];
+        $created_at = $search['date'];
+
+        $data = Uploads::query();
+        $data->where('sharetype', "public")->where('type', '1');
+    
+        if($name){
+            $data->where('name', $name);
+        };
+        if($created_at){
+            $data->whereDate('created_at', $created_at);
+        };
+        $data = $data->paginate(10);
+
+
+        return [$data];
+
     }
     
 }

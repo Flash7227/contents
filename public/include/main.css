@@ -8,8 +8,8 @@
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
     backdrop-filter: blur(0px);
     -webkit-backdrop-filter: blur(0px);
-    border: 1px solid rgba(10, 10, 133, 0.94);
-    height: 150px;
+    border: 1px solid rgba(66, 66, 66, 0.94);
+    height: 200px;
     width: 230px;
     /* height: 100%; */
 }

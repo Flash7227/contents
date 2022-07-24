@@ -24,7 +24,11 @@ class AdminsController extends Controller
     }
 
     public function userFetch(){
-        $users = User::paginate(10);
+        $users = User::addSelect(['uploaded' => Uploads::selectRaw('sum(size) as total')
+        ->whereColumn('user_id', 'users.id')
+        ->groupBy('user_id')
+
+    ])->paginate(10);
         return $users;
     }
 
@@ -42,18 +46,6 @@ class AdminsController extends Controller
             }else{
                 $user = new User;
             }
-            // if($user = User::create([
-            //     'name' => $request['form']['name'],
-            //     'email' => $request['form']['email'],
-            //     'permissions' => json_encode($request['form']['permissions']),
-            //     'role' => $request['form']['role'],
-            //     'password' => Hash::make($request['form']['password']),
-            // ])
-            // ){
-            //     return "user created successfuly";
-            // }
-            
-                // return $form['password'];
                 if($form['password']){
                     $user->fill(
                     [

@@ -13,12 +13,12 @@
 
 
             <el-form :inline="true" label-width="90px">
-              <el-form-item label="нэр">
+              <el-form-item label="Нэр">
                 <div class="block">
                   <el-input v-model="search.name" placeholder="нэрээр хайх"></el-input>
                 </div>
               </el-form-item>
-              <el-form-item label="төрөл">
+              <el-form-item label="Төрөл">
                 <div class="block">
                     <el-select v-model="search.type" placeholder="Select" clearable>
                         <el-option
@@ -31,12 +31,13 @@
                     </el-select>
                 </div>
               </el-form-item>
-              <el-form-item label="таг">
+              <br>
+              <el-form-item label="#Tag">
                 <div class="block">
                     <el-input v-model="search.tag" placeholder="тагаар хайх"></el-input>
                 </div>
               </el-form-item>
-              <el-form-item label="огноо">
+              <el-form-item label="Огноо">
                 <el-date-picker
                     v-model="search.date"
                     type="date"
@@ -51,8 +52,10 @@
                 <el-button type="primary" plain icon="el-icon-search" @click="searchFunc">хайх</el-button>
               </el-form-item>
             </el-form>
-                
-            <p>Нийт: {{ data.total }}</p>
+            <el-divider></el-divider>
+            <div class="text-right">
+                <i style="font-size: 0.8rem; margin: 0 1rem;">Нийт: {{ data.total }}</i>
+            </div>   
             <el-table
             header-cell-class-name="my-header"
             style="text-align: center; width: 100%"

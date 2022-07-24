@@ -34,7 +34,7 @@
             </el-table-column>
             <el-table-column
                 prop="permissions"
-                label="Зөвшөөрөл"
+                label=" Үйлдлийн эрх"
                 align="center" header-align="center"
                 >
                 <template slot-scope="scope">
@@ -58,7 +58,10 @@
                 width="200"
                 align="center" header-align="center">
                 <template slot-scope="scope">
-                    {{ storageLimitValue(scope.row.storage_limit) }}
+                    {{ storageLimitValue(scope.row.storage_limit)}}
+                    <i class="el-icon-caret-right"></i>
+                    {{ storageLimitValue(scope.row.uploaded)}}
+
                 </template>
             </el-table-column>
 
@@ -76,26 +79,26 @@
 
         <pagination :data="list" @pagination-change-page="fetch" :limit="3" align="center" class="my-2"></pagination>
 
-        <el-dialog title="Хэрэглэгчийн мэдээлэл" :visible.sync="invisDetail" width="50%">
-            <el-form :model="form" ref="formData" :rules="rules"  label-position="top">
-                <el-row type="flex" justify="center">
-                    <el-col :span="8">
+        <el-dialog title="Хэрэглэгчийн мэдээлэл" :visible.sync="invisDetail">
+            <el-form :model="form" ref="formData" :rules="rules"  label-position="left" label-width="180px">
+                <el-row>
+                    <el-col :span="12">
                         <el-form-item label="Нэр" prop="name">
                             <el-input v-model="form.name" autocomplete="off"></el-input>
                         </el-form-item>
                     </el-col>
                 </el-row>
-                    <el-row type="flex" justify="center">
-                        <el-col :span="8">
+                    <el-row>
+                        <el-col :span="12">
                             <el-form-item label="И-мэйл" prop="email">
                                 <el-input v-model="form.email" autocomplete="off"></el-input>
                             </el-form-item>
                         </el-col>
                     </el-row>
 
-                    <el-row type="flex" justify="center">
-                        <el-col :span="8">
-                            <el-form-item label="Зөвшөөрөл" prop="permissions">
+                    <el-row>
+                        <el-col :span="12">
+                            <el-form-item label=" Үйлдлийн эрх" prop="permissions">
                                 <el-select v-model="form.permissions" multiple placeholder="сонгох">
                                     <el-option v-for="permission in permissions" :key="permission" :label="permission" :value="permission"></el-option>
                                 </el-select>
@@ -103,8 +106,8 @@
                         </el-col>
                     </el-row>
 
-                <el-row type="flex" justify="center">
-                     <el-col :span="8">
+                <el-row>
+                     <el-col :span="12">
                         <el-form-item label="Зэрэглэл" prop="role">
                             <el-select v-model="form.role" placeholder="сонгох">
                                 <el-option v-for="role in roles" :key="role.value" :label="role.label" :value="role.value"></el-option>
@@ -113,34 +116,58 @@
                     </el-col>
                 </el-row>
 
-                <el-row type="flex" justify="center">
-                     <el-col :span="8">
-                <el-form-item label="Хэрэглэгчийн файл хуулах хэмжээ" prop="storage_limit">
-                    <div>
-                        <el-select v-model="storage_limit_type" placeholder="сонгох">
+                <el-row>
+                     <el-col :span="12">
+
+                <el-form-item
+                v-if="!!form.id"
+                 label="Файл хуулах хэмжээ">
+                    <div style="margin-bottom: 1em;">
+                        <el-select v-model="storage_limit_ext" placeholder="сонгох">
                         <el-option v-for="size in sizes" :key="size.value" :label="size.label" :value="size.value"></el-option>
                     </el-select>
-                    <el-input type="text" placeholder="файл оруулах хэмжээг бичих" v-model="form.storage_limit" clearable></el-input>
+                    </div>
+                    <div>
+
+                    <el-input  type="text" placeholder="файл оруулах хэмжээг бичих" v-model="temporary_storage_limit" clearable></el-input>
+                    <!-- <el-input  type="text" placeholder="formiiin inputttt" v-model="form.storage_limit"  clearable></el-input> -->
                     </div>
                 </el-form-item>
+
+                <el-form-item
+                v-else
+                 label="Файл хуулах хэмжээ" prop="storage_limit">
+                    <div style="margin-bottom: 1em;">
+                        <el-select v-model="storage_limit_ext" placeholder="сонгох">
+                        <el-option v-for="size in sizes" :key="size.value" :label="size.label" :value="size.value"></el-option>
+                    </el-select>
+                    </div>
+                    <div>
+
+                    <!-- <el-input v-if="!!form.id" type="text" placeholder="файл оруулах хэмжээг бичих" v-model="temporary_storage_limit" clearable></el-input> -->
+                    <el-input type="text" placeholder="formiiin inputttt" v-model="form.storage_limit"  clearable></el-input>
+                    </div>
+                </el-form-item>
+
+
                 </el-col>
                 </el-row>
-                <el-row type="flex" justify="center">
-                     <el-col :span="8">
+                <el-row>
+                     <el-col :span="12">
                 <el-form-item 
                 label="Нууц үг" prop="password">
                     <el-input type="password" v-model="form.password" autocomplete="off" placeholder="Нууц үг шинээр оруулах" show-password></el-input>
                 </el-form-item>
                      </el-col>
                 </el-row>
-                <el-row type="flex" justify="center">
-                     <el-col :span="8">
+                <el-row>
+                     <el-col :span="12">
                 <el-form-item>
                     <el-button class="float-right" type="primary" @click="submitForm('formData')">
-                        <span v-if="form.id">Засах</span>
-                        <span v-else>Нэмэх</span>
+                        <span v-if="form.id"><i class="el-icon-circle-check"></i> Засах</span>
+                        <span v-else><i class="el-icon-circle-check"></i> Нэмэх</span>
                     </el-button>
-                    <el-button class="float-right mr-2" @click="cancelDetail()">Хаах</el-button>
+                    <el-button class="float-right mr-2" @click="cancelDetail()"><i class="el-icon-remove-outline"></i> Хаах</el-button>
                 </el-form-item>
                      </el-col>
                 </el-row>
@@ -211,7 +238,7 @@ export default {
                     label: "MB",
                 }
             ],
-            storage_limit_type:'',
+            storage_limit_ext:'',
             temporary_storage_limit: '',
 
             permissions:['public', 'upload', 'user_modify'],
@@ -238,18 +265,17 @@ export default {
             
 
         openDetail(data){
+            this.storage_limit_ext = null;
                 if(data){
                     this.form.id = data.id;
                     this.form.name = data.name;
                     this.form.email = data.email;
                     this.form.role = data.role;
                     this.form.permissions = data.permissions;
-                    this.form.storage_limit = data.storage_limit;
-                    this.temporary_storage_limit = this.storageLimitValue(data.storage_limit);
+                    this.temporary_storage_limit = this.temporaryStorageLimitValue(data.storage_limit);
                     this.invisDetail = true;
                 }else{
                     this.cancelDetail();
-                    this.invisDetail = true;
                 }
         },
 
@@ -259,19 +285,32 @@ export default {
                         //submitting part begins here
                         this.$confirm('Итгэлтэй байна уу?', 'Warning', {
                             confirmButtonText: 'OK',
-                            cancelButtonText: 'Cancel',
+                            cancelButtonText: 'цуцлах',
                             type: 'warning'
                         }).then(() => {
-                            var valueType =  this.storage_limit_type;
-                            var value = this.form.storage_limit;
-                            if(valueType === 'gb'){
-                                var convertToByte = (value * 1073741824); 
-                            }
-                            else if(valueType === 'mb'){
-                                var convertToByte = (value * 1048576); 
-                            }
-                            this.form.storage_limit =  convertToByte;
+                            
+                            var extValue = this.storage_limit_ext;
+                            var formNumberValue = this.form.storage_limit;
+                            var temporaryNumberValue = this.temporary_storage_limit;
+                            if(temporaryNumberValue){
 
+                                if(extValue === 'gb'){
+                                    var convertToByte = (temporaryNumberValue * 1073741824); 
+                                }
+                                else if(extValue === 'mb'){
+                                    var convertToByte = (temporaryNumberValue * 1048576); 
+                                }
+                            } else {
+                                if(extValue === 'gb'){
+                                    var convertToByte = (formNumberValue * 1073741824); 
+                                }
+                                else if(extValue === 'mb'){
+                                    var convertToByte = (formNumberValue * 1048576); 
+                                }
+                            }
+                            
+                            this.form.storage_limit =  convertToByte;
+                            console.log(convertToByte);
                             this.loading = true;
                             axios.post("/admin/user", {form: this.form})
                             .then(response => {
@@ -316,6 +355,7 @@ export default {
         },
 
         cancelDetail(){
+                this.storage_limit_ext = "";
                 this.form.name = "";
                 this.form.email = "";
                 this.form.role = "";
@@ -376,14 +416,38 @@ export default {
         },
 
         storageLimitValue(value){
-            if(value != 0){
-                var i = Math.floor( Math.log(value) / Math.log(1024) );
+            if(value == null){
+                return value = '0';
+            }else {
+
+                if(value != 0){
+                    var i = Math.floor( Math.log(value) / Math.log(1024) );
                 return ( value / Math.pow(1024, i) ).toFixed(2) * 1 + ' ' + ['B', 'kB', 'MB', 'GB', 'TB'][i];
-            }     
+            }
             if(value == 0){
                 return value = '0';
             }else{
                 return value = value;
+            }
+                }
+        },
+
+        temporaryStorageLimitValue(value) {
+            if (value == 0) return "0";
+            if(value > 0){
+                var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+                var sizes2 = Math.round(value / Math.pow(1024, i), 2) + '' + sizes[i];
+                var i = parseInt(Math.floor(Math.log(value) / Math.log(1024)));
+                var answer = Math.round(value / Math.pow(1024, i), 2) + '' + sizes[i];
+                var inNumber = answer.slice(0, -2);
+                var ext = answer.substr(answer.length - 2);
+                console.log(ext, inNumber);
+                this.storage_limit_ext = ext;
+
+
+                return inNumber;
+            }else {
+                return value;
             }
         },
 

@@ -49,7 +49,7 @@
         <el-row>
           <el-col :span="6" v-for="(niitlel, index) in niitlels" :key="index">
             <el-card :body-style="{ padding: '0px' }" >
-            <div class="card">
+            <div class="icon">
               <i class="el-icon-reading"></i>
             </div>
               <div style="padding: 14px;">
@@ -335,7 +335,7 @@ import Media from "@dongido/vue-viaudio";
   .clearfix:after {
       clear: both
   }
-  .card{
+  .icon{
     width: 100%;
     background-color: #0B5394;
    text-align: center; 

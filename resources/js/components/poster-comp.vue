@@ -1,8 +1,45 @@
 <template>
-    <div class="container">
+    <div class="container" style="text-align:center">
         <el-container>
             <el-main>
+                <el-row :gutter="20">
+                    <el-col :span="24">
+                    <el-badge is-dot class="item" type="warning">
+                        <el-button onclick="location.href='/home/video'" size="small">Бичлэг</el-button>
+                    </el-badge>
+                    <el-badge is-dot class="item" type="primary">
+                        <el-button onclick="location.href='/home/niitlel'" size="small">Нийтлэл</el-button>
+                    </el-badge>
+                    <el-badge is-dot class="item" type="warning">
+                        <el-button onclick="location.href='/home/poster'" size="small">Постер</el-button>
+                    </el-badge>
+                    <el-badge is-dot class="item" type="primary">
+                        <el-button onclick="location.href='/home/file'" size="small">Файл</el-button>
+                    </el-badge>
+                    </el-col>
+                </el-row>
                 <el-card>
+                    <el-form :inline="true" label-width="90px">
+                        <el-form-item label="нэр">
+                            <div class="block">
+                            <el-input v-model="search.name" placeholder="нэрээр хайх"></el-input>
+                            </div>
+                        </el-form-item>
+                        <el-form-item label="огноо">
+                            <el-date-picker
+                                v-model="search.date"
+                                type="date"
+                                :localTime="false"
+                                format="yyyy-MM-dd"
+                                value-format="yyyy-MM-dd"
+                                placeholder="огноогоор хайх"
+                                :clearable="true">
+                            </el-date-picker>
+                        </el-form-item>
+                        <el-form-item>
+                            <el-button type="primary" icon="el-icon-search" @click="searchFunc"></el-button>
+                        </el-form-item>
+                    </el-form>
                     <el-table
                     style="text-align: center; width: 100%"
                     class="card"
@@ -54,7 +91,7 @@
                                 </el-button>
                                 <el-button
                                 size="small"
-                                type="primary"
+                                type="success"
                                 circle
                                 @click="handleDownload(scope.row.url, scope.row.download)"><i class="el-icon-download"></i>
                                 </el-button>
@@ -121,6 +158,10 @@
             updated_at:'',
             url:'',
             user_id:'',
+        },
+        search: {
+            name:'',
+            date:''
         }
       }
     },
@@ -142,6 +183,27 @@
             });
         });
       },
+      searchFunc(){
+        axios.post("/home/poster/fetchSearch", { search: this.search})
+            .then((response) => {
+                this.loading = false;
+                if(response.data[0]){
+                    console.log(response.data);
+                    this.postersData = response.data[0];
+                }else{
+                    console.log(response.data);
+                    this.getPosterData();
+                }
+            })
+            .catch((error) => {
+                console.log(error.response);
+                this.$notify.error({
+                    title: "Error",
+                    message: error.response.data.message,
+                });
+            });
+
+        },
       toView(dwnld){
             console.log(dwnld);
         },

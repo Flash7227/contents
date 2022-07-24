@@ -2,8 +2,45 @@
     <div class="container" style="text-align:center">
         <el-container>
             <el-main>
-              <el-row justify="space-around">
-                <el-col :span="6" v-for="(niitlel, index) in uploadData.data" :key="index">
+              <el-row :gutter="20">
+                <el-col :span="24">
+                  <el-badge is-dot class="item" type="warning">
+                    <el-button onclick="location.href='/home/video'" size="small">Бичлэг</el-button>
+                  </el-badge>
+                  <el-badge is-dot class="item" type="primary">
+                    <el-button onclick="location.href='/home/niitlel'" size="small">Нийтлэл</el-button>
+                  </el-badge>
+                  <el-badge is-dot class="item" type="warning">
+                    <el-button onclick="location.href='/home/poster'" size="small">Постер</el-button>
+                  </el-badge>
+                  <el-badge is-dot class="item" type="primary">
+                    <el-button onclick="location.href='/home/file'" size="small">Файл</el-button>
+                  </el-badge>
+                </el-col>
+              </el-row>
+              <el-row :span="20" justify="space-around">
+                <el-form :inline="true" label-width="90px">
+                  <el-form-item label="нэр">
+                      <div class="block">
+                      <el-input v-model="search.name" placeholder="нэрээр хайх"></el-input>
+                      </div>
+                  </el-form-item>
+                  <el-form-item label="огноо">
+                      <el-date-picker
+                          v-model="search.date"
+                          type="date"
+                          :localTime="false"
+                          format="yyyy-MM-dd"
+                          value-format="yyyy-MM-dd"
+                          placeholder="огноогоор хайх"
+                          :clearable="true">
+                      </el-date-picker>
+                  </el-form-item>
+                  <el-form-item>
+                      <el-button type="primary" icon="el-icon-search" @click="searchFunc"></el-button>
+                  </el-form-item>
+                </el-form>
+                <el-col :span="6" v-for="(niitlel, index) in uploadData.data" :key="index" style="padding: 1px; color: #ffff">
                   <div class="glass">
                     <h3><i class="el-icon-tickets" style="font-size: 2em; color: #ffff"></i></h3>
                     <p style="font-size: 1em; color: #ffff;">Нийтлэл</p>
@@ -13,7 +50,7 @@
                       :title=selected.name
                       append-to-body
                       :visible.sync="dialogVisible"
-                      width="80%"
+                      width="100%"
                       :before-close="handleClose">
                       <span v-html="selected.desc"></span>
                       <span slot="footer" class="dialog-footer">
@@ -26,7 +63,7 @@
               <pagination
                 :data="uploadData"
                 @pagination-change-page="getData"
-                :limit="6"
+                :limit="1"
                 align="center"
                 class="my-2"
             ></pagination>
@@ -41,6 +78,10 @@
         dialogVisible: false,
         uploadData:{},
         selected:{},
+        search: {
+          name:'',
+          date:''
+        }
       }
     },
     methods: {
@@ -61,6 +102,27 @@
             });
         });
       },
+      searchFunc(){
+        axios.post("/home/niitlel/fetchSearch", { search: this.search})
+          .then((response) => {
+              this.loading = false;
+              if(response.data[0]){
+                  console.log(response.data);
+                  this.uploadData = response.data[0];
+              }else{
+                  console.log(response.data);
+                  this.getData();
+              }
+          })
+          .catch((error) => {
+              console.log(error.response);
+              this.$notify.error({
+                  title: "Error",
+                  message: error.response.data.message,
+              });
+          });
+
+        },
       
       handleClose(){
           this.dialogVisible = false;         

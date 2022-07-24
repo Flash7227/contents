@@ -44,6 +44,12 @@ Route::group(['middleware' => 'auth', 'prefix' => '/home'], function(){
     Route::get('/video/fetch', 'HomeController@videoFetch');
     Route::get('/file', 'HomeController@filecompIndex');
     Route::get('/file/fetch', 'HomeController@fileFetch');
+    //search
+    Route::post('/poster/fetchSearch', 'HomeController@posterSearch');
+    Route::post('/niitlel/fetchSearch', 'HomeController@niitlelSearch');
+    Route::post('/file/fetchSearch', 'HomeController@fileSearch');
+    Route::post('/video/fetchSearch', 'HomeController@videoSearch');
+    
     
 });
 

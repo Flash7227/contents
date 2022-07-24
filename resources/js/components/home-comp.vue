@@ -1,6 +1,6 @@
 <template>
 <div class="container">
-  <el-container style="text-align:center">
+  <el-container>
       <el-main>
         <el-row :gutter="20">
           <el-col :span="24">
@@ -12,45 +12,75 @@
                   </el-image>
                 </el-carousel-item>
             </el-carousel>
-            <el-badge is-dot class="item" type="warning">
-              <el-button onclick="location.href='/home/video'" size="small">Бичлэг</el-button>
-            </el-badge>
-            <el-badge is-dot class="item" type="primary">
-              <el-button onclick="location.href='/home/niitlel'" size="small">Нийтлэл</el-button>
-            </el-badge>
-            <el-badge is-dot class="item" type="warning">
-              <el-button onclick="location.href='/home/poster'" size="small">Постер</el-button>
-            </el-badge>
-            <el-badge is-dot class="item" type="primary">
-              <el-button onclick="location.href='/home/file'" size="small">Файл</el-button>
-            </el-badge>
+            <div style="text-align: center">
+              <el-badge is-dot class="item" type="warning">
+                <el-button onclick="location.href='/home/video'" size="small">Бичлэг</el-button>
+              </el-badge>
+              <el-badge is-dot class="item" type="primary">
+                <el-button onclick="location.href='/home/niitlel'" size="small">Нийтлэл</el-button>
+              </el-badge>
+              <el-badge is-dot class="item" type="warning">
+                <el-button onclick="location.href='/home/poster'" size="small">Постер</el-button>
+              </el-badge>
+              <el-badge is-dot class="item" type="primary">
+                <el-button onclick="location.href='/home/file'" size="small">Файл</el-button>
+              </el-badge>
+            </div>
+            
           </el-col>
         </el-row>
         <!-- Нийтлэл -->
-        <el-row :gutter="20">
-          <el-col :span="24">
-            <el-col :span="6" v-for="(niitlel, index) in niitlels" :key="index" >
-              <div  class="glass">
-                <h3><i class="el-icon-tickets" style="font-size: 2em; color: #ffff"></i></h3>
-                <p style="font-size: 1em; color: #ffff;">Нийтлэл</p>
-                <!-- <el-link @click="pickDetails(niitlel), dialogVisible = true" type="warning">{{niitlel.name}}</el-link> -->
-                 <el-link @click="pickDetails(niitlel), dialogVisible = true" :underline="false" style="font-size: 10px; color: #ffff;">{{niitlel.name}}</el-link>
+        <!-- <el-row :gutter="20">
+          <el-col :span="6" v-for="(niitlel, index) in niitlels" :key="index" >
+            <div class="glass">
+              <h3><i class="el-icon-reading" style="text-align: center; font-size: 2em; color: #ffff"></i></h3>
+              <p style="text-align: center; font-size: 1em; color: #ffff;">Нийтлэл</p>
+              <p style="font-size: 10px; color: #ffff;">{{niitlel.name}}</p>
+              <time class="time">{{dateformatter(niitlel.created_at)}}</time>
+              <span>
+                <el-button icon="el-icon-view"  size="small" circle @click="pickDetails(niitlel), centerDialogVisible = true" ></el-button>
+                <el-button icon="el-icon-view"  size="small" type="success" circle @click="handleDownload(niitlel.url, niitlel.download)"></el-button>
+              </span>
+            </div>
+          </el-col>
+
+        </el-row> -->
+
+        <el-row>
+          <el-col :span="6" v-for="(niitlel, index) in niitlels" :key="index">
+            <el-card :body-style="{ padding: '0px' }" >
+            <div class="card">
+              <i class="el-icon-reading"></i>
+            </div>
+              <div style="padding: 14px;">
+                <span>{{niitlel.name}}</span>
+                <div class="bottom clearfix">
                   <time class="time">{{dateformatter(niitlel.created_at)}}</time>
-                <el-dialog
-                  :title=selected.name
-                  append-to-body
-                  :visible.sync="dialogVisible"
-                  width="80%"
-                  :before-close="handleClose">
-                  <span v-html="selected.desc"></span>
-                  <span slot="footer" class="dialog-footer">
-                    <el-button @click="dialogVisible = false">Хаах</el-button>
-                  </span>
-                </el-dialog>
+                  <el-button 
+                  :hidden="niitlel.url=='noimage123.png' ? true:false"
+                  icon="el-icon-download"  
+                  size="small" type="success" 
+                  circle 
+                  class="button" 
+                  @click="handleDownload(niitlel.url, niitlel.download)">
+                  </el-button>
+                  <el-button icon="el-icon-view"  size="small" circle class="button" @click="pickDetails(niitlel), centerDialogVisible = true" ></el-button>
+                </div>
               </div>
-            </el-col>
+            </el-card>
           </el-col>
         </el-row>
+        <el-dialog
+          :title="selected.name"
+          :visible.sync="centerDialogVisible"
+          width="100%"
+          center>
+          <span v-html="selected.desc">
+          </span>
+          <span slot="footer" class="dialog-footer">
+            <el-button @click="centerDialogVisible = false">Хаах</el-button>
+          </span>
+        </el-dialog>
         <!-- Бичлэг -->
         <el-row :gutter="20">
           <el-col :span="8" v-for="(video, index) in videos" :key="index">
@@ -80,8 +110,9 @@
           <el-col :span="14">
             <el-card class="box-card">
               <div slot="header" class="clearfix">
-                <!-- <span>Card name</span> -->
-                <el-button style="float: left; padding: 3px 0" type="default" icon="el-icon-edit"> Постер</el-button>
+                <span style="float: left; padding: 3px 0;">
+                  <i class="el-icon-picture-outline" ></i> ПОСТЕР
+                </span>
               </div>
               <div>
                   <el-table
@@ -90,12 +121,15 @@
                     <el-table-column type="expand">
                       <template slot-scope="scope">
                          <p> URL: {{ scope.row.url }}</p>
-                        <el-button
-                          size="small"
-                          type="success"
-                          round
-                          @click="handleDownload(scope.row.url, scope.row.download)"><i class="el-icon-download"></i>
-                          </el-button>
+                         <p> Татах:
+                            <el-button
+                              size="small"
+                              type="success"
+                              round
+                              @click="handleDownload(scope.row.url, scope.row.download)"><i class="el-icon-download"></i>
+                            </el-button>
+                          </p>
+                        
                       </template>
                     </el-table-column>
                     <el-table-column
@@ -119,7 +153,9 @@
           <el-col :span="10">
           <el-card class="box-card">
               <div slot="header" class="clearfix">
-                <el-button style="float: right; padding: 3px 0" type="default" icon="el-icon-files"> Файл</el-button>
+                <span style="float: right; padding: 3px 0;">
+                  <i class="el-icon-files" ></i> ФАЙЛ
+                </span>
               </div>
               <div>
                 <el-table
@@ -128,12 +164,14 @@
                     <el-table-column type="expand">
                       <template slot-scope="scope">
                          <p> URL: {{ scope.row.url }}</p>
-                        <el-button
-                          size="small"
-                          type="success"
-                          round
-                          @click="handleDownload(scope.row.url, scope.row.download)"><i class="el-icon-download"></i>
-                          </el-button>
+                          <p> Татах:
+                            <el-button
+                              size="small"
+                              type="success"
+                              round
+                              @click="handleDownload(scope.row.url, scope.row.download)"><i class="el-icon-download"></i>
+                            </el-button>
+                          </p>  
                       </template>
                     </el-table-column>
                     <el-table-column
@@ -167,12 +205,25 @@ import Media from "@dongido/vue-viaudio";
   export default {
     data () {
       return {
-        dialogVisible: false,
-        files:{},
+        centerDialogVisible: false,
+        files:[],
         videos:{},
-        posters:{},
+        posters:[],
         niitlels:{},
-        selected:{},
+        selected:{
+          file: '',
+          created_at:'',
+          download:'',
+          desc:'',
+          id:'',
+          name:'',
+          size:'',
+          tags:'',
+          type:'',
+          updated_at:'',
+          url:'',
+          user_id:'',
+        },
       }
     },
     methods: {
@@ -245,35 +296,54 @@ import Media from "@dongido/vue-viaudio";
 </script>
 
 <style>
-
   .el-carousel__item h3 {
-    color: #475669;
     font-size: 14px;
     opacity: 0.75;
     line-height: 200px;
     margin: 0;
   }
-
-  .el-carousel__item:nth-child(2n) {
-    background-color: #99a9bf;
-  }
-
   .el-carousel__item:nth-child(2n+1) {
     background-color: #d3dce6;
   }
-
   
-/* card image */
   .time {
     font-size: 13px;
-    color: #E6A23C !important;
-    text-align: left !important
+    color: #999;
   }
   
-  /* .bottom {
-    margin-top: 10px;
-    line-height: 9px;
-  } */
+  .bottom {
+    margin-top: 13px;
+    line-height: 12px;
+  }
+
+  .button {
+    padding: 0;
+    float: right;
+  }
+
+  .image {
+    
+    display: block;
+  }
+
+  .clearfix:before,
+  .clearfix:after {
+      display: table;
+      content: "";
+  }
+  
+  .clearfix:after {
+      clear: both
+  }
+  .card{
+    width: 100%;
+    background-color: #0B5394;
+   text-align: center; 
+   font-size: 8em; 
+   color: #FF9900 
+
+
+  }
 
   
 </style>

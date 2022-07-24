@@ -1,9 +1,9 @@
 <template>
-    <div class="container" style="text-align:center">
-        <el-container>
+    <div class="container">
+        <el-container style="text-align:center">
             <el-main>
               <el-row :gutter="20">
-                <el-col :span="24">
+                <el-col :span="24" >
                   <el-badge is-dot class="item" type="warning">
                     <el-button onclick="location.href='/home/video'" size="small">Бичлэг</el-button>
                   </el-badge>
@@ -18,55 +18,72 @@
                   </el-badge>
                 </el-col>
               </el-row>
-              <el-row :span="20" justify="space-around">
-                <el-form :inline="true" label-width="90px">
-                  <el-form-item label="нэр">
-                      <div class="block">
-                      <el-input v-model="search.name" placeholder="нэрээр хайх"></el-input>
+              <el-card>
+                <el-row >
+                  <el-form :inline="true" label-width="90px">
+                    <el-form-item label="нэр">
+                        <div class="block">
+                        <el-input v-model="search.name" placeholder="нэрээр хайх"></el-input>
+                        </div>
+                    </el-form-item>
+                    <el-form-item label="огноо">
+                        <el-date-picker
+                            v-model="search.date"
+                            type="date"
+                            :localTime="false"
+                            format="yyyy-MM-dd"
+                            value-format="yyyy-MM-dd"
+                            placeholder="огноогоор хайх"
+                            :clearable="true">
+                        </el-date-picker>
+                    </el-form-item>
+                    <el-form-item>
+                        <el-button type="primary" icon="el-icon-search" @click="searchFunc"></el-button>
+                    </el-form-item>
+                  </el-form>
+                  <p style="text-align:left">Нийт: {{ uploadData.total }}</p>
+                  <el-col :span="6" v-for="(niitlel, index) in uploadData.data" :key="index">
+                    <el-card :body-style="{ padding: '0px' }" style="margin top: 10px">
+                      <div class="icon">
+                        <i class="el-icon-reading"></i>
                       </div>
-                  </el-form-item>
-                  <el-form-item label="огноо">
-                      <el-date-picker
-                          v-model="search.date"
-                          type="date"
-                          :localTime="false"
-                          format="yyyy-MM-dd"
-                          value-format="yyyy-MM-dd"
-                          placeholder="огноогоор хайх"
-                          :clearable="true">
-                      </el-date-picker>
-                  </el-form-item>
-                  <el-form-item>
-                      <el-button type="primary" icon="el-icon-search" @click="searchFunc"></el-button>
-                  </el-form-item>
-                </el-form>
-                <el-col :span="6" v-for="(niitlel, index) in uploadData.data" :key="index" style="padding: 1px; color: #ffff">
-                  <div class="glass">
-                    <h3><i class="el-icon-tickets" style="font-size: 2em; color: #ffff"></i></h3>
-                    <p style="font-size: 1em; color: #ffff;">Нийтлэл</p>
-                     <el-link @click="pickDetails(niitlel), dialogVisible = true" :underline="false" style="font-size: 10px; color: #ffff;">{{niitlel.name}}</el-link>
-                    <time class="time">{{dateformatter(niitlel.created_at)}}</time>
-                    <el-dialog
-                      :title=selected.name
-                      append-to-body
-                      :visible.sync="dialogVisible"
-                      width="100%"
-                      :before-close="handleClose">
-                      <span v-html="selected.desc"></span>
-                      <span slot="footer" class="dialog-footer">
-                        <el-button @click="dialogVisible = false">Хаах</el-button>
-                      </span>
-                    </el-dialog>
-                  </div>
-                </el-col>
-              </el-row>
+                      <div style="padding: 14px">
+                        <p class="overme">{{niitlel.name}}</p>
+                        <div class="bottom clearfix">
+                          <time class="time">{{dateformatter(niitlel.created_at)}}</time>
+                          <el-button 
+                          :hidden="niitlel.url=='noimage123.png' ? true:false"
+                          icon="el-icon-download"  
+                          size="small" type="success" 
+                          circle 
+                          class="button" 
+                          @click="handleDownload(niitlel.url, niitlel.download)">
+                          </el-button>
+                          <el-button icon="el-icon-view"  size="small" circle class="button" @click="pickDetails(niitlel), centerDialogVisible = true" ></el-button>
+                        </div>
+                      </div>
+                    </el-card>
+                  </el-col>
+                </el-row>
+              </el-card>
               <pagination
                 :data="uploadData"
                 @pagination-change-page="getData"
                 :limit="1"
                 align="center"
                 class="my-2"
-            ></pagination>
+              ></pagination>
+            <el-dialog
+              :title="selected.name"
+              :visible.sync="centerDialogVisible"
+              width="100%"
+              center>
+              <span v-html="selected.desc">
+              </span>
+              <span slot="footer" class="dialog-footer">
+                <el-button @click="centerDialogVisible = false">Хаах</el-button>
+              </span>
+            </el-dialog>
             </el-main>
         </el-container>
     </div> 
@@ -75,7 +92,7 @@
  export default {
     data () {
       return {
-        dialogVisible: false,
+        centerDialogVisible: false,
         uploadData:{},
         selected:{},
         search: {

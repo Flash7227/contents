@@ -2,7 +2,7 @@
 <div class="container">
   <el-container>
       <el-main>
-        <el-row :gutter="20">
+        <el-row :gutter="20" style="text-align:center">
           <el-col :span="24">
             <el-carousel :interval="4000" type="card" height="400px">
                 <el-carousel-item v-for="(poster, item) in posters" :key="item">
@@ -30,30 +30,14 @@
           </el-col>
         </el-row>
         <!-- Нийтлэл -->
-        <!-- <el-row :gutter="20">
-          <el-col :span="6" v-for="(niitlel, index) in niitlels" :key="index" >
-            <div class="glass">
-              <h3><i class="el-icon-reading" style="text-align: center; font-size: 2em; color: #ffff"></i></h3>
-              <p style="text-align: center; font-size: 1em; color: #ffff;">Нийтлэл</p>
-              <p style="font-size: 10px; color: #ffff;">{{niitlel.name}}</p>
-              <time class="time">{{dateformatter(niitlel.created_at)}}</time>
-              <span>
-                <el-button icon="el-icon-view"  size="small" circle @click="pickDetails(niitlel), centerDialogVisible = true" ></el-button>
-                <el-button icon="el-icon-view"  size="small" type="success" circle @click="handleDownload(niitlel.url, niitlel.download)"></el-button>
-              </span>
-            </div>
-          </el-col>
-
-        </el-row> -->
-
         <el-row>
           <el-col :span="6" v-for="(niitlel, index) in niitlels" :key="index">
             <el-card :body-style="{ padding: '0px' }" >
-            <div class="card">
-              <i class="el-icon-reading"></i>
-            </div>
+              <div class="icon">
+                <i class="el-icon-reading"></i>
+              </div>
               <div style="padding: 14px;">
-                <span>{{niitlel.name}}</span>
+                <p class="overme">{{niitlel.name}}</p>
                 <div class="bottom clearfix">
                   <time class="time">{{dateformatter(niitlel.created_at)}}</time>
                   <el-button 
@@ -70,17 +54,7 @@
             </el-card>
           </el-col>
         </el-row>
-        <el-dialog
-          :title="selected.name"
-          :visible.sync="centerDialogVisible"
-          width="100%"
-          center>
-          <span v-html="selected.desc">
-          </span>
-          <span slot="footer" class="dialog-footer">
-            <el-button @click="centerDialogVisible = false">Хаах</el-button>
-          </span>
-        </el-dialog>
+        
         <!-- Бичлэг -->
         <el-row :gutter="20">
           <el-col :span="8" v-for="(video, index) in videos" :key="index">
@@ -109,88 +83,95 @@
           <!-- Постер -->
           <el-col :span="14">
             <el-card class="box-card">
-              <div slot="header" class="clearfix">
-                <span style="float: left; padding: 3px 0;">
-                  <i class="el-icon-picture-outline" ></i> ПОСТЕР
-                </span>
-              </div>
               <div>
-                  <el-table
-                    :data="posters"
-                    style="width: 100%">
-                    <el-table-column type="expand">
-                      <template slot-scope="scope">
-                         <p> URL: {{ scope.row.url }}</p>
-                         <p> Татах:
-                            <el-button
-                              size="small"
-                              type="success"
-                              round
-                              @click="handleDownload(scope.row.url, scope.row.download)"><i class="el-icon-download"></i>
-                            </el-button>
-                          </p>
-                        
-                      </template>
-                    </el-table-column>
-                    <el-table-column
-                      label="Огноо"
-                    >
+                <div slot="header" class="clearfix">
+                  <span style="float: right;"> <i class="el-icon-picture-outline"></i>Постер</span>
+                </div>
+                <el-table
+                  :data="posters"
+                  style="width: 100%">
+                  <el-table-column 
+                  type="expand">
                     <template slot-scope="scope">
-                      <span size="medium">{{ dateformatter(scope.row.created_at)}}</span>
+                        <p> URL: {{ scope.row.url }}</p>
+                        <p> Татах:
+                          <el-button
+                            size="small"
+                            type="success"
+                            round
+                            @click="handleDownload(scope.row.url, scope.row.download)"><i class="el-icon-download"></i>
+                          </el-button>
+                        </p>
+                      
                     </template>
-                    </el-table-column>
-                    <el-table-column
-                      label="Нэр">
-                      <template slot-scope="scope">
-                        <span size="medium">{{ scope.row.name }}</span>
-                      </template>
-                    </el-table-column>
-                  </el-table>
+                  </el-table-column>
+                  <el-table-column
+                    label="Огноо"
+                  >
+                  <template slot-scope="scope">
+                    <span size="medium">{{ dateformatter(scope.row.created_at)}}</span>
+                  </template>
+                  </el-table-column>
+                  <el-table-column
+                    label="Нэр">
+                    <template slot-scope="scope">
+                      <span size="medium">{{ scope.row.name }}</span>
+                    </template>
+                  </el-table-column>
+                </el-table>
               </div>
             </el-card>
           </el-col>
           <!-- Файл -->
           <el-col :span="10">
           <el-card class="box-card">
+            <div>
               <div slot="header" class="clearfix">
-                <span style="float: right; padding: 3px 0;">
-                  <i class="el-icon-files" ></i> ФАЙЛ
-                </span>
-              </div>
-              <div>
-                <el-table
-                    :data="files"
-                    style="width: 100%">
-                    <el-table-column type="expand">
-                      <template slot-scope="scope">
-                         <p> URL: {{ scope.row.url }}</p>
-                          <p> Татах:
-                            <el-button
-                              size="small"
-                              type="success"
-                              round
-                              @click="handleDownload(scope.row.url, scope.row.download)"><i class="el-icon-download"></i>
-                            </el-button>
-                          </p>  
-                      </template>
-                    </el-table-column>
-                    <el-table-column
-                      label="Огноо"
-                    >
-                    <template slot-scope="scope">
-                      <span size="medium">{{ dateformatter(scope.row.created_at)}}</span>
-                    </template>
-                    </el-table-column>
-                    <el-table-column
-                      label="Нэр">
-                      <template slot-scope="scope">
-                        <span size="medium">{{ scope.row.name }}</span>
-                      </template>
-                    </el-table-column>
-                  </el-table>
-                
-              </div>
+                  <span style="float: right;"> <i class="el-icon-document"></i>Файл</span>
+                </div>
+              <el-table
+                :data="files"
+                style="width: 100%">
+                <el-table-column type="expand">
+                  <template slot-scope="scope">
+                      <p> URL: {{ scope.row.url }}</p>
+                      <p> Татах:
+                        <el-button
+                          size="small"
+                          type="success"
+                          round
+                          @click="handleDownload(scope.row.url, scope.row.download)"><i class="el-icon-download"></i>
+                        </el-button>
+                      </p>  
+                  </template>
+                </el-table-column>
+                <el-table-column
+                  label="Огноо"
+                >
+                <template slot-scope="scope">
+                  <span size="medium">{{ dateformatter(scope.row.created_at)}}</span>
+                </template>
+                </el-table-column>
+                <el-table-column
+                  label="Нэр">
+                  <template slot-scope="scope">
+                    <span size="medium">{{ scope.row.name }}</span>
+                  </template>
+                </el-table-column>
+              </el-table>
+            </div>
             </el-card>
+            <el-dialog
+              :title="selected.name"
+              :visible.sync="centerDialogVisible"
+              width="90%"
+              center>
+              <span v-html="selected.desc">
+              </span>
+              <span slot="footer" class="dialog-footer">
+                <el-button @click="centerDialogVisible = false">Хаах</el-button>
+              </span>
+            </el-dialog>
 
           </el-col>
         </el-row>
@@ -314,16 +295,12 @@ import Media from "@dongido/vue-viaudio";
   .bottom {
     margin-top: 13px;
     line-height: 12px;
+    
   }
 
   .button {
     padding: 0;
     float: right;
-  }
-
-  .image {
-    
-    display: block;
   }
 
   .clearfix:before,
@@ -335,7 +312,7 @@ import Media from "@dongido/vue-viaudio";
   .clearfix:after {
       clear: both
   }
-  .card{
+  .icon{
     width: 100%;
     background-color: #0B5394;
    text-align: center; 
@@ -344,6 +321,5 @@ import Media from "@dongido/vue-viaudio";
 
 
   }
-
   
 </style>

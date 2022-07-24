@@ -19,51 +19,53 @@
           </el-col>
         </el-row>
         <!-- Бичлэг -->
-        <el-row :gutter="20">
         <el-card shadow="always">
-          <el-form :inline="true" label-width="90px">
-            <el-form-item label="нэр">
-                <div class="block">
-                <el-input v-model="search.name" placeholder="нэрээр хайх"></el-input>
+          <el-row :gutter="20">
+            <el-form :inline="true" label-width="90px">
+              <el-form-item label="нэр">
+                  <div class="block">
+                  <el-input v-model="search.name" placeholder="нэрээр хайх"></el-input>
+                  </div>
+              </el-form-item>
+              <el-form-item label="огноо">
+                  <el-date-picker
+                      v-model="search.date"
+                      type="date"
+                      :localTime="false"
+                      format="yyyy-MM-dd"
+                      value-format="yyyy-MM-dd"
+                      placeholder="огноогоор хайх"
+                      :clearable="true">
+                  </el-date-picker>
+              </el-form-item>
+              <el-form-item>
+                  <el-button type="primary" icon="el-icon-search" @click="searchFunc"></el-button>
+              </el-form-item>
+            </el-form>
+            <p style="text-align:left">Нийт: {{ videoData.total }}</p>
+            <el-col :span="8" v-for="(video, index) in videoData.data" :key="index">
+              <Media
+                style="width: 300px; height: 200px;"
+                :kind="'video'"
+                :isMuted="false"
+                :src="video.download"
+                :autoplay="false"
+                :controls="true"
+                :loop="true"
+                @pause="handle"
+                :ref="'video_player'"
+                width="auto"
+                class="example"
+              ></Media>
+              <div style="padding: 1px;">
+                <span style="text-align: left;">{{video.name}}</span>
+                <div class="bottom clearfix">
+                  <time class="time">{{ dateformatter(video.created_at) }}</time>
                 </div>
-            </el-form-item>
-            <el-form-item label="огноо">
-                <el-date-picker
-                    v-model="search.date"
-                    type="date"
-                    :localTime="false"
-                    format="yyyy-MM-dd"
-                    value-format="yyyy-MM-dd"
-                    placeholder="огноогоор хайх"
-                    :clearable="true">
-                </el-date-picker>
-            </el-form-item>
-            <el-form-item>
-                <el-button type="primary" icon="el-icon-search" @click="searchFunc"></el-button>
-            </el-form-item>
-          </el-form>
-          <el-col :span="8" v-for="(video, index) in videoData.data" :key="index">
-            <Media
-              style="width: 300px; height: 200px;"
-              :kind="'video'"
-              :isMuted="false"
-              :src="video.download"
-              :autoplay="false"
-              :controls="true"
-              :loop="true"
-              @pause="handle"
-              :ref="'video_player'"
-              width="auto"
-              class="example"
-            ></Media>
-            <div style="padding: 1px;">
-              <span style="text-align: left;">{{video.name}}</span>
-              <div class="bottom clearfix">
-                <time class="time">{{ dateformatter(video.created_at) }}</time>
               </div>
-            </div>
-          </el-col>
-        </el-card> 
+            </el-col>
+          </el-row>
+        </el-card>
         <pagination
           :data="videoData"
           @pagination-change-page="getvideoData"
@@ -71,8 +73,6 @@
           align="center"
           class="my-2"
         ></pagination>
-
-        </el-row>
     </el-main>
   </el-container>
   </div>

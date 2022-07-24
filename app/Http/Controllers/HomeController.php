@@ -60,11 +60,12 @@ class HomeController extends Controller
     
         if($name){
             $data->where('name', $name);
+            //$data->orWhere('name', 'like', '%' . $name . '%');
         };
         if($created_at){
             $data->whereDate('created_at', $created_at);
         };
-        $data = $data->paginate(10);
+        $data = $data->orderBy('created_at', 'DESC')->paginate(10);
 
 
         return [$data];
@@ -107,7 +108,7 @@ class HomeController extends Controller
     }
     public function videoFetch()
     {
-        $getvideo = Uploads::where('sharetype', "public")->where('type', '2')->orderBy('created_at', 'DESC')->paginate(9);
+        $getvideo = Uploads::where('sharetype', "public")->where('type', '2')->orderBy('created_at', 'DESC')->paginate(6);
         return $getvideo;
     }
     public function videoSearch(Request $req){

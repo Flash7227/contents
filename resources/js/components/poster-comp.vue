@@ -18,6 +18,7 @@
                     </el-badge>
                     </el-col>
                 </el-row>
+                
                 <el-card>
                     <el-form :inline="true" label-width="90px">
                         <el-form-item label="нэр">
@@ -40,6 +41,7 @@
                             <el-button type="primary" icon="el-icon-search" @click="searchFunc"></el-button>
                         </el-form-item>
                     </el-form>
+                    <p style="text-align:left">Нийт: {{ postersData.total }}</p>
                     <el-table
                     style="text-align: center; width: 100%"
                     class="card"
@@ -81,52 +83,24 @@
                             width="100"
                             align="center">
                             <template slot-scope="scope">
-                                <el-button
-                                v-if="scope.row.type === 3 || scope.row.type === 2"
+                                <!-- <el-button
                                 size="small"
-                          
                                 circle
-                                @click="toView(scope.row.download), pickDetails(scope.row), dialogVisible = true
+                                @click="pickDetails(scope.row), centerDialogVisible = true
                                 "><i class="el-icon-view"></i>
-                                </el-button>
+                                </el-button> -->
+                                <el-button icon="el-icon-view" size="small" circle class="button" @click="pickDetails(scope.row), centerDialogVisible = true" ></el-button>
+
                                 <el-button
                                 size="small"
                                 type="success"
                                 circle
                                 @click="handleDownload(scope.row.url, scope.row.download)"><i class="el-icon-download"></i>
                                 </el-button>
-
-                                <el-dialog
-                                    title="Tips"
-                                    :visible.sync="dialogVisible"
-                                    width="60%"
-                                    destroy-on-close
-                                    :before-close="handleClose">
-                                    <span>
-                                        <el-image 
-                                            v-if="scope.row.download === types.download"
-                                            :src="types.download" 
-                                            :preview-src-list="[types.download]"
-                                            >
-                                        </el-image>
-                                        <video
-                                            v-if="scope.row.download === types.download"
-                                            ref="video" 
-                                            class="video" 
-                                            width="100%" 
-                                            controls>
-                                            <source :src="scope.row.download" type="video/mp4">
-                                        </video>
-                                    </span>
-                                    <span slot="footer" class="dialog-footer">
-                                        <el-button @click="dialogVisible = false">Cancel</el-button>
-                                        <el-button type="primary" @click="dialogVisible = false">Confirm</el-button>
-                                    </span>
-                                </el-dialog>
-        
                             </template>
                         </el-table-column>
                     </el-table>
+                    
                 </el-card>
                 <pagination
                     :data="postersData"
@@ -135,6 +109,21 @@
                     align="center"
                     class="my-2"
                 ></pagination>
+                <el-dialog
+                    :title="selected.name"
+                    :visible.sync="centerDialogVisible"
+                    width="60%">
+                    <span>
+                        <el-image 
+                            :src="selected.download" 
+                            :preview-src-list="[selected.download]"
+                            >
+                        </el-image>
+                    </span>
+                    <span slot="footer" class="dialog-footer">
+                        <el-button @click="centerDialogVisible = false">Хаах</el-button>
+                    </span>
+                </el-dialog>
             </el-main>
             
         </el-container>
@@ -144,16 +133,16 @@
  export default {
     data () {
       return {
-        dialogVisible: false,
+        centerDialogVisible: false,
         postersData:{},
-        types: {
+        selected: {
             file: '',
             created_at:'',
             download:'',
             id:'',
             name:'',
             size:'',
-            // tags:'',
+            desc:'',
             type:'',
             updated_at:'',
             url:'',
@@ -222,17 +211,18 @@
 
         pickDetails(data){
             
-            this.types.file = data.file;
-            this.types.created_at = data.created_at;
-            this.types.download = data.download;
-            this.types.id = data.id;
-            this.types.name = data.name;
-            this.types.size = data.size;
+            this.selected.file = data.file;
+            this.selected.created_at = data.created_at;
+            this.selected.download = data.download;
+            this.selected.id = data.id;
+            this.selected.name = data.name;
+            this.selected.size = data.size;
+             this.selected.desc = data.desc;
             // this.types.tags = data.tags;
-            this.types.type = data.type;
-            this.types.updated_at = data.updated_at;
-            this.types.url = data.url;
-            this.types.user_id = data.user_id;
+            this.selected.type = data.type;
+            this.selected.updated_at = data.updated_at;
+            this.selected.url = data.url;
+            this.selected.user_id = data.user_id;
                 
         },
 

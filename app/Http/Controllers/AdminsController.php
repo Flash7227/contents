@@ -74,49 +74,7 @@ class AdminsController extends Controller
         return 'error';
     }
 
-    public function profileIndex(){
-        return view('admin.profile');
-    }
-
-    public function profileUpload(Request $req){
-        $data =  Auth::user();
-
-        return [$data];
-    }
-
-    public function avatarUpload(Request $req){
-
-        if(!$req->hasFile('file'))
-        return response()->json([
-            'error' => 'No File Uploaded'
-        ]);
-        
-        $file = $req->file('file');
-        if(!$file->isValid()){
-            return response()->json([
-                'error' => 'File is not valid!'
-            ]);
-        } else {
-            $filenamewithExt= $file->getClientOriginalName();
-            $filename = pathinfo($filenamewithExt,PATHINFO_FILENAME);
-            $extension = $file->guessClientExtension();
-            $fileNameToStore = $filename.'_'.time().'.'.$extension;
-            $path = $file->storeAs('public/uploads',$fileNameToStore); 
-            // return $path;
-            };
-
-            $user = Auth::user();
-            $path = Storage::delete('public/uploads'.$user->avatar);
-            $id = Auth::user()->id;
-            $user->avatar = $fileNameToStore;
-            // return $avatar;
-            $user->save();
-            return $user;
-
-
-
-
-    }
+    
 
     public function uploadIndex()
     {

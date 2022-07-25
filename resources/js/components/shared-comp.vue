@@ -2,9 +2,11 @@
     <div class="container"
         v-loading.fullscreen.lock="loading"
         :element-loading-text="loadText"
-        v-show="data.total > 0"
+        
     >
-        <el-card>
+        <el-card
+        
+            >
             <!-- <div style="margin: 20px 0;">
                 <el-radio-group v-model="selectedTag" @change="tagHandler">
                 <el-radio-button value="">#Бүгд</el-radio-button>
@@ -55,7 +57,7 @@
             </el-form>
             <el-divider></el-divider>
             <div class="text-right">
-                <i style="font-size: 0.8rem; margin: 0 1rem;">Нийт: {{ data.total }}</i>
+                <small class="grey">Нийт: {{ data.total }}</small>
             </div>   
             <el-table
             header-cell-class-name="my-header"
@@ -185,6 +187,7 @@
             </span>
         </el-dialog>
     </div>
+    
   
 </template>
 
@@ -244,6 +247,17 @@ export default {
                 .then((response) => {
                     this.data = response.data[0];
                     this.collectTags();
+                    if(response.data[0].total === 0){
+                        
+                        console.log('empty');
+                         
+                        this.$message({
+                        showClose: true,
+                        message: 'Хуваалцсан мэдээлэл олдсонгүй...',
+                        type: 'error'
+                        });
+                    
+                    }
                 })
                 .catch((error) => {
                     console.log(error.response);

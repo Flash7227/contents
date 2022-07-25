@@ -20,6 +20,11 @@ Route::group(['middleware' => 'auth', 'prefix' => '/user'], function(){
     Route::post('/shared/fetch', 'UsersController@sharedFetch');
     Route::post('/shared/fetchByTag', 'UsersController@fetchByTag');
     Route::post('/shared/fetchSearch', 'UsersController@fetchSearch');
+
+    //profile
+    Route::get('/profile', 'UsersController@profileIndex');
+    Route::get('/profile/upload', 'UsersController@profileUpload');
+    Route::post('/profile/avatar', 'UsersController@avatarUpload');
 });
 
 Route::group(['middleware' => 'admincheck', 'prefix' => '/admin'], function(){
@@ -27,11 +32,7 @@ Route::group(['middleware' => 'admincheck', 'prefix' => '/admin'], function(){
     Route::post('/user', 'AdminsController@userEdit');
     Route::get('/user/fetch', 'AdminsController@userFetch1');
     Route::post('/user/fetch', 'AdminsController@userFetch');
-    //profile
-    Route::get('/profile', 'AdminsController@profileIndex');
-    Route::get('/profile/upload', 'AdminsController@profileUpload');
-    //upload
-    Route::post('/profile/avatar', 'AdminsController@avatarUpload');
+    
 
     //uploads
     Route::get('/uploads', 'AdminsController@uploadIndex');

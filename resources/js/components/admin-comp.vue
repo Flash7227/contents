@@ -298,6 +298,8 @@ export default {
                                 }
                                 else if(extValue === 'mb'){
                                     var convertToByte = (temporaryNumberValue * 1048576); 
+                                }else if(!extValue){
+                                    var convertToByte = 0;
                                 }
 
                             } else {
@@ -306,6 +308,8 @@ export default {
                                 }
                                 else if(extValue === 'mb'){
                                     var convertToByte = (formNumberValue * 1048576); 
+                                }else if(!extValue){
+                                    var convertToByte = 0;
                                 }
                             }
                             this.form.storage_limit =  convertToByte;

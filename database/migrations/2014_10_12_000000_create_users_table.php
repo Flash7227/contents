@@ -22,6 +22,7 @@ class CreateUsersTable extends Migration
             $table->integer('role')->default(0);
             $table->json('permissions');
             $table->string('storage_limit')->default("0");
+            $table->string('avatar')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

@@ -198,7 +198,7 @@ class UsersController extends Controller
         // where('allowed', Auth()->user()->email)
         whereJsonContains('allowed', $email)
         // ->orWhereJsonContains('allowed','public')
-        ->paginate(10);
+        ->paginate(12);
         
         $tags = Uploads::whereJsonContains('allowed', $email)
         ->select('tags')

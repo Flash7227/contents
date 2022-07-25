@@ -6,11 +6,9 @@
         element-loading-text="Уншиж байна...">
         
         <el-card class="user-card">
-            <div slot="header">
-                <span >
+            <div slot="header" class="text-right">
               
-                <el-button  style="float: right;" plain type="success" icon="el-icon-circle-plus" @click="openDetail">Хэрэглэгч нэмэх</el-button>
-                </span>
+                <el-button plain type="success" icon="el-icon-circle-plus" @click="openDetail">Хэрэглэгч нэмэх</el-button>
             </div>
 
         <el-table
@@ -21,6 +19,7 @@
         
         header-cell-class-name="table-header">
             <el-table-column
+                type="email"
                 prop="email"
                 label="И-мэйл"
                 align="center" header-align="center"
@@ -44,7 +43,7 @@
 
             <el-table-column
                 prop="role"
-                label="Зэрэглэл"
+                label="Эрхийн түвшин"
                 width="200"
                 align="center" header-align="center">
                 <template slot-scope="scope">
@@ -79,8 +78,8 @@
 
         <pagination :data="list" @pagination-change-page="fetch" :limit="3" align="center" class="my-2"></pagination>
 
-        <el-dialog title="Хэрэглэгчийн мэдээлэл" :visible.sync="invisDetail">
-            <el-form :model="form" ref="formData" :rules="rules"  label-position="left" label-width="180px">
+        <el-dialog title="Хэрэглэгчийн мэдээлэл" :visible.sync="invisDetail" :before-close="handleClose" :destroy-on-close="true">
+            <el-form :model="form" ref="formData" :rules="rules"  label-position="left" label-width="180px" >
                 <el-row>
                     <el-col :span="12">
                         <el-form-item label="Нэр" prop="name">
@@ -88,27 +87,27 @@
                         </el-form-item>
                     </el-col>
                 </el-row>
-                    <el-row>
-                        <el-col :span="12">
-                            <el-form-item label="И-мэйл" prop="email">
-                                <el-input v-model="form.email" autocomplete="off"></el-input>
-                            </el-form-item>
-                        </el-col>
-                    </el-row>
+                <el-row>
+                    <el-col :span="12">
+                        <el-form-item label="И-мэйл" prop="email">
+                            <el-input v-model="form.email" autocomplete="off"></el-input>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
 
-                    <el-row>
-                        <el-col :span="12">
-                            <el-form-item label=" Үйлдлийн эрх" prop="permissions">
-                                <el-select v-model="form.permissions" multiple placeholder="сонгох">
-                                    <el-option v-for="permission in permissions" :key="permission" :label="permission" :value="permission"></el-option>
-                                </el-select>
-                            </el-form-item>
-                        </el-col>
-                    </el-row>
+                <el-row>
+                    <el-col :span="12">
+                        <el-form-item label=" Үйлдлийн эрх" prop="permissions">
+                            <el-select v-model="form.permissions" multiple placeholder="сонгох">
+                                <el-option v-for="permission in permissions" :key="permission" :label="permission" :value="permission"></el-option>
+                            </el-select>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
 
                 <el-row>
                      <el-col :span="12">
-                        <el-form-item label="Зэрэглэл" prop="role">
+                        <el-form-item label="Эрхийн түвшин" prop="role">
                             <el-select v-model="form.role" placeholder="сонгох">
                                 <el-option v-for="role in roles" :key="role.value" :label="role.label" :value="role.value"></el-option>
                             </el-select>
@@ -118,57 +117,54 @@
 
                 <el-row>
                      <el-col :span="12">
+                        <!------------- shineer user vvsgeh dialogiih   -------------->
+                        <el-form-item
+                        v-if="!!form.id"
+                         label="Файл хуулах хэмжээ">
+                            <div style="margin-bottom: 1em;">
+                                <el-select v-model="storage_limit_ext" placeholder="сонгох">
+                                    <el-option v-for="size in sizes" :key="size.value" :label="size.label" :value="size.value"></el-option>
+                                </el-select>
+                            </div>
+                            <div>
+                            <el-input  type="text" placeholder="оруулах файлын хэмжээг бичнэ үү..." v-model="temporary_storage_limit" clearable></el-input>
+                            <!-- <el-input  type="text" placeholder="formiiin inputttt" v-model="form.storage_limit"  clearable></el-input> -->
+                            </div>
+                        </el-form-item>
 
-                <el-form-item
-                v-if="!!form.id"
-                 label="Файл хуулах хэмжээ">
-                    <div style="margin-bottom: 1em;">
-                        <el-select v-model="storage_limit_ext" placeholder="сонгох">
-                        <el-option v-for="size in sizes" :key="size.value" :label="size.label" :value="size.value"></el-option>
-                    </el-select>
-                    </div>
-                    <div>
-
-                    <el-input  type="text" placeholder="файл оруулах хэмжээг бичих" v-model="temporary_storage_limit" clearable></el-input>
-                    <!-- <el-input  type="text" placeholder="formiiin inputttt" v-model="form.storage_limit"  clearable></el-input> -->
-                    </div>
-                </el-form-item>
-
-                <el-form-item
-                v-else
-                 label="Файл хуулах хэмжээ" prop="storage_limit">
-                    <div style="margin-bottom: 1em;">
-                        <el-select v-model="storage_limit_ext" placeholder="сонгох">
-                        <el-option v-for="size in sizes" :key="size.value" :label="size.label" :value="size.value"></el-option>
-                    </el-select>
-                    </div>
-                    <div>
-
-                    <!-- <el-input v-if="!!form.id" type="text" placeholder="файл оруулах хэмжээг бичих" v-model="temporary_storage_limit" clearable></el-input> -->
-                    <el-input type="text" placeholder="formiiin inputttt" v-model="form.storage_limit"  clearable></el-input>
-                    </div>
-                </el-form-item>
-
-
-                </el-col>
+                        <el-form-item
+                        v-else
+                         label="Файл хуулах хэмжээ" prop="storage_limit">
+                            <div style="margin-bottom: 1em;">
+                                <el-select v-model="storage_limit_ext" placeholder="сонгох">
+                                    <el-option v-for="size in sizes" :key="size.value" :label="size.label" :value="size.value"></el-option>
+                                </el-select>
+                            </div>
+                            <div>
+                            
+                            <!-- < v-if="!!form.id" type="text" placeholder="файл оруулах хэмжээг бичих" v-model="temporary_storage_limit" clearable></     el-input> -->
+                            <el-input type="text" placeholder="оруулах файлын хэмжээг бичнэ үү..." v-model="form.storage_limit"  clearable></el-input>
+                            </div>
+                        </el-form-item>
+                    </el-col>
                 </el-row>
                 <el-row>
                      <el-col :span="12">
-                <el-form-item 
-                label="Нууц үг" prop="password">
-                    <el-input type="password" v-model="form.password" autocomplete="off" placeholder="Нууц үг шинээр оруулах" show-password></el-input>
-                </el-form-item>
+                        <el-form-item 
+                        label="Нууц үг" prop="password">
+                            <el-input type="password" v-model="form.password" autocomplete="off" placeholder="Нууц үг шинээр оруулах" show-password pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" required></el-input>
+                        </el-form-item>
                      </el-col>
                 </el-row>
                 <el-row>
                      <el-col :span="12">
-                <el-form-item>
-                    <el-button class="float-right" type="primary" @click="submitForm('formData')">
-                        <span v-if="form.id"><i class="el-icon-circle-check"></i> Засах</span>
-                        <span v-else><i class="el-icon-circle-check"></i> Нэмэх</span>
-                    </el-button>
-                    <el-button class="float-right mr-2" @click="cancelDetail()"><i class="el-icon-remove-outline"></i> Хаах</el-button>
-                </el-form-item>
+                        <el-form-item>
+                            <el-button class="float-right" type="primary" @click="submitForm('formData')">
+                                <span v-if="form.id"><i class="el-icon-circle-check"></i> Засах</span>
+                                <span v-else><i class="el-icon-circle-check"></i> Нэмэх</span>
+                            </el-button>
+                            <el-button class="float-right mr-2" @click="cancelDetail()"><i class="el-icon-remove-outline"></i> Хаах</el-button>
+                        </el-form-item>
                      </el-col>
                 </el-row>
             </el-form>
@@ -200,7 +196,7 @@ export default {
                         { required: true, message: 'Заавал бөглөх', trigger: 'blur' }
                     ],
                     email: [
-                        { required: true, message: 'Заавал бөглөх', trigger: 'blur' }
+                        { required: true, type: 'email', message: 'И-мэйл хаяг оруулна уу', trigger: 'blur' }
                     ],
                     permissions: [
                         { required: true, message: 'Заавал бөглөх', trigger: 'blur' }
@@ -210,7 +206,8 @@ export default {
                     ],
                     storage_limit: [
                         { required: true, message: 'Заавал бөглөх', trigger: 'blur' }
-                    ]
+                    ],
+                    
             },
 
             roles:[
@@ -272,6 +269,7 @@ export default {
                     this.form.email = data.email;
                     this.form.role = data.role;
                     this.form.permissions = data.permissions;
+                    // this.storage_limit = '';
                     this.temporary_storage_limit = this.temporaryStorageLimitValue(data.storage_limit);
                     this.invisDetail = true;
                 }else{
@@ -292,7 +290,8 @@ export default {
                             var extValue = this.storage_limit_ext;
                             var formNumberValue = this.form.storage_limit;
                             var temporaryNumberValue = this.temporary_storage_limit;
-                            if(temporaryNumberValue){
+
+                            if(this.form.id){
 
                                 if(extValue === 'gb'){
                                     var convertToByte = (temporaryNumberValue * 1073741824); 
@@ -300,6 +299,7 @@ export default {
                                 else if(extValue === 'mb'){
                                     var convertToByte = (temporaryNumberValue * 1048576); 
                                 }
+
                             } else {
                                 if(extValue === 'gb'){
                                     var convertToByte = (formNumberValue * 1073741824); 
@@ -308,8 +308,8 @@ export default {
                                     var convertToByte = (formNumberValue * 1048576); 
                                 }
                             }
-                            
                             this.form.storage_limit =  convertToByte;
+                            
                             console.log(convertToByte);
                             this.loading = true;
                             axios.post("/admin/user", {form: this.form})
@@ -355,7 +355,9 @@ export default {
         },
 
         cancelDetail(){
+                this.temporary_storage_limit = "";
                 this.storage_limit_ext = "";
+                this.form.id = "";
                 this.form.name = "";
                 this.form.email = "";
                 this.form.role = "";
@@ -435,19 +437,20 @@ export default {
         temporaryStorageLimitValue(value) {
             if (value == 0) return "0";
             if(value > 0){
-                var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+                var sizes = ['Bytes', 'kb', 'mb', 'gb', 'tb'];
                 var sizes2 = Math.round(value / Math.pow(1024, i), 2) + '' + sizes[i];
-                var i = parseInt(Math.floor(Math.log(value) / Math.log(1024)));
-                var answer = Math.round(value / Math.pow(1024, i), 2) + '' + sizes[i];
+                var i = Math.floor( Math.log(value) / Math.log(1024) );
+                var answer = ( value / Math.pow(1024, i) ).toFixed(2) * 1 + '' + sizes[i];
                 var inNumber = answer.slice(0, -2);
                 var ext = answer.substr(answer.length - 2);
-                console.log(ext, inNumber);
+                // console.log(ext, inNumber);
                 this.storage_limit_ext = ext;
 
-
                 return inNumber;
+            }if(value == 0){
+                return value = '0';
             }else {
-                return value;
+                return value = value;
             }
         },
 
@@ -460,11 +463,21 @@ export default {
             }else if(value === 0){
                 return value = 'Энгийн хэрэглэгч';
             }else if(value === 2){
-                return value == 'Дотоод ажилтан';
+                return value = 'Дотоод ажилтан';
             }else{
                 return value === 'Хоосон'
             }
         },
+
+         handleClose(done) {
+            console.log(done);
+            this.$confirm('Үйлдлийг цуцлах уу?')
+            .then(_ => {
+                this.cancelDetail();
+                done();
+            })
+            .catch(_ => {});
+        }
 
     },
     

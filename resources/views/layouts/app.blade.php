@@ -25,7 +25,7 @@
     <link href="/include/main.css" rel="stylesheet">
 </head>
 <body>
-    <div id="app" class="app">
+    <div id="app" >
         @include('layouts.inc.navbar')
         <main>
             @yield('content')

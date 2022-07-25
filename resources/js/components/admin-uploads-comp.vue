@@ -5,7 +5,7 @@
         element-loading-text="Уншиж байна..."
     >
     <el-card class="mt-2">
-            <p class="text-left">Хэрэглэгчидийн хуулсан файлууд</p>
+            <p class="text-left">Хуулсан файлын жагсаалт</p>
             <div class="text-right">
                 <small class="grey">Нийт: {{uploads.total}}ш / Хэмжээ: {{readableSize(dataused)}}</small>
             </div>

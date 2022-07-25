@@ -49,11 +49,12 @@
               <div class="readIcon" v-if="niitlel.url=='noimage123.png'">
                 <i class="el-icon-reading"></i>
               </div>
-              <div v-else>
-                <img 
-                  class="image"
-                  :src="niitlel.download"
-                  :preview-src-list="[niitlel.download]"/>
+              <div class="demo-image__preview" v-else >
+                <el-image 
+                  style="width: 100%; height: 200px"
+                  :src="niitlel.download" 
+                  :preview-src-list=[niitlel.download]>
+                </el-image>
               </div>
               <div style="padding: 14px;">
                 <p class="overme">{{niitlel.name}}</p>
@@ -220,6 +221,9 @@
   
   .clearfix:after {
     clear: both
+  }
+  .el-image{
+    display: block;
   }
   .image {
     width: 100%;

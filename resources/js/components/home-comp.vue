@@ -7,12 +7,19 @@
             <div>
               <el-carousel :interval="4000" type="card">
                   <el-carousel-item v-for="(poster, index) in posters" :key="'b'+index" >
-                    <img
+                    <!-- <img class="demo-image__preview"
                     width="100%"
                     height="100%"
                     :src="poster.download"
                     :preview-src-list="[poster.download]"
-                  />
+                    /> -->
+                    <div class="demo-image__preview">
+                      <el-image 
+                        style="width: 100%; height: 300px"
+                        :src="poster.download" 
+                        :preview-src-list=[poster.download]>
+                      </el-image>
+                    </div>
                   </el-carousel-item>
               </el-carousel>
             </div>
@@ -37,11 +44,12 @@
               <div class="readIcon" v-if="niitlel.url=='noimage123.png'">
                 <i class="el-icon-reading"></i>
               </div>
-              <div v-else>
-                <img 
-                  class="image"
-                  :src="niitlel.download"
-                  :preview-src-list="[niitlel.download]"/>
+              <div class="demo-image__preview" v-else >
+                <el-image 
+                  style="width: 100%; height: 200px"
+                  :src="niitlel.download" 
+                  :preview-src-list=[niitlel.download]>
+                </el-image>
               </div>
               <div style="padding: 14px;">
                 <p class="overme">{{niitlel.name}}</p>
@@ -283,8 +291,7 @@ import Media from "@dongido/vue-viaudio";
     font-size: 14px;
     opacity: 0.75;
     line-height: 400px;
-    /* width: 540px;
-    height: 400px; */
+    display: block;
     margin: 0;
   }
   /* .el-carousel__item:nth-child(2n+1) {
@@ -315,6 +322,9 @@ import Media from "@dongido/vue-viaudio";
   
   .clearfix:after {
       clear: both
+  }
+  .el-image{
+    display: block;
   }
   .image {
     width: 100%;

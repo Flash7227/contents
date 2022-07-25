@@ -4,8 +4,46 @@
         v-loading.fullscreen.lock="loading"
         element-loading-text="Уншиж байна..."
     >
-    <el-card class="mt-2">
+    <el-card class="mt-2 mb-4">
             <p class="text-left">Хуулсан файлын жагсаалт</p>
+            <el-form :inline="true">
+                <el-form-item label="Төрөл" prop="type">
+                    <el-select v-model="form.type" placeholder="Сонгох" clearable>
+                        <el-option
+                            v-for="item in options"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value"
+                        >
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+                  <el-form-item label="Хэрэглэгчийн имайл" prop="allowed">
+                    <el-select
+                        v-model="form.email"
+                        filterable
+                        remote
+                        reserve-keyword
+                        placeholder="Имайл"
+                        :remote-method="remoteMethod"
+                        :loading="loading"
+                        allow-create
+                        default-first-option
+                        clearable
+                    >
+                        <el-option
+                            v-for="(item, index) in emails"
+                            :key="index"
+                            :label="item"
+                            :value="item"
+                        >
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item>
+                    <el-button icon="el-icon-search" type="primary" @click="fetch">Хайх</el-button>
+                </el-form-item>
+            </el-form>
             <div class="text-right">
                 <small class="grey">Нийт: {{uploads.total}}ш / Хэмжээ: {{readableSize(dataused)}}</small>
             </div>
@@ -25,10 +63,10 @@
                     header-align="center"
                 >
                     <template slot-scope="scope">
-                        <i v-if="scope.row.type == 1" class="el-icon-document"></i>
-                        <i v-else-if="scope.row.type == 2" class="el-icon-video-camera-solid blue"></i>
-                        <i v-else-if="scope.row.type == 3" class="el-icon-picture green"></i>
-                        <i v-else-if="scope.row.type == 4" class="el-icon-reading yellow"></i>
+                        <i v-if="scope.row.type == 1" class="el-icon-document indicator-icon"></i>
+                        <i v-else-if="scope.row.type == 2" class="el-icon-video-camera-solid blue indicator-icon"></i>
+                        <i v-else-if="scope.row.type == 3" class="el-icon-picture green indicator-icon"></i>
+                        <i v-else-if="scope.row.type == 4" class="el-icon-reading yellow indicator-icon"></i>
                         <span class="ml-1">{{ typeName(scope.row.type) }}</span>
                     </template>
                 </el-table-column>
@@ -124,15 +162,14 @@
                     </template>
                 </el-table-column>
             </el-table>
+            <pagination
+                :data="uploads"
+                @pagination-change-page="fetch"
+                :limit="3"
+                align="center"
+                class="my-2"
+            ></pagination>
         </el-card>
-        <pagination
-            :data="uploads"
-            @pagination-change-page="fetch"
-            :limit="3"
-            align="center"
-            class="my-2"
-        ></pagination>
-
      <el-dialog
             title="Дэлгэрэнгүй"
             :visible.sync="dialogVisible"
@@ -224,13 +261,18 @@ export default {
                 sharetype:"",
                 user:{}
             },
+            form:{
+                email:"",
+                type:""
+            },
+            emails:[]
         };
     },
     methods: {
         fetch(page = 1) {
             this.loading = true;
             axios
-                .post("/admin/uploads/fetch?page=" + page)
+                .post("/admin/uploads/fetch?page=" + page, {form:this.form})
                 .then((response) => {
                     this.loading = false;
                     this.uploads = response.data[0];
@@ -313,7 +355,7 @@ export default {
         },
         tableHeaderColor({ row, column, rowIndex, columnIndex }) {
             if (rowIndex === 0) {
-                return 'background-color:grey; color:white; text-transform:uppercase; letter-spacing:1px; font-weight:700; text-align:center; font-size:0.8em; padding: 1em 0;' 
+                return 'background-color:#3897e4; color:white; text-transform:uppercase; letter-spacing:1px; font-weight:700; text-align:center; font-size:0.8em; padding: 1em 0;' 
             }
         },
         tableRowClassName({row, rowIndex}) {
@@ -365,10 +407,32 @@ export default {
         handleClose(){
             this.dialogVisible = false;         
         },
+        remoteMethod(query) {
+            if (query !== "") {
+                // this.loading = true;
+                setTimeout(() => {
+                    // this.loading = false;
+                    this.emails = JSON.parse(this.states).filter((item) => {
+                        return (
+                            item.toLowerCase().indexOf(query.toLowerCase()) > -1
+                        );
+                    });
+                }, 100);
+            } else {
+                this.emails = [];
+            }
+        },
     },
     created() {
         this.fetch();
     },
-    // props:['permissions']
+    props: {
+        csrf: {
+            type: String,
+        },
+        states: {
+            type: String,
+        }
+    },
 };
 </script>

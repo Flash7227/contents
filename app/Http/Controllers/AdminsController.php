@@ -78,11 +78,24 @@ class AdminsController extends Controller
 
     public function uploadIndex()
     {
-        return view('admin.uploads');
+        $emails = User::select('email')->get()->pluck('email');
+        return view('admin.uploads', ['emails'=>$emails]);
     }
     public function uploadFetch(Request $req)
     {
-        $upload = Uploads::with('user')->orderBy('created_at', 'DESC')->paginate(15);
+        $upload = Uploads::query();
+        if($req->form['email']){
+            $user = User::where('email', $req->form['email'])->first();
+            if($user){
+                $upload->where('user_id', $user->id);
+            }else{
+                $upload->where('user_id', 0);
+            }
+        };
+        if($req->form['type']){
+            $upload->where('type', $req->form['type']);
+        };
+        $upload = $upload->with('user')->orderBy('created_at', 'DESC')->paginate(15);
         $storage = Uploads::sum('size');
         return [$upload,$storage];
     }

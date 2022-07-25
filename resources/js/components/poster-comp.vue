@@ -43,6 +43,7 @@
                             </el-form>
                             <p style="text-align:left">Нийт: {{ postersData.total }}</p>
                             <el-table
+                            header-cell-class-name="my-header"
                             style="text-align: center; width: 100%"
                             class="card"
                             :data="postersData.data"

@@ -37,7 +37,7 @@ class HomeController extends Controller
         $files = Uploads::where('sharetype', "public")->where('type', '1')->orderBy('created_at', 'DESC')->limit(3)->get();
         $videos = Uploads::where('sharetype', "public")->where('type', '2')->orderBy('created_at', 'DESC')->limit(3)->get();
         $posters = Uploads::where('sharetype', "public")->where('type', '3')->orderBy('created_at', 'DESC')->limit(3)->get();
-        $niitlels = Uploads::where('sharetype', "public")->where('type', '4')->orderBy('created_at', 'DESC')->limit(4)->get();
+        $niitlels = Uploads::where('sharetype', "public")->where('type', '4')->orderBy('created_at', 'DESC')->limit(3)->get();
         return [$files, $videos, $posters, $niitlels];
     }
     /// niitlel
@@ -108,7 +108,7 @@ class HomeController extends Controller
     }
     public function videoFetch()
     {
-        $getvideo = Uploads::where('sharetype', "public")->where('type', '2')->orderBy('created_at', 'DESC')->paginate(6);
+        $getvideo = Uploads::where('sharetype', "public")->where('type', '2')->orderBy('created_at', 'DESC')->paginate(9);
         return $getvideo;
     }
     public function videoSearch(Request $req){

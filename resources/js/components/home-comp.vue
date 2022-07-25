@@ -2,17 +2,21 @@
 <div class="container">
   <el-container>
       <el-main>
-        <el-row :gutter="20" style="text-align:center">
-          <el-col :span="24">
-            <el-carousel :interval="4000" type="card" height="400px">
-                <el-carousel-item v-for="(poster, item) in posters" :key="item">
-                  <el-image 
+        <div class="row" style="text-align: center;">
+          <div class="col-lg-12 col-md-12 col-sm-12 rowspace">
+            <div>
+              <el-carousel :interval="4000" type="card">
+                  <el-carousel-item v-for="(poster, item) in posters" :key="item">
+                    <img
+                    width="100%"
+                    height="100%"
                     :src="poster.download"
-                    :preview-src-list="[poster.download]">
-                  </el-image>
-                </el-carousel-item>
-            </el-carousel>
-            <div style="text-align: center">
+                    :preview-src-list="[poster.download]"
+                  />
+                  </el-carousel-item>
+              </el-carousel>
+            </div>
+            <div>
               <el-badge is-dot class="item" type="warning">
                 <el-button onclick="location.href='/home/video'" size="small">Бичлэг</el-button>
               </el-badge>
@@ -26,15 +30,18 @@
                 <el-button onclick="location.href='/home/file'" size="small">Файл</el-button>
               </el-badge>
             </div>
-            
-          </el-col>
-        </el-row>
-        <!-- Нийтлэл -->
-        <el-row>
-          <el-col :span="6" v-for="(niitlel, index) in niitlels" :key="index">
+          </div>
+          <!-- Нийтлэл -->
+          <div class="col-lg-4 col-md-4 col-sm-4 rowspace" v-for="(niitlel, index) in niitlels" :key="index">
             <el-card :body-style="{ padding: '0px' }" >
-              <div class="icon">
+              <div class="readIcon" v-if="niitlel.url=='noimage123.png'">
                 <i class="el-icon-reading"></i>
+              </div>
+              <div v-else>
+                <img 
+                  class="image"
+                  :src="niitlel.download"
+                  :preview-src-list="[niitlel.download]"/>
               </div>
               <div style="padding: 14px;">
                 <p class="overme">{{niitlel.name}}</p>
@@ -52,12 +59,9 @@
                 </div>
               </div>
             </el-card>
-          </el-col>
-        </el-row>
-        
-        <!-- Бичлэг -->
-        <el-row :gutter="20">
-          <el-col :span="8" v-for="(video, index) in videos" :key="index">
+          </div>
+          <!-- Бичлэг -->
+          <div class="col-lg-4 col-md-4 col-sm-4 rowspace" v-for="(video, index) in videos" :key="index">
             <Media
               style="width: 300px; height: 200px;"
               :kind="'video'"
@@ -77,15 +81,15 @@
                 <time class="time">{{ dateformatter(video.created_at) }}</time>
               </div>
             </div>
-          </el-col>
-        </el-row>
-        <el-row :glutter="20">
-          <!-- Постер -->
-          <el-col :span="14">
+          </div>
+          <div class="col-lg-6 col-md-6 col-sm-6 rowspace">
+            <!-- Постер -->
             <el-card class="box-card">
               <div>
                 <div slot="header" class="clearfix">
-                  <span style="float: right;"> <i class="el-icon-picture-outline"></i>Постер</span>
+                  <el-button onclick="location.href='/home/poster'" size="small" style="float: right;">
+                    <i class="el-icon-picture-outline"></i>Постер
+                  </el-button>
                 </div>
                 <el-table
                   :data="posters"
@@ -93,16 +97,14 @@
                   <el-table-column 
                   type="expand">
                     <template slot-scope="scope">
-                        <p> URL: {{ scope.row.url }}</p>
-                        <p> Татах:
-                          <el-button
-                            size="small"
-                            type="success"
-                            round
-                            @click="handleDownload(scope.row.url, scope.row.download)"><i class="el-icon-download"></i>
-                          </el-button>
-                        </p>
-                      
+                      <p> Татах:
+                        <el-button
+                          size="small"
+                          type="success"
+                          round
+                          @click="handleDownload(scope.row.url, scope.row.download)"><i class="el-icon-download"></i>
+                        </el-button>
+                      </p>
                     </template>
                   </el-table-column>
                   <el-table-column
@@ -121,20 +123,21 @@
                 </el-table>
               </div>
             </el-card>
-          </el-col>
+          </div>
           <!-- Файл -->
-          <el-col :span="10">
-          <el-card class="box-card">
+          <div class="col-lg-6 col-md-6 col-sm-6 rowspace">
+            <el-card class="box-card">
             <div>
               <div slot="header" class="clearfix">
-                  <span style="float: right;"> <i class="el-icon-document"></i>Файл</span>
+                <el-button onclick="location.href='/home/file'" size="small" style="float: right;">
+                  <i class="el-icon-document"></i>Файл
+                </el-button>
                 </div>
               <el-table
                 :data="files"
                 style="width: 100%">
                 <el-table-column type="expand">
                   <template slot-scope="scope">
-                      <p> URL: {{ scope.row.url }}</p>
                       <p> Татах:
                         <el-button
                           size="small"
@@ -172,9 +175,8 @@
                 <el-button @click="centerDialogVisible = false">Хаах</el-button>
               </span>
             </el-dialog>
-
-          </el-col>
-        </el-row>
+          </div>
+        </div>
     </el-main>
   </el-container>
   </div>
@@ -280,12 +282,14 @@ import Media from "@dongido/vue-viaudio";
   .el-carousel__item h3 {
     font-size: 14px;
     opacity: 0.75;
-    line-height: 200px;
+    line-height: 400px;
+    /* width: 540px;
+    height: 400px; */
     margin: 0;
   }
-  .el-carousel__item:nth-child(2n+1) {
+  /* .el-carousel__item:nth-child(2n+1) {
     background-color: #d3dce6;
-  }
+  } */
   
   .time {
     font-size: 13px;
@@ -312,14 +316,22 @@ import Media from "@dongido/vue-viaudio";
   .clearfix:after {
       clear: both
   }
-  .icon{
+  .image {
     width: 100%;
+    height: 200px;
+    display: block;
+  }
+  .readIcon{
+    width: 100%;
+    height: 200px;
     background-color: #0B5394;
-   text-align: center; 
-   font-size: 8em; 
-   color: #FF9900 
+    text-align: center; 
+    font-size: 8em; 
+    color: #FF9900 
+  }
 
-
+  .rowspace{
+    padding: 10px;
   }
   
 </style>

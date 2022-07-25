@@ -2,8 +2,11 @@
 <div class="container">
   <el-container style="text-align:center">
       <el-main>
-        <el-row :gutter="20">
-          <el-col :span="24">
+        <div class="row">
+          <div class="col-lg-12 col-md-12 col-sm-12 rowspace">
+            <el-badge is-dot class="item" type="success">
+              <el-button onclick="location.href='/home'" size="small">Нүүр</el-button>
+            </el-badge>
             <el-badge is-dot class="item" type="warning">
               <el-button onclick="location.href='/home/video'" size="small">Бичлэг</el-button>
             </el-badge>
@@ -16,12 +19,9 @@
             <el-badge is-dot class="item" type="primary">
               <el-button onclick="location.href='/home/file'" size="small">Файл</el-button>
             </el-badge>
-          </el-col>
-        </el-row>
-        <!-- Бичлэг -->
-        <el-card shadow="always">
-          <el-row :gutter="20">
-            <el-form :inline="true" label-width="90px">
+          </div>
+          <div class="col-lg-12 col-md-12 col-sm-12">
+            <el-form :inline="true">
               <el-form-item label="нэр">
                   <div class="block">
                   <el-input v-model="search.name" placeholder="нэрээр хайх"></el-input>
@@ -43,36 +43,39 @@
               </el-form-item>
             </el-form>
             <p style="text-align:left">Нийт: {{ videoData.total }}</p>
-            <el-col :span="8" v-for="(video, index) in videoData.data" :key="index">
-              <Media
-                style="width: 300px; height: 200px;"
-                :kind="'video'"
-                :isMuted="false"
-                :src="video.download"
-                :autoplay="false"
-                :controls="true"
-                :loop="true"
-                @pause="handle"
-                :ref="'video_player'"
-                width="auto"
-                class="example"
-              ></Media>
-              <div style="padding: 1px;">
-                <span style="text-align: left;">{{video.name}}</span>
-                <div class="bottom clearfix">
-                  <time class="time">{{ dateformatter(video.created_at) }}</time>
-                </div>
+          </div>
+           <!-- Бичлэг -->
+
+          <div class="col-lg-4 col-md-4 col-sm-4 rowspace" v-for="(video, index) in videoData.data" :key="index">
+            <Media
+              style="width: 300px; height: 200px;"
+              :kind="'video'"
+              :isMuted="false"
+              :src="video.download"
+              :autoplay="false"
+              :controls="true"
+              :loop="true"
+              @pause="handle"
+              :ref="'video_player'"
+              width="auto"
+              class="example"
+            ></Media>
+            <div style="padding: 1px;">
+              <span style="text-align: left;">{{video.name}}</span>
+              <div class="bottom clearfix">
+                <time class="time">{{ dateformatter(video.created_at) }}</time>
               </div>
-            </el-col>
-          </el-row>
-        </el-card>
+            </div>
+          </div>
+          
+        </div>  
         <pagination
-          :data="videoData"
-          @pagination-change-page="getvideoData"
-          :limit="3"
-          align="center"
-          class="my-2"
-        ></pagination>
+            :data="videoData"
+            @pagination-change-page="getvideoData"
+            :limit="3"
+            align="center"
+            class="my-2"
+          ></pagination>
     </el-main>
   </el-container>
   </div>
@@ -187,6 +190,10 @@ export default {
   .row-bg {
     padding: 10px 0;
     background-color: #f9fafc;
+  }
+  .rowspace{
+    padding: 10px;
+    margin-top: 20px
   }
 
 </style>

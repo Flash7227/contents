@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 
 Auth::routes();
 
-Route::get('/', 'HomeController@welcome');
+Route::get('/', 'HomeController@homecompIndex');
 
 
 //Tseverhen ajiltsgaay
@@ -39,7 +39,7 @@ Route::group(['middleware' => 'auth', 'prefix' => '/admin'], function(){
     Route::post('/uploads/modify', 'AdminsController@uploadModify');
 });
 
-Route::group(['middleware' => 'auth', 'prefix' => '/home'], function(){
+Route::group([ 'prefix' => '/home'], function(){
     Route::get('/', 'HomeController@homecompIndex');
     Route::get('/getupload', 'HomeController@uploadData');
     Route::get('/niitlel', 'HomeController@niitlelcompIndex');

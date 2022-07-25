@@ -2,6 +2,7 @@
     <div class="container"
         v-loading.fullscreen.lock="loading"
         :element-loading-text="loadText"
+        v-show="data.total > 0"
     >
         <el-card>
             <!-- <div style="margin: 20px 0;">
@@ -20,7 +21,7 @@
               </el-form-item>
               <el-form-item label="Төрөл">
                 <div class="block">
-                    <el-select v-model="search.type" placeholder="Select" clearable>
+                    <el-select v-model="search.type" placeholder="төрөл сонгох" clearable>
                         <el-option
                         v-for="fileType in fileTypes"
                         :key="fileType.value"
@@ -78,10 +79,10 @@
                 <template slot-scope="scope">
                    
                     <div slot="reference" class="name-wrapper">
-                        <span v-if="scope.row.type === 1" size="medium">Файл</span>
-                        <span v-if="scope.row.type === 2" size="medium">Видео</span>
-                        <span v-if="scope.row.type === 3" size="medium">Зураг</span>
-                        <span v-if="scope.row.type === 4" size="medium">Нийтлэл</span>
+                        <span v-if="scope.row.type === 1" size="medium"><i class="el-icon-document mr-1"></i>Файл</span>
+                        <span v-else-if="scope.row.type === 2" size="medium"><i class="el-icon-video-camera-solid blue mr-1"></i>Видео</span>
+                        <span v-else-if="scope.row.type === 3" size="medium"><i class="el-icon-picture green mr-1"></i>Зураг</span>
+                        <span v-else-if="scope.row.type === 4" size="medium"><i class="el-icon-reading yellow mr-1"></i>Нийтлэл</span>
                     </div>
                 </template>
                 </el-table-column>
@@ -101,7 +102,7 @@
                 >
                 <template slot-scope="scope">
                     <el-tag
-                    type="primary"
+                    type="info"
                     class="mr-1 mb-1"
                     v-for="(tag, index) in JSON.parse(scope.row.tags)"
                      :key="index"
@@ -272,6 +273,7 @@ export default {
                         message: error.response.data.message,
                     });
                 });
+                
 
         },
 

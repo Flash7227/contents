@@ -44,7 +44,7 @@
             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
               @if(Auth()->user()->role === 1)
               <a class="dropdown-item" href="/admin/user">Хэрэглэгчид</a>
-              <a class="dropdown-item" href="/admin/uploads">Хяналт</a>
+              <a class="dropdown-item" href="/admin/uploads">Хэрэглэгчдийн хуулсан файл</a>
               @endif
               @if(Auth()->user()->role === 0 || Auth()->user()->role === 2 || Auth()->user()->role === 1)
               <a class="dropdown-item" href="/admin/profile">Миний хаяг</a>

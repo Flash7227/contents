@@ -14,14 +14,14 @@
                         <el-descriptions class="margin-top" title="" :column="1" border>
                         <el-descriptions-item>
                         <template slot="label">
-                        <i class="el-icon-user"></i>
+                        <i class="el-icon-s-custom"></i>
                         Нэр
                         </template>
                         {{ this.info.name }}
                         </el-descriptions-item>
                         <el-descriptions-item>
                             <template slot="label">
-                            <i class="el-icon-files"></i>
+                            <i class="el-icon-s-management"></i> Зэрэглэл
                             </template>
                             {{ roleValue(this.info.role) }}
                             
@@ -29,29 +29,29 @@
                         
                         <el-descriptions-item>
                             <template slot="label">
-                            <i class="el-icon-notebook-2"></i>
+                            <i class="el-icon-s-cooperation"></i> 
                             И-мэйл
                             </template>
                             {{ this.info.email }}
                         </el-descriptions-item>
                         <el-descriptions-item>
                             <template slot="label">
-                            <i class="el-icon-notebook-2"></i>
-                            Үйлдэлийн эрх
+                            <i class="el-icon-s-check"></i>
+                             Үйлдэлийн эрх
                             </template>
                             {{ permissionsValue(this.info.permissions) }}
                         </el-descriptions-item>
                         <el-descriptions-item>
                             <template slot="label">
-                            <i class="el-icon-notebook-2"></i>
-                            Ашиглах боломтой дата хэмжээ
+                            <i class="el-icon-s-data"></i>
+                             Ашиглах боломжтой дата хэмжээ
                             </template>
                             {{ storageLimitValue(this.info.storage_limit) }}
                         </el-descriptions-item>
                         <el-descriptions-item>
                             <template slot="label">
                             <i class="el-icon-date"></i>
-                            Үүсгэсэн огноо
+                             Үүсгэсэн огноо
                             </template>
                             {{ dateformatter(this.info.created_at) }}
                         </el-descriptions-item>
@@ -62,7 +62,7 @@
                                 style="margin-top:12px;"
                                 
                                 plain
-                                @click="imageModal()">зураг солих</el-button>
+                                @click="imageModal()"> зураг солих</el-button>
                     </el-card>
 
                 </div>
@@ -177,7 +177,7 @@
                 // console.log(short, '---');
                 return moment(date).format("YYYY-MM-DD");
             } else {
-                return moment(date).format("YYYY-MM-DD HH:mm");
+                return moment(date).format("YYYY-MM-DD");
             }
         },
 
@@ -249,7 +249,7 @@
         },
 
         roleValue(value){
-             
+             console.log(value);
             if(value === null){
                 return value = 'null';
             }else if(value === 1){

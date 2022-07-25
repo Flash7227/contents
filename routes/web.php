@@ -22,7 +22,7 @@ Route::group(['middleware' => 'auth', 'prefix' => '/user'], function(){
     Route::post('/shared/fetchSearch', 'UsersController@fetchSearch');
 });
 
-Route::group(['middleware' => 'auth', 'prefix' => '/admin'], function(){
+Route::group(['middleware' => 'admincheck', 'prefix' => '/admin'], function(){
     Route::get('/user', 'AdminsController@userIndex');
     Route::post('/user', 'AdminsController@userEdit');
     Route::get('/user/fetch', 'AdminsController@userFetch1');

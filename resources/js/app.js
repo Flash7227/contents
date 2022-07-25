@@ -38,7 +38,7 @@ Vue.component('poster-comp', require('./components/poster-comp.vue').default);
 Vue.component('video-comp', require('./components/video-comp.vue').default);
 Vue.component('file-comp', require('./components/file-comp.vue').default);
 
-
+Vue.component('breadcrumb', require('./components/breadcrumb.vue').default);
 Vue.component('example-component', require('./components/ExampleComponent.vue').default);
 //frame
 const app = new Vue({

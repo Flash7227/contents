@@ -170,10 +170,10 @@
                     header-align="center"
                 >
                     <template slot-scope="scope">
-                        <i v-if="scope.row.type == 1" class="el-icon-document"></i>
-                        <i v-else-if="scope.row.type == 2" class="el-icon-video-camera-solid blue"></i>
-                        <i v-else-if="scope.row.type == 3" class="el-icon-picture green"></i>
-                        <i v-else-if="scope.row.type == 4" class="el-icon-reading yellow"></i>
+                        <i v-if="scope.row.type == 1" class="el-icon-document indicator-icon"></i>
+                        <i v-else-if="scope.row.type == 2" class="el-icon-video-camera-solid blue indicator-icon"></i>
+                        <i v-else-if="scope.row.type == 3" class="el-icon-picture green indicator-icon"></i>
+                        <i v-else-if="scope.row.type == 4" class="el-icon-reading yellow indicator-icon"></i>
                         <span class="ml-1">{{ typeName(scope.row.type) }}</span>
                     </template>
                 </el-table-column>
@@ -680,16 +680,24 @@ export default {
             // console.log(event);
             this.loadText = "Уншиж байна..." + Math.floor(event.percent) + "%";
         },
-        handleSuccess() {
+        handleSuccess(response) {
+            console.log(response);
             this.loading = false;
             this.loadText = "Уншиж байна...";
             this.resetForm();
-            this.$message({
-                message: "Successful",
-                type: "success",
-                duration: 3000,
-            });
-            this.fetch();
+            if(response == 'success'){
+                this.$message({
+                    message: "Successful",
+                    type: "success",
+                    duration: 3000,
+                });
+                this.fetch();
+            }else{
+                this.$notify.error({
+                    title: "Error",
+                    message: response
+                });
+            }
         },
         handleError() {
             this.loading = false;
@@ -941,7 +949,7 @@ export default {
         },
         tableHeaderColor({ row, column, rowIndex, columnIndex }) {
             if (rowIndex === 0) {
-                return 'background-color:#82b4ed; color:white; text-transform:uppercase; letter-spacing:1px; font-weight:700; text-align:center; font-size:0.8em; padding: 1em 0;' 
+                return 'background-color:#3897e4; color:white; text-transform:uppercase; letter-spacing:1px; font-weight:700; text-align:center; font-size:0.8em; padding: 1em 0;' 
             }
         },
         customProgressFormat(percent){
@@ -1056,5 +1064,8 @@ export default {
     }
     .el-table .file-row{
         background: #409EFF;
+    }
+    .indicator-icon{
+        font-size: 1.7em !important;
     }
 </style>

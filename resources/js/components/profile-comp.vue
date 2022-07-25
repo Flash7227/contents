@@ -84,7 +84,7 @@
                 <el-form-item>
                 <el-upload
                 ref="upload"
-                action="/admin/profile/avatar"
+                action="/user/profile/avatar"
                 list-type="picture-card"
                 :file-list="attachments"
                 :data="fileList"
@@ -159,7 +159,7 @@
     },
     methods: {
       profile() {
-            axios.get("/admin/profile/upload")
+            axios.get("/user/profile/upload")
                 .then((response) => {
                     this.info = response.data[0];
                     this.fileList = response.data[1];

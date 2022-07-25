@@ -6,6 +6,10 @@ use Storage;
 use League\Flysystem\Filesystem;
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\File;
 
 
 class UsersController extends Controller
@@ -246,5 +250,52 @@ class UsersController extends Controller
 
         $data=$data->paginate(10);
         return [$data];
+    }
+
+    //user profile & upload profile photo
+
+    public function profileIndex(){
+        return view('admin.profile');
+    }
+
+    public function profileUpload(Request $req){
+        $data =  Auth::user();
+
+        return [$data];
+    }
+
+    public function avatarUpload(Request $req){
+
+        if(!$req->hasFile('file'))
+        return response()->json([
+            'error' => 'No File Uploaded'
+        ]);
+        
+        $file = $req->file('file');
+        if(!$file->isValid()){
+            return response()->json([
+                'error' => 'File is not valid!'
+            ]);
+        } else {
+            $filenamewithExt= $file->getClientOriginalName();
+            $filename = pathinfo($filenamewithExt,PATHINFO_FILENAME);
+            $extension = $file->guessClientExtension();
+            $fileNameToStore = $filename.'_'.time().'.'.$extension;
+            $path = $file->storeAs('public/uploads',$fileNameToStore); 
+            // return $path;
+            };
+
+            $user = Auth::user();
+
+            if ($user->avatar) {
+                Storage::delete('public/uploads' . '/' . $user->avatar);
+                $user->avatar = null;
+                $user->save();
+            }
+
+            $user->avatar = $fileNameToStore;
+            $user->save();
+            return $user;
+
     }
 }

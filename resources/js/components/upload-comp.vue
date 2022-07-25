@@ -149,7 +149,7 @@
             </el-form>
  
         </el-card>
-        <el-card class="mt-2">
+        <el-card class="mt-2 mb-4">
             <p class="text-left">Таны хуулсан файлууд</p>
             <div class="text-right">
                 <small class="grey">Нийт: {{lists.total}}ш</small>
@@ -209,7 +209,6 @@
                 >
                     <template slot-scope="scope">
                         <el-popover
-
                             placement="right"
                             title="Сонгож хуваалцсан жагсаалт"
                             width="300"
@@ -259,14 +258,14 @@
                     </template>
                 </el-table-column>
             </el-table>
+            <pagination
+                :data="lists"
+                @pagination-change-page="fetch"
+                :limit="3"
+                align="center"
+                class="my-2"
+            ></pagination>
         </el-card>
-        <pagination
-            :data="lists"
-            @pagination-change-page="fetch"
-            :limit="3"
-            align="center"
-            class="my-2"
-        ></pagination>
         <el-dialog
             title="Дэлгэрэнгүй"
             :visible.sync="dialogVisible"
@@ -288,7 +287,6 @@
                         :editor-toolbar="editorSettings.customToolbar"
                         v-model="selected.desc"/>
                 </el-form-item>
-
                 <el-form-item label="Нэр" prop="name">
                     <el-input v-model="selected.name"></el-input>
                 </el-form-item>
@@ -308,7 +306,6 @@
                     </el-upload>
                     <small class="grey">Солиход шууд өөрчлөгдөнө!</small>
                 </el-form-item>
-
                 <el-form-item label="Tags" prop="tags">
                     <el-tag
                         v-for="(tag,index) in selected.dynamicTags"
@@ -1040,32 +1037,30 @@ export default {
         width: 100%;
     }
     .avatar-uploader .el-upload {
-    border: 1px dashed #d9d9d9;
-    border-radius: 6px;
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
+        border: 1px dashed #d9d9d9;
+        border-radius: 6px;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
     }
     .avatar-uploader .el-upload:hover {
     border-color: #409EFF;
     }
     .avatar-uploader-icon {
-    font-size: 28px;
-    color: #8c939d;
-    width: 178px;
-    height: 178px;
-    line-height: 178px;
-    text-align: center;
+        font-size: 28px;
+        color: #8c939d;
+        width: 178px;
+        height: 178px;
+        line-height: 178px;
+        text-align: center;
     }
     .avatar {
-    width: 178px;
-    height: 178px;
-    display: block;
+        width: 178px;
+        height: 178px;
+        display: block;
     }
     .el-table .file-row{
         background: #409EFF;
     }
-    .indicator-icon{
-        font-size: 1.7em !important;
-    }
+
 </style>

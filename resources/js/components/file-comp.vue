@@ -45,6 +45,7 @@
                                 </el-form>
                                 <p style="text-align:left">Нийт: {{ filesData.total }}</p>
                                 <el-table
+                                    header-cell-class-name="my-header"
                                     style="text-align: center; width: 100%"
                                     class="card"
                                     :data="filesData.data"

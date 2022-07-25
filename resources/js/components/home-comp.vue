@@ -6,7 +6,7 @@
           <div class="col-lg-12 col-md-12 col-sm-12 rowspace">
             <div>
               <el-carousel :interval="4000" type="card">
-                  <el-carousel-item v-for="(poster, item) in posters" :key="item">
+                  <el-carousel-item v-for="(poster, index) in posters" :key="'b'+index" >
                     <img
                     width="100%"
                     height="100%"
@@ -32,7 +32,7 @@
             </div>
           </div>
           <!-- Нийтлэл -->
-          <div class="col-lg-4 col-md-4 col-sm-4 rowspace" v-for="(niitlel, index) in niitlels" :key="index">
+          <div class="col-lg-4 col-md-4 col-sm-4 rowspace" v-for="(niitlel, index) in niitlels" :key="'c'+index">
             <el-card :body-style="{ padding: '0px' }" >
               <div class="readIcon" v-if="niitlel.url=='noimage123.png'">
                 <i class="el-icon-reading"></i>
@@ -61,7 +61,7 @@
             </el-card>
           </div>
           <!-- Бичлэг -->
-          <div class="col-lg-4 col-md-4 col-sm-4 rowspace" v-for="(video, index) in videos" :key="index">
+          <div class="col-lg-4 col-md-4 col-sm-4 rowspace" v-for="(video, index) in videos" :key="'a'+index">
             <Media
               style="width: 300px; height: 200px;"
               :kind="'video'"

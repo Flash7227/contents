@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 
 class AdminsController extends Controller
 {
@@ -34,17 +35,34 @@ class AdminsController extends Controller
 
 
     public function userEdit(Request $request){
+
+        
+
         if($request->input('delete')){
             $user = User::find($request->input('id'));
             if($user->delete()){
                 return 'success';
             };
         }else{
+            
+            // $request->validate([
+            //     'email' => 'required|unique:email'.$userr->id
+            // ]);
+            
             $form = $request->input('form');
             if(isset($form['id'])){
                 $user = User::find($form['id']);
             }else{
                 $user = new User;
+
+                $userr = Auth()->user();
+
+                $validator = Validator::make($request->all(), 
+                [
+                    'email' => ['required','string','email' , 'unique:users'],
+                    'password' => ['required','string','min:4']
+                ]
+            );
             }
                 if($form['password']){
                     $user->fill(

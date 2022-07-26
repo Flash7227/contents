@@ -34,7 +34,7 @@
             <a class="nav-link" href="/register"><i class="ri-login-box-line"></i> Нэвтрэх</a>
         </li> --}}
         <li class="nav-item {{ Request::path() == 'login' ? 'active' : ''}}">
-            <a class="nav-link" href="/login">Нэвтрэх</a>
+            <a class="nav-link" href="/login"><i class="el-icon-caret-right"></i> Нэвтрэх</a>
         </li>
         @else 
         <li class="nav-item dropdown {{ str_contains(Request::path(), 'admin') ? 'active' : ''}}">

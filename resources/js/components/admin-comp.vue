@@ -79,7 +79,7 @@
         <pagination :data="list" @pagination-change-page="fetch" :limit="3" align="center" class="my-2"></pagination>
 
         <el-dialog title="Хэрэглэгчийн мэдээлэл" :visible.sync="invisDetail" :before-close="handleClose" :destroy-on-close="true">
-            <el-form :model="form" ref="formData" :rules="rules"  label-position="left" label-width="180px" >
+            <el-form :model="form" ref="formData" :rules="rules"  label-position="left" label-width="180px" autocomplete="off">
                 <el-row>
                     <el-col :span="12">
                         <el-form-item label="Нэр" prop="name">
@@ -143,7 +143,7 @@
                             <div>
                             
                             <!-- < v-if="!!form.id" type="text" placeholder="файл оруулах хэмжээг бичих" v-model="temporary_storage_limit" clearable></     el-input> -->
-                            <el-input type="text" placeholder="оруулах файлын хэмжээг бичнэ үү..." v-model="form.storage_limit"  clearable></el-input>
+                            <el-input type="text" placeholder="оруулах файлын хэмжээг бичнэ үү..." v-model="form.storage_limit" clearable autocomplete="new-password" readonly onfocus="this.removeAttribute('readonly');"></el-input>
                             </div>
                         </el-form-item>
                     </el-col>
@@ -151,8 +151,14 @@
                 <el-row>
                      <el-col :span="12">
                         <el-form-item 
+                        v-if="!form.id"
                         label="Нууц үг" prop="password">
-                            <el-input type="password" v-model="form.password" autocomplete="off" placeholder="Нууц үг шинээр оруулах" show-password pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" required></el-input>
+                            <el-input type="password" v-model="form.password" autocomplete="new-password" readonly onfocus="this.removeAttribute('readonly');" placeholder="Нууц үг шинээр оруулах" min="4" show-password pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" required></el-input>
+                        </el-form-item>
+                        <el-form-item
+                        v-else 
+                        label="Нууц үг">
+                            <el-input type="password" v-model="form.password" autocomplete="new-password" readonly onfocus="this.removeAttribute('readonly');" placeholder="Нууц үг шинээр оруулах" min="4" show-password pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" required></el-input>
                         </el-form-item>
                      </el-col>
                 </el-row>
@@ -206,6 +212,9 @@ export default {
                     ],
                     storage_limit: [
                         { required: true, message: 'Заавал бөглөх', trigger: 'blur' }
+                    ],
+                    password: [
+                        { required: true, message: 'Заавал бөглөх, 4-өөс дээш оронтой байх', Min: 4, trigger: 'blur' }
                     ],
                     
             },
@@ -281,11 +290,14 @@ export default {
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
                         //submitting part begins here
+                      
                         this.$confirm('Итгэлтэй байна уу?', 'Warning', {
                             confirmButtonText: 'OK',
                             cancelButtonText: 'цуцлах',
                             type: 'warning'
-                        }).then(() => {
+                        }
+                        )
+                        .then(() => {
                             
                             var extValue = this.storage_limit_ext;
                             var formNumberValue = this.form.storage_limit;
@@ -319,6 +331,7 @@ export default {
                             axios.post("/admin/user", {form: this.form})
                             .then(response => {
                                 this.loading = false;
+
                                 console.log(response.data);
                                 if(response.data == "success"){
                                     this.$notify({
@@ -338,11 +351,52 @@ export default {
                             })
                             .catch(error => {
                                 this.loading = false;
-                                console.log(error.response);
-                                this.$notify.error({
-                                    title: 'Error',
-                                    message: error.response.data.message
+
+                                var extValue = this.storage_limit_ext;
+                            var formNumberValue = this.form.storage_limit;
+                            var temporaryNumberValue = this.temporary_storage_limit;
+
+                            if(this.form.id){
+
+                                if(extValue === 'gb'){
+                                    var convertToByte = (temporaryNumberValue / 1073741824); 
+                                }
+                                else if(extValue === 'mb'){
+                                    var convertToByte = (temporaryNumberValue / 1048576); 
+                                }else if(!extValue){
+                                    var convertToByte = 0;
+                                }
+
+                            } else {
+                                if(extValue === 'gb'){
+                                    var convertToByte = (formNumberValue / 1073741824); 
+                                }
+                                else if(extValue === 'mb'){
+                                    var convertToByte = (formNumberValue / 1048576); 
+                                }else if(!extValue){
+                                    var convertToByte = 0;
+                                }
+                            }
+                            this.form.storage_limit =  convertToByte;
+                                
+                                console.log(error.response.data);
+
+                                var errormsg = error.response.data.message;
+                                var text = '23000';
+                                if (errormsg.indexOf(text) >= 0) { 
+                                 this.$notify.error({
+                                    title: 'Error!',
+                                    message: 'Бүртгэлтэй и-мэйл байна'
                                 });
+                                }
+                                else{
+                                    this.$notify.error({
+                                        title: 'Error!',
+                                    
+                                        message: 'Нууц үг оруулна уу'
+                                    });
+                                }
+                                
                             });
                         })
                         .catch(() => {

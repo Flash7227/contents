@@ -7,7 +7,8 @@
             <el-col :span="12" :offset="6">
                 <div class="grid-content bg-purple">
                     <el-card class="card">
-                        <el-image  
+                        <el-image
+                        class="profile-image-tag"
                         :src="'/storage/uploads/' + info.avatar" 
                         :preview-src-list="avatar">
                         </el-image>
@@ -283,6 +284,12 @@
   
 </script>
 <style scoped>
+
+  .profile-image-tag{
+    display: block;
+    margin: 0 auto;
+
+  }
   .el-card {
     background: none;
     padding: 10px;

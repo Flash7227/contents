@@ -22,12 +22,12 @@
           </div> -->
           <div class="col-lg-12 col-md-12 col-sm-12">
             <el-form :inline="true">
-              <el-form-item label="нэр">
+              <el-form-item label="Нэр">
                   <div class="block">
                   <el-input v-model="search.name" placeholder="нэрээр хайх"></el-input>
                   </div>
               </el-form-item>
-              <el-form-item label="огноо">
+              <el-form-item label="Огноо">
                   <el-date-picker
                       v-model="search.date"
                       type="date"

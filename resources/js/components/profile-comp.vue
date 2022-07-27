@@ -1,76 +1,74 @@
-
-
 <template>
-    <div class="div">
-
-        <el-row :gutter="20">
-            <el-col :span="12" :offset="6">
-                <div class="grid-content bg-purple">
-                    <el-card class="card">
-                        <el-image
-                        class="profile-image-tag"
-                        :src="'/storage/uploads/' + info.avatar" 
-                        :preview-src-list="avatar">
-                        </el-image>
-                        <el-descriptions class="margin-top" title="" :column="1" border>
-                        <el-descriptions-item>
+  <div class="container">
+    <div class="child">
+    <el-row>
+      <el-col>
+        <div>
+          <el-card class="profile-card">
+            <el-image
+            class="profile-image"
+            :src="'/storage/uploads/' + info.avatar" 
+            :preview-src-list="avatar">
+            </el-image>
+              <el-descriptions class="margin-top" title="" :column="1" border>
+                <el-descriptions-item>
                         <template slot="label">
                         <i class="el-icon-s-custom"></i>
                         Нэр
                         </template>
                         {{ this.info.name }}
-                        </el-descriptions-item>
-                        <el-descriptions-item>
+                </el-descriptions-item>
+                <el-descriptions-item>
                             <template slot="label">
                             <i class="el-icon-s-management"></i> Зэрэглэл
                             </template>
                             {{ roleValue(this.info.role) }}
                             
-                        </el-descriptions-item>
+                </el-descriptions-item>
                         
-                        <el-descriptions-item>
+                <el-descriptions-item>
                             <template slot="label">
                             <i class="el-icon-s-cooperation"></i> 
                             И-мэйл
                             </template>
                             {{ this.info.email }}
-                        </el-descriptions-item>
-                        <el-descriptions-item>
+                </el-descriptions-item>
+                <el-descriptions-item>
                             <template slot="label">
                             <i class="el-icon-s-check"></i>
                              Үйлдэлийн эрх
                             </template>
                             {{ permissionsValue(this.info.permissions) }}
-                        </el-descriptions-item>
-                        <el-descriptions-item>
+                </el-descriptions-item>
+                <el-descriptions-item>
                             <template slot="label">
                             <i class="el-icon-s-data"></i>
                              Ашиглах боломжтой дата хэмжээ
                             </template>
                             {{ storageLimitValue(this.info.storage_limit) }}
-                        </el-descriptions-item>
-                        <el-descriptions-item>
+                </el-descriptions-item>
+                <el-descriptions-item>
                             <template slot="label">
                             <i class="el-icon-date"></i>
                              Үүсгэсэн огноо
                             </template>
                             {{ dateformatter(this.info.created_at) }}
-                        </el-descriptions-item>
-                        </el-descriptions>
-                        <el-button
+                </el-descriptions-item>
+              </el-descriptions>
+              <el-button
                                 type="primary"
                                 icon="el-icon-picture"
                                 style="margin-top:12px;"
                                 
                                 plain
-                                @click="imageModal()"> зураг солих</el-button>
-                    </el-card>
+                                @click="imageModal()"> зураг солих
+              </el-button>
+          </el-card>
+        </div>
+      </el-col>
+    </el-row>
 
-                </div>
-            </el-col>
-        </el-row>
-
-      <el-form :model="current" label-width="50px" class="demo-form">
+    <el-form :model="current" label-width="50px" class="demo-form">
         <div class="modal fade" id="img" tabindex="-1" aria-labelledby="imgLabel"   aria-hidden="true">     
           <div class="modal-dialog">
             <div class="modal-content">
@@ -121,8 +119,9 @@
             </div>
           </div>
         </div>
-      </el-form>
+    </el-form>
     </div>
+  </div>
 </template>
 
 <script>
@@ -285,12 +284,7 @@
 </script>
 <style scoped>
 
-  .profile-image-tag{
-    display: block;
-    margin: 0 auto;
-
-  }
-  .el-card {
+  .profile-card {
     background: none;
     padding: 10px;
     text-align: center;
@@ -299,7 +293,10 @@
      */
     margin-top:50px;
   }
-  .el-image{
+
+  .profile-image{
+    display: block;
+    margin: 0 auto;
     width: 15rem;
     height:15rem;
     border: black;
@@ -309,5 +306,24 @@
     text-align:left;
     font-size:18px;
   }
+
+  .child{
+
+    /* position: fixed; */
+  /* top: 10%; */
+  /* left: 10%; */
+  transform: translate(-50%, -50%);
+  -webkit-transform: translate(20%, 0%);
+  -moz-transform: translate(-50%, -50%);
+  -o-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  
+  /* font-size: 20px; */
+  /* border: darkgreen 5px solid; */
+  /* padding: 5px; */
+  z-index: 100;
+  }
+
+  
 
 </style>

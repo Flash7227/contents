@@ -85,8 +85,8 @@
             <div class="col-lg-3 col-xs-12 location mt-2">
                 <h4 class="mt-lg-0 mt-sm-4">Холбоо барих</h4>
               <p class="mb-0"><i class="fa fa-phone mr-3"></i>+976-11-304258</p>
-              <p class="mb-0"><i class="fa fa-phone mr-3"></i>1800-1858</p>
               <p class="mb-0"><i class="fa fa-phone mr-3"></i>+976-11-327720</p>
+              <p class="mb-0"><i class="fa fa-phone mr-3"></i>1800-1858</p>
               <p><a href="mailto:info@crc.gov.mn"><i class="fa fa-envelope-o mr-3"></i>info@crc.gov.mn</a></p>
             </div>
           </div>

@@ -3,7 +3,7 @@
         <el-container>
             <el-main>
                 <div class="row">
-                    <div class="col-lg-12 col-md-12 col-sm-12 rowspace">
+                    <div class="col-lg-12 col-md-12 col-sm-12">
                         <!-- <el-badge is-dot class="item" type="success">
                             <el-button onclick="location.href='/home'" size="small">Нүүр</el-button>
                         </el-badge>
@@ -23,12 +23,12 @@
                         <div class="rowspace">
                             <el-card>
                                 <el-form :inline="true">
-                                    <el-form-item label="нэр">
+                                    <el-form-item label="Нэр">
                                         <div class="block">
                                         <el-input v-model="search.name" placeholder="нэрээр хайх"></el-input>
                                         </div>
                                     </el-form-item>
-                                    <el-form-item label="огноо">
+                                    <el-form-item label="Огноо">
                                         <el-date-picker
                                             v-model="search.date"
                                             type="date"

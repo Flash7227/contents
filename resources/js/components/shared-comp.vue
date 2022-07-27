@@ -408,7 +408,7 @@ export default {
 }
 
 .my-header{
-    background: #3897e4 !important;
+    background: #84A4C1 !important;
     color: white;
     text-transform: uppercase;
     font-size: 0.9em;

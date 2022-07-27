@@ -79,24 +79,24 @@
         <pagination :data="list" @pagination-change-page="fetch" :limit="3" align="center" class="my-2"></pagination>
 
         <el-dialog title="Хэрэглэгчийн мэдээлэл" :visible.sync="invisDetail" :before-close="handleClose" :destroy-on-close="true">
-            <el-form :model="form" ref="formData" :rules="rules"  label-position="left" label-width="180px" autocomplete="off">
-                <el-row>
-                    <el-col :span="12">
+            <el-form :model="form" ref="formData" :rules="rules"  label-position="left" autocomplete="off">
+                <el-row :gutter="20" type="flex">
+                    <el-col :span="12" :offset="6">
                         <el-form-item label="Нэр" prop="name">
                             <el-input v-model="form.name" autocomplete="off"></el-input>
                         </el-form-item>
                     </el-col>
                 </el-row>
-                <el-row>
-                    <el-col :span="12">
+                <el-row :gutter="20">
+                    <el-col :span="12" :offset="6">
                         <el-form-item label="И-мэйл" prop="email">
                             <el-input v-model="form.email" autocomplete="off"></el-input>
                         </el-form-item>
                     </el-col>
                 </el-row>
 
-                <el-row>
-                    <el-col :span="12">
+                <el-row :gutter="20">
+                    <el-col :span="12" :offset="6">
                         <el-form-item label=" Үйлдлийн эрх" prop="permissions">
                             <el-select v-model="form.permissions" multiple placeholder="сонгох">
                                 <el-option v-for="permission in permissions" :key="permission" :label="permission" :value="permission"></el-option>
@@ -105,8 +105,8 @@
                     </el-col>
                 </el-row>
 
-                <el-row>
-                     <el-col :span="12">
+                <el-row :gutter="20">
+                     <el-col :span="12" :offset="6">
                         <el-form-item label="Эрхийн түвшин" prop="role">
                             <el-select v-model="form.role" placeholder="сонгох">
                                 <el-option v-for="role in roles" :key="role.value" :label="role.label" :value="role.value"></el-option>
@@ -115,8 +115,8 @@
                     </el-col>
                 </el-row>
 
-                <el-row>
-                     <el-col :span="12">
+                <el-row :gutter="20">
+                     <el-col :span="12" :offset="6">
                         <!------------- shineer user vvsgeh dialogiih   -------------->
                         <el-form-item
                         v-if="!!form.id"
@@ -148,8 +148,8 @@
                         </el-form-item>
                     </el-col>
                 </el-row>
-                <el-row>
-                     <el-col :span="12">
+                <el-row :gutter="20">
+                     <el-col :span="12"  :offset="6">
                         <el-form-item 
                         v-if="!form.id"
                         label="Нууц үг" prop="password">
@@ -162,10 +162,10 @@
                         </el-form-item>
                      </el-col>
                 </el-row>
-                <el-row>
-                     <el-col :span="12">
+                <el-row :gutter="20">
+                     <el-col :span="10"  :offset="5">
                         <el-form-item>
-                            <el-button class="float-right" type="primary" @click="submitForm('formData')">
+                            <el-button class="float-right mb-2" type="primary" @click="submitForm('formData')">
                                 <span v-if="form.id"><i class="el-icon-circle-check"></i> Засах</span>
                                 <span v-else><i class="el-icon-circle-check"></i> Нэмэх</span>
                             </el-button>
@@ -563,7 +563,7 @@ export default {
   }
 
   .table-header{
-    background: #3897e4 !important;
+    background: #84A4C1 !important;
     color: white;
     text-transform: uppercase;
     font-size: 0.9em;

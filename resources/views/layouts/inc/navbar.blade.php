@@ -1,31 +1,63 @@
 
-  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+  <nav class="navbar navbar-expand-lg navbar-dark nav-new">
     
     <div class="container">
       <a class="navbar-brand" href="/">
-        <img src="/imgs/logo-white.png" width="auto" height="40"/>
+        <img src="/imgs/logo-white.png" width="auto" height="45" class="navbar-image"/>
     </a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor02" aria-controls="navbarColor02" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarColor02">
       <ul class="navbar-nav mr-auto">
-        @auth
         <li class="nav-item {{ Request::path() == 'home' ? 'active' : ''}}">
-            <a class="nav-link" href="/home">Үндсэн нүүр
-            </a>
+          <a class="nav-link" href="/home">Нүүр
+          </a>
+      </li>
+      <li class="nav-item dropdown {{ Request::path() == 'home/niitlel' ? 'active' : ''}} {{ Request::path() == 'home/video' ? 'active' : ''}} {{ Request::path() == 'home/poster' ? 'active' : ''}} {{ Request::path() == 'home/file' ? 'active' : ''}}">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Нээлттэй Контент
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <a class="dropdown-item" href="/home/niitlel">Блог</a>
+          <a class="dropdown-item" href="/home/video">Бичлэг</a>
+          <a class="dropdown-item" href="/home/poster">Постер</a>
+          {{-- <div class="dropdown-divider"></div> --}}
+          <a class="dropdown-item" href="/home/file">Файл</a>
+        </div>
+      </li>
+        @auth
+        <li class="nav-item dropdown {{ Request::path() == 'user/upload' ? 'active' : ''}} {{ Request::path() == 'user/shared' ? 'active' : ''}}">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Файл
+          </a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <a class="dropdown-item" href="/user/upload">Файл хуулах</a>
+            <a class="dropdown-item" href="/user/shared">Хуваалцсан файл</a>
+          </div>
         </li>
-        <li class="nav-item {{ Request::path() == 'user/upload' ? 'active' : ''}}">
+        
+        {{-- <li class="nav-item {{ Request::path() == 'user/upload' ? 'active' : ''}}">
           <a class="nav-link" href="/user/upload">Файл хуулах
         </a>
         </li>
         <li class="nav-item {{ Request::path() == 'user/shared' ? 'active' : ''}}">
-            {{-- <span class="badge badge-pill badge-primary" style="float:right;margin-bottom:-10px;">1</span> <!-- your badge --> --}}
           <a class="nav-link" href="/user/shared">Хуваалцсан файл</a>
-        </li>
+        </li> --}}
         {{-- <li class="nav-item">
           <a class="nav-link" href="#">About</a>
         </li> --}}
+        @if(Auth()->user()->role === 1)
+        <li class="nav-item dropdown {{ Request::path() == 'admin/user' ? 'active' : ''}} {{ Request::path() == 'admin/uploads' ? 'active' : ''}}">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Админ
+          </a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <a class="dropdown-item" href="/admin/user">Хэрэглэгчид</a>
+            <a class="dropdown-item" href="/admin/uploads">Хэрэглэгчдийн хуулсан файл</a>
+          </div>
+        </li>
+        @endif
         @endauth
       </ul>
       <ul class="navbar-nav">
@@ -42,10 +74,10 @@
                 <i class="el-icon-user-solid"></i> {{ Auth::user()->name }}
             </a>
             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-              @if(Auth()->user()->role === 1)
+              {{-- @if(Auth()->user()->role === 1)
               <a class="dropdown-item" href="/admin/user">Хэрэглэгчид</a>
               <a class="dropdown-item" href="/admin/uploads">Хэрэглэгчдийн хуулсан файл</a>
-              @endif
+              @endif --}}
               @if(Auth()->user()->role === 0 || Auth()->user()->role === 2 || Auth()->user()->role === 1)
               <a class="dropdown-item" href="/user/profile">Миний хаяг</a>
               @endif

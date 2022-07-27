@@ -100,10 +100,13 @@
                     Постер
                   </el-button>
                 </div>
+                <div class="text-center">
                 <el-table
                   :data="posters"
-                  style="width: 100%">
+                  style="width: 95%">
                   <el-table-column 
+                    align="center"
+                    header-align="center"
                   type="expand">
                     <template slot-scope="scope">
                       <p> Татах:
@@ -118,18 +121,22 @@
                   </el-table-column>
                   <el-table-column
                     label="Огноо"
+                    align="center"
+                    width="150"
                   >
                   <template slot-scope="scope">
                     <span size="medium">{{ dateformatter(scope.row.created_at)}}</span>
                   </template>
                   </el-table-column>
                   <el-table-column
-                    label="Нэр">
+                    label="Нэр"
+                    align="center">
                     <template slot-scope="scope">
                       <span size="medium">{{ scope.row.name }}</span>
                     </template>
                   </el-table-column>
                 </el-table>
+                </div>
               </div>
             </el-card>
           </div>
@@ -145,8 +152,9 @@
                 </div>
               <el-table
                 :data="files"
-                style="width: 100%">
-                <el-table-column type="expand">
+                style="width: 95%">
+                <el-table-column type="expand" align="center"
+                    header-align="center">
                   <template slot-scope="scope">
                       <p> Татах:
                         <el-button
@@ -160,12 +168,17 @@
                 </el-table-column>
                 <el-table-column
                   label="Огноо"
+                  width="150"
+                  align="center"
+                    header-align="center"
                 >
                 <template slot-scope="scope">
                   <span size="medium">{{ dateformatter(scope.row.created_at)}}</span>
                 </template>
                 </el-table-column>
                 <el-table-column
+                align="center"
+                    header-align="center"
                   label="Нэр">
                   <template slot-scope="scope">
                     <span size="medium">{{ scope.row.name }}</span>

@@ -946,7 +946,7 @@ export default {
         },
         tableHeaderColor({ row, column, rowIndex, columnIndex }) {
             if (rowIndex === 0) {
-                return 'background-color:#3897e4; color:white; text-transform:uppercase; letter-spacing:1px; font-weight:700; text-align:center; font-size:0.8em; padding: 1em 0;' 
+                return 'background-color:#84A4C1; color:white; text-transform:uppercase; letter-spacing:1px; font-weight:700; text-align:center; font-size:0.8em; padding: 1em 0;' 
             }
         },
         customProgressFormat(percent){

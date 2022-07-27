@@ -1,4 +1,4 @@
-<footer class="footer bg-primary footer-color">
+{{-- <footer class="footer bg-primary footer-color">
     <div class="container text-center">
     <div class="row">
         <div class="col-md-4 col-sm-4">
@@ -58,4 +58,42 @@
 
             
 
-    
+     --}}
+
+     <div class="mt-5 pt-4 pb-1 footer">
+        <div class="container">
+          <div class="row">
+            {{-- <div class="col-lg-5 col-xs-12 about-company">
+              <h2>CRC</h2>
+              <p class="pr-5 text-white-50">Харилцаа Холбооны Зохицуулах Хороо</p>
+              <p><a href="#"><i class="fa fa-facebook-square mr-1"></i></a><a href="#"><i class="fa fa-linkedin-square"></i></a></p>
+            </div> --}}
+            <div class="col-lg-4 col-xs-12 links mt-2">
+              <h4 class="mt-lg-0 mt-sm-3">Холбоос</h4>
+                <ul class="m-0 p-0">
+                  <li>- <a href="https://crc.gov.mn/" class="footer-color">Байгууллагын веб хуудас</a></li>
+                  <li>- <a href="http://www.black-list.mn//" class="footer-color">Шуудангийн нэгдсэн кодын систем</a></li>
+                  <li>- <a href="https://zipcode.mn/" class="footer-color">Зөрчилтэй домайны жагсаалт</a></li>
+                  <li>- <a href="http://www.facebook.com/crcmongol">Facebook холбоос</a></li>
+                  <li>- <a href="http://www.twitter.com/crcmn">Twitter холбоос</a></li>
+                </ul>
+            </div>
+            <div class="col-lg-5 col-xs-12 location mt-2">
+                <h4 class="mt-lg-0 mt-sm-4">Хаяг</h4>
+                <p>Метро бизнес төв А-блок 5 давхар Д.Сүхбаатарын гудамж-13 Сүхбаатар дүүрэг, Улаанбаатар 14201-0033</p>
+              </div>
+            <div class="col-lg-3 col-xs-12 location mt-2">
+                <h4 class="mt-lg-0 mt-sm-4">Холбоо барих</h4>
+              <p class="mb-0"><i class="fa fa-phone mr-3"></i>+976-11-304258</p>
+              <p class="mb-0"><i class="fa fa-phone mr-3"></i>1800-1858</p>
+              <p class="mb-0"><i class="fa fa-phone mr-3"></i>+976-11-327720</p>
+              <p><a href="mailto:info@crc.gov.mn"><i class="fa fa-envelope-o mr-3"></i>info@crc.gov.mn</a></p>
+            </div>
+          </div>
+          <div class="row mt-1">
+            <div class="col copyright">
+              <p class=""><small class="text-white-50">© 2022. Харилцаа Холбооны Зохицуулах Хороо.</small></p>
+            </div>
+          </div>
+        </div>
+        </div>

@@ -3,7 +3,7 @@
   <el-container style="text-align:center">
       <el-main>
         <div class="row">
-          <div class="col-lg-12 col-md-12 col-sm-12 rowspace">
+          <!-- <div class="col-lg-12 col-md-12 col-sm-12 rowspace">
             <el-badge is-dot class="item" type="success">
               <el-button onclick="location.href='/home'" size="small">Нүүр</el-button>
             </el-badge>
@@ -19,7 +19,7 @@
             <el-badge is-dot class="item" type="primary">
               <el-button onclick="location.href='/home/file'" size="small">Файл</el-button>
             </el-badge>
-          </div>
+          </div> -->
           <div class="col-lg-12 col-md-12 col-sm-12">
             <el-form :inline="true">
               <el-form-item label="нэр">

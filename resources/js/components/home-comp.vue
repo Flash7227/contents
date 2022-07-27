@@ -23,7 +23,7 @@
                   </el-carousel-item>
               </el-carousel>
             </div>
-            <div>
+            <!-- <div>
               <el-badge is-dot class="item" type="warning">
                 <el-button onclick="location.href='/home/video'" size="small">Бичлэг</el-button>
               </el-badge>
@@ -36,7 +36,7 @@
               <el-badge is-dot class="item" type="primary">
                 <el-button onclick="location.href='/home/file'" size="small">Файл</el-button>
               </el-badge>
-            </div>
+            </div> -->
           </div>
           <!-- Нийтлэл -->
           <div class="col-lg-4 col-md-4 col-sm-4 rowspace" v-for="(niitlel, index) in niitlels" :key="'c'+index">
@@ -92,11 +92,12 @@
           </div>
           <div class="col-lg-6 col-md-6 col-sm-6 rowspace">
             <!-- Постер -->
-            <el-card class="box-card">
+            <el-card class="box-card home-card">
               <div>
                 <div slot="header" class="clearfix">
                   <el-button onclick="location.href='/home/poster'" size="small" style="float: right;">
-                    <i class="el-icon-picture-outline"></i>Постер
+                    <!-- <i class="el-icon-picture-outline"></i> -->
+                    Постер
                   </el-button>
                 </div>
                 <el-table
@@ -134,11 +135,12 @@
           </div>
           <!-- Файл -->
           <div class="col-lg-6 col-md-6 col-sm-6 rowspace">
-            <el-card class="box-card">
+            <el-card class="box-card home-card">
             <div>
               <div slot="header" class="clearfix">
                 <el-button onclick="location.href='/home/file'" size="small" style="float: right;">
-                  <i class="el-icon-document"></i>Файл
+                  <!-- <i class="el-icon-document"></i> -->
+                  Файл
                 </el-button>
                 </div>
               <el-table
@@ -343,5 +345,7 @@ import Media from "@dongido/vue-viaudio";
   .rowspace{
     padding: 10px;
   }
-  
+  .home-card{
+    height: 320px;
+  }
 </style>

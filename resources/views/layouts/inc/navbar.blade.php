@@ -11,20 +11,21 @@
     <div class="collapse navbar-collapse" id="navbarColor02">
       <ul class="navbar-nav mr-auto">
         <li class="nav-item {{ Request::path() == 'home' ? 'active' : ''}}">
-          <a class="nav-link" href="/home">Нүүр</a>
-        </li>
-        <li class="nav-item {{ Request::path() == 'home/blog' ? 'active' : ''}}">
-          <a class="nav-link" href="/home/blog">Блог</a>
-        </li>
-        <li class="nav-item {{ Request::path() == 'home/video' ? 'active' : ''}}">
-          <a class="nav-link" href="/home/video">Бичлэг</a>
-        </li>
-        <li class="nav-item {{ Request::path() == 'home' ? 'active' : ''}}">
-          <a class="nav-link" href="/home/poster">Постер</a>
-        </li>
-        <li class="nav-item {{ Request::path() == 'home/file' ? 'active' : ''}}">
-          <a class="nav-link" href="/home/file">Файл</a>
-        </li>
+          <a class="nav-link" href="/home">Нүүр
+          </a>
+      </li>
+      <li class="nav-item dropdown {{ Request::path() == 'home/blog' ? 'active' : ''}} {{ Request::path() == 'home/video' ? 'active' : ''}} {{ Request::path() == 'home/poster' ? 'active' : ''}} {{ Request::path() == 'home/file' ? 'active' : ''}}">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Нээлттэй Контент
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <a class="dropdown-item" href="/home/blog">Блог</a>
+          <a class="dropdown-item" href="/home/video">Бичлэг</a>
+          <a class="dropdown-item" href="/home/poster">Постер</a>
+          {{-- <div class="dropdown-divider"></div> --}}
+          <a class="dropdown-item" href="/home/file">Файл</a>
+        </div>
+      </li>
         @auth
         {{-- <li class="nav-item dropdown {{ Request::path() == 'user/upload' ? 'active' : ''}} {{ Request::path() == 'user/shared' ? 'active' : ''}}">
           <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

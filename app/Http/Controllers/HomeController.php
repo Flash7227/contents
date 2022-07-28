@@ -34,23 +34,23 @@ class HomeController extends Controller
     }
     public function uploadData()
     {
-        $files = Uploads::where('sharetype', "public")->where('type', '1')->orderBy('created_at', 'DESC')->limit(3)->get();
+        $files = Uploads::where('sharetype', "public")->where('type', '1')->orderBy('created_at', 'DESC')->limit(6)->get();
         $videos = Uploads::where('sharetype', "public")->where('type', '2')->orderBy('created_at', 'DESC')->limit(3)->get();
-        $posters = Uploads::where('sharetype', "public")->where('type', '3')->orderBy('created_at', 'DESC')->limit(3)->get();
-        $niitlels = Uploads::where('sharetype', "public")->where('type', '4')->orderBy('created_at', 'DESC')->limit(3)->get();
+        $posters = Uploads::where('sharetype', "public")->where('type', '3')->orderBy('created_at', 'DESC')->limit(6)->get();
+        $niitlels = Uploads::where('sharetype', "public")->where('type', '4')->orderBy('created_at', 'DESC')->limit(6)->get();
         return [$files, $videos, $posters, $niitlels];
     }
     /// niitlel
-    public function niitlelcompIndex()
+    public function blogcompIndex()
     {
         return view('files.niitlel');
     }
-    public function niitlelFetch()
+    public function blogFetch()
     {
         $getniitlel = Uploads::where('sharetype', "public")->where('type', '4')->orderBy('created_at', 'DESC')->paginate(9);
         return $getniitlel;
     }
-    public function niitlelSearch(Request $req){
+    public function blogSearch(Request $req){
         $search = $req->input('search');
         $name = $search['name'];
         $created_at = $search['date'];

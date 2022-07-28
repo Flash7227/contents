@@ -5,14 +5,17 @@
         <div class="row" style="text-align: center;">
           <div class="col-lg-12 col-md-12 col-sm-12 rowspace">
             <div>
-              <el-carousel :interval="4000" type="card">
+              <!-- <el-carousel height="600px" width="100%" direction="vertical" :autoplay="false">
+                <el-carousel-item v-for="(poster, index) in posters" :key="'d'+index" >
+                  <el-image 
+                    style="width: 100%; height: 600px"
+                    :src="poster.download" 
+                    :preview-src-list=[poster.download]>
+                  </el-image>
+                </el-carousel-item>
+              </el-carousel> -->
+              <!-- <el-carousel :interval="4000" type="card">
                   <el-carousel-item v-for="(poster, index) in posters" :key="'b'+index" >
-                    <!-- <img class="demo-image__preview"
-                    width="100%"
-                    height="100%"
-                    :src="poster.download"
-                    :preview-src-list="[poster.download]"
-                    /> -->
                     <div class="demo-image__preview">
                       <el-image 
                         style="width: 100%; height: 300px"
@@ -21,38 +24,101 @@
                       </el-image>
                     </div>
                   </el-carousel-item>
-              </el-carousel>
+              </el-carousel> -->
             </div>
-            <!-- <div>
-              <el-badge is-dot class="item" type="warning">
-                <el-button onclick="location.href='/home/video'" size="small">Бичлэг</el-button>
-              </el-badge>
-              <el-badge is-dot class="item" type="primary">
-                <el-button onclick="location.href='/home/niitlel'" size="small">Нийтлэл</el-button>
-              </el-badge>
-              <el-badge is-dot class="item" type="warning">
-                <el-button onclick="location.href='/home/poster'" size="small">Постер</el-button>
-              </el-badge>
-              <el-badge is-dot class="item" type="primary">
-                <el-button onclick="location.href='/home/file'" size="small">Файл</el-button>
-              </el-badge>
-            </div> -->
           </div>
+          <div class="col-lg-12 col-md-12 col-sm-12 rowspace" >
+            <el-table
+              :data="posters"
+              height="250"
+              style="width: 100%">
+              <el-table-column
+                label="огноо">
+                <template slot-scope="scope">
+                  <span size="medium">{{ dateformatter(scope.row.created_at)}}</span>
+                </template>
+              </el-table-column>
+              <el-table-column
+                label="Name">
+                <template slot-scope="scope">
+                  <span size="medium">{{scope.row.name}}</span>
+                </template>
+              </el-table-column>
+              <el-table-column
+              label="Үйлдэл"
+              width="100"
+              align="center">
+              <template slot-scope="scope">
+                  <el-button
+                  size="small"
+                  type="success"
+                  circle
+                  @click="handleDownload(scope.row.url, scope.row.download)"><i class="el-icon-download"></i>
+                  </el-button>
+              </template>
+            </el-table-column>
+            </el-table>
+            
+          </div>
+          <div class="col-lg-12 col-md-12 col-sm-12 rowspace">
+            <el-table
+              :data="files"
+              height="250"
+              style="width: 100%">
+              <el-table-column
+                label="огноо">
+                <template slot-scope="scope">
+                  <span size="medium">{{ dateformatter(scope.row.created_at)}}</span>
+                </template>
+              </el-table-column>
+              <el-table-column
+                label="Name">
+                <template slot-scope="scope">
+                  <span size="medium">{{scope.row.name}}</span>
+                </template>
+              </el-table-column>
+              <el-table-column
+              label="Үйлдэл"
+              width="100"
+              align="center">
+              <template slot-scope="scope">
+                  <el-button
+                  size="small"
+                  type="success"
+                  circle
+                  @click="handleDownload(scope.row.url, scope.row.download)"><i class="el-icon-download"></i>
+                  </el-button>
+              </template>
+            </el-table-column>
+            </el-table>
+            <div style="width: 100%" class="rowspace">
+             <h1 style="float: left; font-style: bold;">Шинэ Нийтлэл</h1>
+            </div>
+            <div style="width: 100%" class="rowspace">
+             <hr>
+            </div>
+             
+            
+          </div>
+          
           <!-- Нийтлэл -->
           <div class="col-lg-4 col-md-4 col-sm-4 rowspace" v-for="(niitlel, index) in niitlels" :key="'c'+index">
-            <el-card :body-style="{ padding: '0px' }" >
+            <el-card :body-style="{ padding: '0px' }" style="border-radius: 8px" >
               <div class="readIcon" v-if="niitlel.url=='noimage123.png'">
                 <i class="el-icon-reading"></i>
               </div>
               <div class="demo-image__preview" v-else >
                 <el-image 
-                  style="width: 100%; height: 200px"
+                  style="width: 100%; height: 270px; border-radius: 8px"
                   :src="niitlel.download" 
                   :preview-src-list=[niitlel.download]>
                 </el-image>
               </div>
               <div style="padding: 14px;">
-                <p class="overme">{{niitlel.name}}</p>
+                <div>
+                  <p class="overme">{{niitlel.name}}</p>
+                  <!-- <el-button @click="pickDetails(niitlel), centerDialogVisible = true" type="text" class="overme">{{niitlel.name}}</el-button> -->
+                </div>
                 <div class="bottom clearfix">
                   <time class="time">{{dateformatter(niitlel.created_at)}}</time>
                   <el-button 
@@ -71,7 +137,8 @@
           <!-- Бичлэг -->
           <div class="col-lg-4 col-md-4 col-sm-4 rowspace" v-for="(video, index) in videos" :key="'a'+index">
             <Media
-              style="width: 300px; height: 200px;"
+              width="100%"
+              height="200px"
               :kind="'video'"
               :isMuted="false"
               :src="video.download"
@@ -80,7 +147,6 @@
               :loop="true"
               @pause="handle"
               :ref="'video_player'"
-              width="auto"
               class="example"
             ></Media>
             <div style="padding: 1px;">
@@ -89,104 +155,29 @@
                 <time class="time">{{ dateformatter(video.created_at) }}</time>
               </div>
             </div>
+              <!-- <el-card :body-style="{ padding: '0px' }">
+                <Media
+                  width="100%"
+                  height="200px"
+                  :kind="'video'"
+                  :isMuted="false"
+                  :src="video.download"
+                  :autoplay="false"
+                  :controls="true"
+                  :loop="true"
+                  @pause="handle"
+                  :ref="'video_player'"
+                  class="example"
+                ></Media>
+                <div style="padding: 14px;">
+                  <span >{{video.name}}</span>
+                  <div class="bottom clearfix">
+                    <time class="time">{{ dateformatter(video.created_at) }}</time>
+                  </div>
+                </div>
+              </el-card> -->
           </div>
-          <div class="col-lg-6 col-md-6 col-sm-6 rowspace">
-            <!-- Постер -->
-            <el-card class="box-card home-card">
-              <div>
-                <div slot="header" class="clearfix">
-                  <el-button onclick="location.href='/home/poster'" size="small" style="float: right;">
-                    <!-- <i class="el-icon-picture-outline"></i> -->
-                    Постер
-                  </el-button>
-                </div>
-                <div class="text-center">
-                <el-table
-                  :data="posters"
-                  style="width: 95%">
-                  <el-table-column 
-                    align="center"
-                    header-align="center"
-                  type="expand">
-                    <template slot-scope="scope">
-                      <p> Татах:
-                        <el-button
-                          size="small"
-                          type="success"
-                          round
-                          @click="handleDownload(scope.row.url, scope.row.download)"><i class="el-icon-download"></i>
-                        </el-button>
-                      </p>
-                    </template>
-                  </el-table-column>
-                  <el-table-column
-                    label="Огноо"
-                    align="center"
-                    width="150"
-                  >
-                  <template slot-scope="scope">
-                    <span size="medium">{{ dateformatter(scope.row.created_at)}}</span>
-                  </template>
-                  </el-table-column>
-                  <el-table-column
-                    label="Нэр"
-                    align="center">
-                    <template slot-scope="scope">
-                      <span size="medium">{{ scope.row.name }}</span>
-                    </template>
-                  </el-table-column>
-                </el-table>
-                </div>
-              </div>
-            </el-card>
-          </div>
-          <!-- Файл -->
-          <div class="col-lg-6 col-md-6 col-sm-6 rowspace">
-            <el-card class="box-card home-card">
-            <div>
-              <div slot="header" class="clearfix">
-                <el-button onclick="location.href='/home/file'" size="small" style="float: right;">
-                  <!-- <i class="el-icon-document"></i> -->
-                  Файл
-                </el-button>
-                </div>
-              <el-table
-                :data="files"
-                style="width: 95%">
-                <el-table-column type="expand" align="center"
-                    header-align="center">
-                  <template slot-scope="scope">
-                      <p> Татах:
-                        <el-button
-                          size="small"
-                          type="success"
-                          round
-                          @click="handleDownload(scope.row.url, scope.row.download)"><i class="el-icon-download"></i>
-                        </el-button>
-                      </p>  
-                  </template>
-                </el-table-column>
-                <el-table-column
-                  label="Огноо"
-                  width="150"
-                  align="center"
-                    header-align="center"
-                >
-                <template slot-scope="scope">
-                  <span size="medium">{{ dateformatter(scope.row.created_at)}}</span>
-                </template>
-                </el-table-column>
-                <el-table-column
-                align="center"
-                    header-align="center"
-                  label="Нэр">
-                  <template slot-scope="scope">
-                    <span size="medium">{{ scope.row.name }}</span>
-                  </template>
-                </el-table-column>
-              </el-table>
-            </div>
-            </el-card>
+            
             <el-dialog
               :title="selected.name"
               :visible.sync="centerDialogVisible"
@@ -198,7 +189,7 @@
                 <el-button @click="centerDialogVisible = false">Хаах</el-button>
               </span>
             </el-dialog>
-          </div>
+
         </div>
     </el-main>
   </el-container>
@@ -343,15 +334,16 @@ import Media from "@dongido/vue-viaudio";
   }
   .image {
     width: 100%;
-    height: 200px;
+    height: 300px;
     display: block;
   }
   .readIcon{
     width: 100%;
-    height: 200px;
+    height: 270px !important;
     background-color: #0B5394;
-    text-align: center; 
-    font-size: 8em; 
+    text-align: center !important; 
+    font-size: 13em !important; 
+    border-radius: 8px;
     color: #FF9900 
   }
 

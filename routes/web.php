@@ -44,8 +44,8 @@ Route::group([ 'prefix' => '/home'], function(){
     // Route::get('/', 'HomeController@homecompIndex');
     Route::get('/', 'NewHomeController@index');
     Route::get('/getupload', 'HomeController@uploadData');
-    Route::get('/niitlel', 'HomeController@niitlelcompIndex');
-    Route::get('/niitlel/fetch', 'HomeController@niitlelFetch');
+    Route::get('/blog', 'HomeController@blogcompIndex');
+    Route::get('/blog/fetch', 'HomeController@blogFetch');
     Route::get('/poster', 'HomeController@postercompIndex');
     Route::get('/poster/fetch', 'HomeController@posterFetch');
     Route::get('/video', 'HomeController@videocompIndex');
@@ -54,8 +54,8 @@ Route::group([ 'prefix' => '/home'], function(){
     Route::get('/file/fetch', 'HomeController@fileFetch');
     //search
     Route::post('/poster/fetchSearch', 'HomeController@posterSearch');
-    Route::post('/niitlel/fetchSearch', 'HomeController@niitlelSearch');
-    Route::post('/file/fetchSearch', 'HomeController@fileSearch');
+    Route::post('/blog/fetchSearch', 'HomeController@blogSearch');
+    Route::post('/blog/fetchSearch', 'HomeController@fileSearch');
     Route::post('/video/fetchSearch', 'HomeController@videoSearch');
 });
 

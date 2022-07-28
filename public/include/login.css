@@ -19,13 +19,13 @@
     box-sizing: border-box;
 }
 
-a {
+#a-tag {
     text-decoration: none;
     color: inherit;
 }
 
 /* remove #blue tap on mobile */
-a,
+#a-tag,
 button,
 input {
     -webkit-tap-highlight-color: transparent;
@@ -75,7 +75,7 @@ input::placeholder {
 
 
 .site {
-    height: 100vh;
+    height: 100%;
     display: flex;
     justify-content: center;
     padding: 20px 0;
@@ -104,12 +104,12 @@ nav ul li:last-child {
     /* font-size: 12px; */
 }
 
-nav ul li:last-child a {
+nav ul li:last-child #a-tag {
     color: var(--primary);
     font-weight: 500;
 }
 
-nav ul li:last-child a:hover {
+nav ul li:last-child #a-tag:hover {
     text-decoration: underline;
 }
 

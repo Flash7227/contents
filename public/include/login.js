@@ -20,20 +20,26 @@ signin.addEventListener('click', function () {
 
 
 
-// const password = document.getElementById("password");
-// const loginForm = document.getElementById("loginForm");
-// const error = document.getElementById("error");
-// loginForm.addEventListener('submit', (e) => {
-//     let messages = [];
 
-//     if (password.value.length <= 4) {
-//         console.log('length not valid');
-//         messages.push('доод тал нь 4 оронтой байх');
-//     }
-//     if (messages.length > 0) {
-//         e.preventDefault();
-//         error.innerText = messages.join(", ")
+function myFunction() {
+    var x = document.querySelector(".passwordshow");
+    var y = document.querySelector(".passwordshow2");
+    var z = document.querySelector(".passwordshow3");
+    if (x.type === "password") {
+        x.type = "text";
+    } else {
+        x.type = "password";
+    }
 
-//     }
-// })
+    if (y.type === "password") {
+        y.type = "text";
+    } else {
+        y.type = "password";
+    }
+    if (z.type === "password") {
+        z.type = "text";
+    } else {
+        z.type = "password";
+    }
+}
 

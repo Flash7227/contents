@@ -10,11 +10,11 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarColor02">
       <ul class="navbar-nav mr-auto">
-        <li class="nav-item {{ Request::path() == 'home' ? 'active' : ''}}">
-          <a class="nav-link" href="/home">Нүүр
+        <li  class="nav-item {{ Request::path() == 'home' ? 'active' : ''}} ml-4">
+          <a id="nav-mainpage" class="nav-link" href="/home">Нүүр
           </a>
       </li>
-      <li class="nav-item dropdown {{ Request::path() == 'home/blog' ? 'active' : ''}} {{ Request::path() == 'home/video' ? 'active' : ''}} {{ Request::path() == 'home/poster' ? 'active' : ''}} {{ Request::path() == 'home/file' ? 'active' : ''}}">
+      <li class="nav-item dropdown ml-2 {{ Request::path() == 'home/niitlel' ? 'active' : ''}} {{ Request::path() == 'home/video' ? 'active' : ''}} {{ Request::path() == 'home/poster' ? 'active' : ''}} {{ Request::path() == 'home/file' ? 'active' : ''}}">
         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           Нээлттэй Контент
         </a>
@@ -55,7 +55,7 @@
             <a class="nav-link" href="/register"><i class="ri-login-box-line"></i> Нэвтрэх</a>
         </li> --}}
         <li class="nav-item {{ Request::path() == 'login' ? 'active' : ''}}">
-            <a class="nav-link" href="/login"><i class="el-icon-caret-right"></i> Нэвтрэх</a>
+            <a id="login-button" class="nav-link" href="/login"><i class="el-icon-caret-right"></i> Нэвтрэх</a>
         </li>
         @else 
         <li class="nav-item dropdown {{ str_contains(Request::path(), 'admin') ? 'active' : ''}}">
@@ -88,3 +88,61 @@
     </div>
   </nav>
   
+
+
+  {{-- <link rel="stylesheet" href='include/navbar.css'> --}}
+  <!-- header start -->
+  {{-- <header class="header">
+    <div class="container">
+       <div class="header-main">
+          <div class="logo">
+             <a href="#">Logo</a>
+          </div>
+          <div class="open-nav-menu">
+             <span></span>
+          </div>
+          <div class="menu-overlay">
+          </div>
+          <!-- navigation menu start -->
+          <nav class="nav-menu">
+            <div class="close-nav-menu">
+               <img src="img/close.svg" alt="close">
+            </div>
+            <ul class="menu">
+               <li class="menu-item menu-item-has-children">
+                  <a href="#" data-toggle="sub-menu">Home <i class="plus"></i></a>
+                  <ul class="sub-menu">
+                      <li class="menu-item"><a href="#">Home 1</a></li>
+                      <li class="menu-item"><a href="#">Home 2</a></li>
+                      <li class="menu-item"><a href="#">Home 3</a></li>
+                      <li class="menu-item"><a href="#">Home 4</a></li>
+                  </ul>
+               </li>
+               <li class="menu-item">
+                  <a href="#">About</a>
+               </li>
+               <li class="menu-item">
+                  <a href="#">Services</a>
+               </li>
+               <li class="menu-item menu-item-has-children">
+                  <a href="#" data-toggle="sub-menu">Pages <i class="plus"></i></a>
+                  <ul class="sub-menu">
+                      <li class="menu-item"><a href="#">page 1</a></li>
+                      <li class="menu-item"><a href="#">page 2</a></li>
+                      <li class="menu-item"><a href="#">page 3</a></li>
+                      <li class="menu-item"><a href="#">page 4</a></li>
+                  </ul>
+               </li>
+               <li class="menu-item">
+                  <a href="#">News</a>
+               </li>
+               <li class="menu-item">
+                  <a href="#">Contact</a>
+               </li>
+            </ul>
+          </nav>
+          <!-- navigation menu end -->
+       </div>
+    </div>
+ </header> --}}
+ <!-- header end -->

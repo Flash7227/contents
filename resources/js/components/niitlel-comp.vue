@@ -112,7 +112,7 @@
     methods: {
       getData(page=1){
         axios
-        .get("/home/niitlel/fetch?page="+page)
+        .get("/home/blog/fetch?page="+page)
         .then((response) => {
             this.loading = false;
             this.uploadData = response.data;
@@ -128,7 +128,7 @@
         });
       },
       searchFunc(){
-        axios.post("/home/niitlel/fetchSearch", { search: this.search})
+        axios.post("/home/blog/fetchSearch", { search: this.search})
           .then((response) => {
               this.loading = false;
               if(response.data[0]){

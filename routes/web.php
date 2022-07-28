@@ -43,6 +43,8 @@ Route::group(['middleware' => 'admincheck', 'prefix' => '/admin'], function(){
 Route::group([ 'prefix' => '/home'], function(){
     // Route::get('/', 'HomeController@homecompIndex');
     Route::get('/', 'NewHomeController@index');
+    Route::get('/fetch', 'NewHomeController@fetch');
+    //new above
     Route::get('/getupload', 'HomeController@uploadData');
     Route::get('/niitlel', 'HomeController@niitlelcompIndex');
     Route::get('/niitlel/fetch', 'HomeController@niitlelFetch');

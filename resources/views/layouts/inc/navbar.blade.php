@@ -14,12 +14,12 @@
           <a class="nav-link" href="/home">Нүүр
           </a>
       </li>
-      <li class="nav-item dropdown {{ Request::path() == 'home/niitlel' ? 'active' : ''}} {{ Request::path() == 'home/video' ? 'active' : ''}} {{ Request::path() == 'home/poster' ? 'active' : ''}} {{ Request::path() == 'home/file' ? 'active' : ''}}">
+      <li class="nav-item dropdown {{ Request::path() == 'home/blog' ? 'active' : ''}} {{ Request::path() == 'home/video' ? 'active' : ''}} {{ Request::path() == 'home/poster' ? 'active' : ''}} {{ Request::path() == 'home/file' ? 'active' : ''}}">
         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           Нээлттэй Контент
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-          <a class="dropdown-item" href="/home/niitlel">Блог</a>
+          <a class="dropdown-item" href="/home/blog">Блог</a>
           <a class="dropdown-item" href="/home/video">Бичлэг</a>
           <a class="dropdown-item" href="/home/poster">Постер</a>
           {{-- <div class="dropdown-divider"></div> --}}

@@ -98,7 +98,7 @@
                     <nav>
                         <ul>
                             <li></li>
-                            <li>Хувийн хаяг үүсгэх бол <a href="#0" class="t-signin">  Энд дар </a></li>
+                            <li>Хувийн хаяг үүсгэх бол <a id="a-tag" href="#0" class="t-signin">  Энд дар </a></li>
                         </ul>
                     </nav>
                     <div class="heading">
@@ -144,7 +144,7 @@
                     <nav>
                         <ul>
                             <li></li>
-                            <li>Хуучин хаягаар нэвтрэх бол<a href="#0" class="t-signup"> Энд дар</a></li>
+                            <li>Хуучин хаягаар нэвтрэх бол<a id="a-tag" href="#0" class="t-signup"> Энд дар</a></li>
                         </ul>
                     </nav>
                     <div class="heading">

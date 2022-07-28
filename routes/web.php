@@ -41,7 +41,8 @@ Route::group(['middleware' => 'admincheck', 'prefix' => '/admin'], function(){
 });
 
 Route::group([ 'prefix' => '/home'], function(){
-    Route::get('/', 'HomeController@homecompIndex');
+    // Route::get('/', 'HomeController@homecompIndex');
+    Route::get('/', 'NewHomeController@index');
     Route::get('/getupload', 'HomeController@uploadData');
     Route::get('/niitlel', 'HomeController@niitlelcompIndex');
     Route::get('/niitlel/fetch', 'HomeController@niitlelFetch');
@@ -56,8 +57,6 @@ Route::group([ 'prefix' => '/home'], function(){
     Route::post('/niitlel/fetchSearch', 'HomeController@niitlelSearch');
     Route::post('/file/fetchSearch', 'HomeController@fileSearch');
     Route::post('/video/fetchSearch', 'HomeController@videoSearch');
-    
-    
 });
 
     

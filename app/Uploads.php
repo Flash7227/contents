@@ -2,6 +2,7 @@
 
 namespace App;
 use App\User;
+use App\Counter;
 use Illuminate\Database\Eloquent\Model;
 
 class Uploads extends Model
@@ -23,5 +24,9 @@ class Uploads extends Model
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+    public function counter()
+    {
+        return $this->hasMany(Counter::class, 'upload_id');
     }
 }

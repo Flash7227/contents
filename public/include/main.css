@@ -156,3 +156,12 @@
     cursor: pointer;
     transition: background 0.5s;
 }
+
+.sub{
+    padding:12px;
+    width:32%;
+    height:150px;
+    display:table-cell;
+    border-right:solid grey 1px;  
+}
+.sub:last-child{border:0px}

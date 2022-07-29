@@ -44,12 +44,12 @@ Route::group(['middleware' => 'admincheck', 'prefix' => '/admin'], function(){
     
 
 });
+Route::get('/blog/{id}', 'NewHomeController@blogFetch');
 
 Route::group([ 'prefix' => '/home'], function(){
     // Route::get('/', 'HomeController@homecompIndex');
     Route::get('/', 'NewHomeController@index');
     Route::get('/fetch', 'NewHomeController@fetch');
-    Route::get('/blog/{id}', 'NewHomeController@blogFetch');
     //new above
     Route::get('/getupload', 'HomeController@uploadData');
     Route::get('/blog', 'HomeController@blogcompIndex');

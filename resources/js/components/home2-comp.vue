@@ -18,7 +18,7 @@
                     </el-carousel-item>
                 </el-carousel>
             <div class="row">
-                <div class="col-sm-12 col-md-4 mt-3" v-for="(blog,index) in blogs.slice(3)" :key="index" @click="viewBlog(blog)">
+                <div class="col-sm-12 col-md-4 mt-3 custom-hover" v-for="(blog,index) in blogs.slice(3)" :key="index" @click="viewBlog(blog)">
                     <el-card :body-style="{ padding: '0px' }">
                         <img :src="blog.download" class="image">
                     </el-card>
@@ -39,12 +39,12 @@
                     <div class="row">
                         <div class="col-md-6 col-sm-12" v-for="(poster,index) in posters.slice(0, 1)" :key="index">
                             <div class="demo-image__preview text-center">
-                                <el-image :src="poster.download" style="width: 240px; height: 240px" :preview-src-list="[poster.download]"></el-image>
+                                <el-image :src="poster.download" style="width: 260px; height: 260px" :preview-src-list="[poster.download]"></el-image>
                             </div>
                         </div>
                         <div class="col-md-6 col-sm-12">
                             <div class="row">
-                                <div class="col-lg-12" v-for="(poster,index) in posters.slice(1)" :key="index">
+                                <div class="col-lg-12 mt-1" v-for="(poster,index) in posters.slice(1)" :key="index">
                                     <div class="demo-image__preview text-center">
                                         <el-image  :src="poster.download" style="width: 80px; height: 80px" :preview-src-list="[poster.download]"></el-image>
                                     </div>
@@ -229,7 +229,7 @@ export default {
             });
         },
         viewBlog(data){
-            location.href = '/home/blog/' + data.id;
+            location.href = '/blog/' + data.id;
         }
     },
     created() {
@@ -316,5 +316,8 @@ export default {
 
 .el-carousel__item:nth-child(2n + 1) {
   background-color: #d3dce6;
+}
+.custom-hover{
+    cursor: pointer;
 }
 </style>

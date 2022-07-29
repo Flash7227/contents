@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 use App\Uploads;
+use App\Counter;
 use Storage;
 use League\Flysystem\Filesystem;
 use App\User;
@@ -204,12 +205,8 @@ class UsersController extends Controller
         // ->orWhereJsonContains('allowed','public')
         ->paginate(12);
         
-        $tags = Uploads::whereJsonContains('allowed', $email)
-        ->select('tags')
-        ->pluck('tags')
-        // ->toArray()
-        // ->merge('tags')
-        ;
+        // $count = Uploads::with('');
+
         return [$data];
     }
 
@@ -298,4 +295,45 @@ class UsersController extends Controller
             return $user;
 
     }
+
+    public function countViewAndDownload(Request $req){
+        
+        if($req['count'] === 'countView'){
+            $upload_id =  $req['data']['id'];
+            $currentViews = Counter::where('upload_id', $upload_id)->first();
+            if(!isset($currentViews)){
+                return Counter::create([
+                    'upload_id' => $upload_id,
+                    'view' =>  1
+                ]);
+                
+            }else {
+                return Counter::where('upload_id', $upload_id)->update([
+                    'view' => $currentViews->view + 1
+                ]);
+            }
+
+
+        }elseif($req['count'] === 'countDownload'){
+            $upload_id =  $req['data']['id'];
+            $currentViews = Counter::where('upload_id', $upload_id)->first();
+            if(!isset($currentViews)){
+                return Counter::create([
+                    'upload_id' => $upload_id,
+                    'download' =>  1
+                ]);
+            }else {
+                return Counter::where('upload_id', $upload_id)->update([
+                    'download' => $currentViews->download + 1
+                ]);
+            }
+        }else {
+            return 'error';
+        }
+        
+    }
+
+
+    
+   
 }

@@ -1,4 +1,5 @@
 
+
   <nav class="navbar navbar-expand-lg navbar-dark nav-new">
     
     <div class="container">
@@ -11,21 +12,20 @@
     <div class="collapse navbar-collapse" id="navbarColor02">
       <ul class="navbar-nav mr-auto">
         <li  class="nav-item {{ Request::path() == 'home' ? 'active' : ''}} ml-4">
-          <a id="nav-mainpage" class="nav-link" href="/home">Нүүр
+          <a id="nav-mainpage" class="nav-link mainlink" href="/home">Нүүр
           </a>
       </li>
-      <li class="nav-item dropdown ml-2 {{ Request::path() == 'home/niitlel' ? 'active' : ''}} {{ Request::path() == 'home/video' ? 'active' : ''}} {{ Request::path() == 'home/poster' ? 'active' : ''}} {{ Request::path() == 'home/file' ? 'active' : ''}}">
+      {{-- <li class="nav-item dropdown ml-2 {{ Request::path() == 'home/niitlel' ? 'active' : ''}} {{ Request::path() == 'home/video' ? 'active' : ''}} {{ Request::path() == 'home/poster' ? 'active' : ''}} {{ Request::path() == 'home/file' ? 'active' : ''}}">
         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           Нээлттэй Контент
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-          <a class="dropdown-item" href="/home/blog">Блог</a>
+          <a class="dropdown-item" href="/home/niitlel">Блог</a>
           <a class="dropdown-item" href="/home/video">Бичлэг</a>
           <a class="dropdown-item" href="/home/poster">Постер</a>
-          {{-- <div class="dropdown-divider"></div> --}}
           <a class="dropdown-item" href="/home/file">Файл</a>
         </div>
-      </li>
+      </li> --}}
         @auth
         {{-- <li class="nav-item dropdown {{ Request::path() == 'user/upload' ? 'active' : ''}} {{ Request::path() == 'user/shared' ? 'active' : ''}}">
           <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -37,16 +37,33 @@
           </div>
         </li> --}}
         
-        {{-- <li class="nav-item {{ Request::path() == 'user/upload' ? 'active' : ''}}">
-          <a class="nav-link" href="/user/upload">Файл хуулах
+        <li class="nav-item {{ Request::path() == 'home/blog' ? 'active' : ''}}">
+          <a class="nav-link mainlink" href="/home/blog">Блог
         </a>
         </li>
-        <li class="nav-item {{ Request::path() == 'user/shared' ? 'active' : ''}}">
-          <a class="nav-link" href="/user/shared">Хуваалцсан файл</a>
-        </li> --}}
+        <li class="nav-item {{ Request::path() == 'home/video' ? 'active' : ''}}">
+          <a class="nav-link mainlink" href="/home/video">Видео</a>
+        </li>
+        <li class="nav-item {{ Request::path() == 'home/poster' ? 'active' : ''}}">
+          <a class="nav-link mainlink" href="/home/poster">Постер</a>
+        </li>
+        <li class="nav-item {{ Request::path() == 'home/file' ? 'active' : ''}}">
+          <a class="nav-link mainlink" href="/home/file">Файл</a>
+        </li>
         {{-- <li class="nav-item">
           <a class="nav-link" href="#">About</a>
         </li> --}}
+        {{-- @if(Auth()->user()->role === 1)
+        <li class="nav-item dropdown {{ Request::path() == 'admin/user' ? 'active' : ''}} {{ Request::path() == 'admin/uploads' ? 'active' : ''}}">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Админ
+          </a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <a class="dropdown-item" href="/admin/user">Хэрэглэгчид</a>
+            <a class="dropdown-item" href="/admin/uploads">Хэрэглэгчдийн хуулсан файл</a>
+          </div>
+        </li>
+        @endif --}}
         @endauth
       </ul>
       <ul class="navbar-nav">
@@ -64,17 +81,17 @@
             </a>
             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
               @if(Auth()->user()->role === 1)
+              <a class="dropdown-item" href="/user/upload">Файл хуулах</a>
+              <a class="dropdown-item" href="/user/shared">Хуваалцсан файл</a>
+              <a class="dropdown-item" href="/admin/uploads">Хэрэглэгчдийн хуулсан файл</a>
               <a class="dropdown-item" href="/admin/user">Хэрэглэгчид</a>
-              <a class="dropdown-item" href="/admin/uploads">Хяналт</a>
               @endif
               @if(Auth()->user()->role === 0 || Auth()->user()->role === 2 || Auth()->user()->role === 1)
               <a class="dropdown-item" href="/user/profile">Миний хаяг</a>
-              <a class="dropdown-item" href="/user/upload">Файл хуулах</a>
-              <a class="dropdown-item" href="/user/shared">Танд хуваалцсан файл</a>
               @endif
                 <a class="dropdown-item" href="{{ route('logout') }}"
-                  onclick="event.preventDefault();
-                  document.getElementById('logout-form').submit();">
+                   onclick="event.preventDefault();
+                                 document.getElementById('logout-form').submit();">
                     Гарах
                 </a>
                 <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
@@ -87,62 +104,7 @@
     </div>
     </div>
   </nav>
-  
 
 
-  {{-- <link rel="stylesheet" href='include/navbar.css'> --}}
-  <!-- header start -->
-  {{-- <header class="header">
-    <div class="container">
-       <div class="header-main">
-          <div class="logo">
-             <a href="#">Logo</a>
-          </div>
-          <div class="open-nav-menu">
-             <span></span>
-          </div>
-          <div class="menu-overlay">
-          </div>
-          <!-- navigation menu start -->
-          <nav class="nav-menu">
-            <div class="close-nav-menu">
-               <img src="img/close.svg" alt="close">
-            </div>
-            <ul class="menu">
-               <li class="menu-item menu-item-has-children">
-                  <a href="#" data-toggle="sub-menu">Home <i class="plus"></i></a>
-                  <ul class="sub-menu">
-                      <li class="menu-item"><a href="#">Home 1</a></li>
-                      <li class="menu-item"><a href="#">Home 2</a></li>
-                      <li class="menu-item"><a href="#">Home 3</a></li>
-                      <li class="menu-item"><a href="#">Home 4</a></li>
-                  </ul>
-               </li>
-               <li class="menu-item">
-                  <a href="#">About</a>
-               </li>
-               <li class="menu-item">
-                  <a href="#">Services</a>
-               </li>
-               <li class="menu-item menu-item-has-children">
-                  <a href="#" data-toggle="sub-menu">Pages <i class="plus"></i></a>
-                  <ul class="sub-menu">
-                      <li class="menu-item"><a href="#">page 1</a></li>
-                      <li class="menu-item"><a href="#">page 2</a></li>
-                      <li class="menu-item"><a href="#">page 3</a></li>
-                      <li class="menu-item"><a href="#">page 4</a></li>
-                  </ul>
-               </li>
-               <li class="menu-item">
-                  <a href="#">News</a>
-               </li>
-               <li class="menu-item">
-                  <a href="#">Contact</a>
-               </li>
-            </ul>
-          </nav>
-          <!-- navigation menu end -->
-       </div>
-    </div>
- </header> --}}
- <!-- header end -->
+
+

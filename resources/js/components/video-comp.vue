@@ -3,29 +3,17 @@
   <el-container style="text-align:center">
       <el-main>
         <div class="row">
-          <!-- <div class="col-lg-12 col-md-12 col-sm-12 rowspace">
-            <el-badge is-dot class="item" type="success">
-              <el-button onclick="location.href='/home'" size="small">Нүүр</el-button>
-            </el-badge>
-            <el-badge is-dot class="item" type="warning">
-              <el-button onclick="location.href='/home/video'" size="small">Бичлэг</el-button>
-            </el-badge>
-            <el-badge is-dot class="item" type="primary">
-              <el-button onclick="location.href='/home/niitlel'" size="small">Нийтлэл</el-button>
-            </el-badge>
-            <el-badge is-dot class="item" type="warning">
-              <el-button onclick="location.href='/home/poster'" size="small">Постер</el-button>
-            </el-badge>
-            <el-badge is-dot class="item" type="primary">
-              <el-button onclick="location.href='/home/file'" size="small">Файл</el-button>
-            </el-badge>
-          </div> -->
           <div class="col-lg-12 col-md-12 col-sm-12">
             <el-form :inline="true">
               <el-form-item label="Нэр">
                   <div class="block">
                   <el-input v-model="search.name" placeholder="нэрээр хайх"></el-input>
                   </div>
+              </el-form-item>
+              <el-form-item label="#Tag">
+                <div class="block">
+                    <el-input v-model="search.tag" placeholder="тагаар хайх"></el-input>
+                </div>
               </el-form-item>
               <el-form-item label="Огноо">
                   <el-date-picker
@@ -42,7 +30,10 @@
                   <el-button type="primary" icon="el-icon-search" @click="searchFunc"></el-button>
               </el-form-item>
             </el-form>
-            <p style="text-align:left">Нийт: {{ videoData.total }}</p>
+            <hr>
+            <div class="text-right">
+              <small class="grey">Нийт: {{ videoData.total }}</small>
+            </div> 
           </div>
            <!-- Бичлэг -->
 
@@ -89,7 +80,8 @@ export default {
       videoData:{},
       search: {
           name:'',
-          date:''
+          tag: '',
+          date:'',
       }
     };
   },

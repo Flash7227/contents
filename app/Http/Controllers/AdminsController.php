@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Uploads;
+use App\Counter;
 use App\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -113,7 +114,10 @@ class AdminsController extends Controller
         if($req->form['type']){
             $upload->where('type', $req->form['type']);
         };
-        $upload = $upload->with('user')->orderBy('created_at', 'DESC')->paginate(15);
+        // return Counter::with('upload')->get();
+        // return Uploads::with('counter')->get();
+
+        $upload = $upload->with('user')->with('counter')->orderBy('created_at', 'DESC')->paginate(15);
         $storage = Uploads::sum('size');
         return [$upload,$storage];
     }

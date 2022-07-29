@@ -43,7 +43,7 @@ class HomeController extends Controller
     /// niitlel
     public function blogcompIndex()
     {
-        return view('files.niitlel');
+        return view('files.blog');
     }
     public function blogFetch()
     {
@@ -53,6 +53,7 @@ class HomeController extends Controller
     public function blogSearch(Request $req){
         $search = $req->input('search');
         $name = $search['name'];
+        $tag = $search['tag'];
         $created_at = $search['date'];
 
         $data = Uploads::query();
@@ -61,6 +62,9 @@ class HomeController extends Controller
         if($name){
             $data->where('name', $name);
             //$data->orWhere('name', 'like', '%' . $name . '%');
+        };
+        if($tag){
+            $data->whereJsonContains('tags', [$tag]);
         };
         if($created_at){
             $data->whereDate('created_at', $created_at);
@@ -84,6 +88,7 @@ class HomeController extends Controller
     public function posterSearch(Request $req){
         $search = $req->input('search');
         $name = $search['name'];
+        $tag = $search['tag'];
         $created_at = $search['date'];
 
         $data = Uploads::query();
@@ -92,10 +97,13 @@ class HomeController extends Controller
         if($name){
             $data->where('name', $name);
         };
+        if($tag){
+            $data->whereJsonContains('tags', [$tag]);
+        };
         if($created_at){
             $data->whereDate('created_at', $created_at);
         };
-        $data = $data->paginate(10);
+        $data = $data->orderBy('created_at', 'DESC')->paginate(10);
 
 
         return [$data];
@@ -114,6 +122,7 @@ class HomeController extends Controller
     public function videoSearch(Request $req){
         $search = $req->input('search');
         $name = $search['name'];
+        $tag = $search['tag'];
         $created_at = $search['date'];
 
         $data = Uploads::query();
@@ -122,10 +131,13 @@ class HomeController extends Controller
         if($name){
             $data->where('name', $name);
         };
+        if($tag){
+            $data->whereJsonContains('tags', [$tag]);
+        };
         if($created_at){
             $data->whereDate('created_at', $created_at);
         };
-        $data = $data->paginate(10);
+        $data = $data->orderBy('created_at', 'DESC')->paginate(10);
 
 
         return [$data];
@@ -145,6 +157,7 @@ class HomeController extends Controller
     public function fileSearch(Request $req){
         $search = $req->input('search');
         $name = $search['name'];
+        $tag = $search['tag'];
         $created_at = $search['date'];
 
         $data = Uploads::query();
@@ -153,14 +166,23 @@ class HomeController extends Controller
         if($name){
             $data->where('name', $name);
         };
+        if($tag){
+            $data->whereJsonContains('tags', [$tag]);
+        };
         if($created_at){
             $data->whereDate('created_at', $created_at);
         };
-        $data = $data->paginate(10);
-
+        $data = $data->orderBy('created_at', 'DESC')->paginate(10);
 
         return [$data];
 
+    }
+
+    public function detailBlog($id){
+        $datas = Uploads::where('sharetype', "public")->where('type', '4')->where('id', $id)->get();
+        return $datas;
+        return view('files.detailBlog', ['data'=>$data]);
+        
     }
     
 }

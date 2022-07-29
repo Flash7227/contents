@@ -143,26 +143,6 @@
 
 }
 
-#navbarDropdown {}
-
-#navbarDropdown:hover {
-    background-color: #ffffff;
-    color: rgb(28, 59, 107);
-
-    border-radius: 0.7em;
-    cursor: pointer;
-    transition: background 0.5s;
-}
-
-#nav-mainpage:hover {
-    background-color: #ffffff;
-    color: rgb(28, 59, 107);
-
-    border-radius: 0.5em;
-    cursor: pointer;
-    transition: background 0.5s;
-}
-
 .dropdown:hover .dropdown-menu {
     display: block;
     margin-top: 0;

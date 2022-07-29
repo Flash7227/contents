@@ -77,21 +77,21 @@
         @else 
         <li class="nav-item dropdown {{ str_contains(Request::path(), 'admin') ? 'active' : ''}}">
             <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                <i class="el-icon-user-solid"></i> {{ Auth::user()->name }}
+                 {{ Auth::user()->name }}
             </a>
             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
               @if(Auth()->user()->role === 1)
-              <a class="dropdown-item" href="/user/upload">Файл хуулах</a>
-              <a class="dropdown-item" href="/user/shared">Хуваалцсан файл</a>
-              <a class="dropdown-item" href="/admin/uploads">Хэрэглэгчдийн хуулсан файл</a>
-              <a class="dropdown-item" href="/admin/user">Хэрэглэгчид</a>
+              <a class="dropdown-item" href="/user/upload"><i class="el-icon-document"></i> Файл хуулах</a>
+              <a class="dropdown-item" href="/user/shared"><i class="el-icon-share"></i> Хуваалцсан файл</a>
+              <a class="dropdown-item" href="/admin/uploads"><i class="el-icon-document-copy"></i> Хэрэглэгчдийн хуулсан файл</a>
+              <a class="dropdown-item" href="/admin/user"><i class="el-icon-setting"></i> Хэрэглэгч тохиргоо</a>
               @endif
               @if(Auth()->user()->role === 0 || Auth()->user()->role === 2 || Auth()->user()->role === 1)
-              <a class="dropdown-item" href="/user/profile">Миний хаяг</a>
+              <a class="dropdown-item" href="/user/profile"><i class="el-icon-user"></i> Миний хаяг</a>
               @endif
                 <a class="dropdown-item" href="{{ route('logout') }}"
                    onclick="event.preventDefault();
-                                 document.getElementById('logout-form').submit();">
+                                 document.getElementById('logout-form').submit();"><i class="el-icon-switch-button"></i>
                     Гарах
                 </a>
                 <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">

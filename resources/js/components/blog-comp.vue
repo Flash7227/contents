@@ -1,31 +1,19 @@
 <template>
-  <div class="container" style="text-align:center">
+  <div class="container">
     <el-container>
       <el-main>
         <div class="row">
-          <!-- <div class="col-lg-12 col-md-12 col-sm-12 rowspace">
-            <el-badge is-dot class="item" type="success">
-              <el-button onclick="location.href='/home'" size="small">Нүүр</el-button>
-            </el-badge>
-            <el-badge is-dot class="item" type="warning">
-              <el-button onclick="location.href='/home/video'" size="small">Бичлэг</el-button>
-            </el-badge>
-            <el-badge is-dot class="item" type="primary">
-              <el-button onclick="location.href='/home/niitlel'" size="small">Нийтлэл</el-button>
-            </el-badge>
-            <el-badge is-dot class="item" type="warning">
-              <el-button onclick="location.href='/home/poster'" size="small">Постер</el-button>
-            </el-badge>
-            <el-badge is-dot class="item" type="primary">
-              <el-button onclick="location.href='/home/file'" size="small">Файл</el-button>
-            </el-badge>
-          </div> -->
-          <div class="col-lg-12 col-md-12 col-sm-12">
+          <div class="col-lg-12 col-md-12 col-sm-12"  style="text-align:center">
             <el-form :inline="true">
               <el-form-item label="Нэр">
                   <div class="block">
                   <el-input v-model="search.name" placeholder="нэрээр хайх"></el-input>
                   </div>
+              </el-form-item>
+              <el-form-item label="#Tag">
+                <div class="block">
+                    <el-input v-model="search.tag" placeholder="тагаар хайх"></el-input>
+                </div>
               </el-form-item>
               <el-form-item label="Огноо">
                   <el-date-picker
@@ -42,45 +30,41 @@
                   <el-button type="primary" icon="el-icon-search" @click="searchFunc"></el-button>
               </el-form-item>
             </el-form>
-              <p style="text-align:left">Нийт: {{ uploadData.total }}</p>
+            <hr>
+            <div class="text-right">
+              <small class="grey">Нийт: {{ blogData.total }}</small>
+            </div> 
           </div>
-          <div class="col-lg-4 col-md-4 col-sm-4 rowspace" v-for="(niitlel, index) in uploadData.data" :key="index" >
-            <el-card :body-style="{ padding: '0px' }" >
-              <div class="readIcon" v-if="niitlel.url=='noimage123.png'">
+          <div class="col-lg-4 col-md-4 col-sm-4 rowspace" v-for="(blog, index) in blogData.data" :key="index" >
+            <!-- <el-card :body-style="{ padding: '0px' }" > -->
+              <div class="readIcon" v-if="blog.url=='noimage123.png'">
                 <i class="el-icon-reading"></i>
               </div>
               <div class="demo-image__preview" v-else >
                 <el-image 
-                  style="width: 100%; height: 200px"
-                  :src="niitlel.download" 
-                  :preview-src-list=[niitlel.download]>
+                  style="width: 100%; height: 270px; border-radius: 8px"
+                  :src="blog.download" 
+                  :preview-src-list=[blog.download]>
                 </el-image>
               </div>
-              <div style="padding: 14px;">
-                <p class="overme">{{niitlel.name}}</p>
-                <div class="bottom clearfix">
-                  <time class="time">{{dateformatter(niitlel.created_at)}}</time>
-                  <el-button 
-                  :hidden="niitlel.url=='noimage123.png' ? true:false"
-                  icon="el-icon-download"  
-                  size="small" type="success" 
-                  circle 
-                  class="button" 
-                  @click="handleDownload(niitlel.url, niitlel.download)">
-                  </el-button>
-                  <el-button icon="el-icon-view"  size="small" circle class="button" @click="pickDetails(niitlel), centerDialogVisible = true" ></el-button>
+              <div style="padding: 14px;" class="description">
+                <div class="custom-card-title overme">
+                   <a v-bind:href="'/home/blog/details/'+ blog.id">{{blog.name}}</a>
                 </div>
+                <small class="grey">{{dateformatter(blog.created_at, false)}}</small>
               </div>
-            </el-card>
+            <!-- </el-card> -->
           </div>
-        </div>
-           <pagination
-            :data="uploadData"
+          <pagination
+            :data="blogData"
             @pagination-change-page="getData"
             :limit="6"
             align="center"
             class="my-2"
-          ></pagination>           
+          ></pagination> 
+        </div>
+              
+       
           <el-dialog
             :title="selected.name"
             :visible.sync="centerDialogVisible"
@@ -101,11 +85,12 @@
     data () {
       return {
         centerDialogVisible: false,
-        uploadData:{},
+        blogData:{},
         selected:{},
         search: {
           name:'',
-          date:''
+          date:'',
+          tag: ''
         }
       }
     },
@@ -115,8 +100,8 @@
         .get("/home/blog/fetch?page="+page)
         .then((response) => {
             this.loading = false;
-            this.uploadData = response.data;
-            console.log(this.uploadData);
+            this.blogData = response.data;
+            console.log(this.blogData);
         })
         .catch((error) => {
             this.loading = false;
@@ -128,26 +113,27 @@
         });
       },
       searchFunc(){
-        axios.post("/home/blog/fetchSearch", { search: this.search})
-          .then((response) => {
-              this.loading = false;
-              if(response.data[0]){
-                  console.log(response.data);
-                  this.uploadData = response.data[0];
-              }else{
-                  console.log(response.data);
-                  this.getData();
-              }
-          })
-          .catch((error) => {
-              console.log(error.response);
-              this.$notify.error({
-                  title: "Error",
-                  message: error.response.data.message,
-              });
-          });
+      axios.post("/home/blog/fetchSearch", { search: this.search})
+        .then((response) => {
+            this.loading = false;
+            if(response.data[0]){
+                console.log(response.data);
+                this.blogData = response.data[0];
+            }else{
+                console.log(response.data);
+                this.getData();
+            }
+        })
+        .catch((error) => {
+            console.log(error.response);
+            this.$notify.error({
+                title: "Error",
+                message: error.response.data.message,
+            });
+        });
 
-        },
+      },
+      
       
       handleClose(){
           this.dialogVisible = false;         
@@ -227,16 +213,20 @@
   }
   .image {
     width: 100%;
-    height: 200px;
+    height: 250px;
     display: block;
   }
   .readIcon{
     width: 100%;
-    height: 200px;
+    height: 250px;
     background-color: #0B5394;
     text-align: center; 
     font-size: 8em; 
     color: #FF9900 
+  }
+  .description{
+    width: 100%;
+    height: 150px;
   }
 
   .card {
@@ -266,4 +256,11 @@
     padding: 10px;
     margin-top: 20px
   }
+  .overme {
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    text-align: left;
+}
 </style>

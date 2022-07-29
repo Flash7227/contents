@@ -9,13 +9,6 @@
     padding: 0 0;
 }
 
-.overme {
-    width: 100%;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    text-align: left;
-}
 
 .f_glass {
     background: rgba(255, 255, 255, 0.14);
@@ -163,3 +156,11 @@
 .dropdown-menu>a:hover {
     font-weight: 1000;
 }
+.sub{
+    padding:12px;
+    width:32%;
+    height:150px;
+    display:table-cell;
+    border-right:solid grey 1px;  
+}
+.sub:last-child{border:0px}

@@ -21,7 +21,7 @@ class NewHomeController extends Controller
     public function blogFetch($id)
     {
         $blog = Uploads::find($id);
-        return view('files.blog', ['blog'=>$blog]);
+        return view('files.blog2', ['blog'=>$blog]);
     }
 }
 

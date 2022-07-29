@@ -133,14 +133,14 @@
                         size="small"
                         circle
                         :append-to-body="true"
-                        @click="pickDetails(scope.row), dialogVisible = true
+                        @click="pickDetails(scope.row), submitView(scope.row,  'countView') , dialogVisible = true
                         "><i class="el-icon-view"></i>
                         </el-button>
                         <el-button
                         size="small"
                         type="success"
                         circle
-                        @click="handleDownload(scope.row.url, scope.row.download)"><i class="el-icon-download"></i>
+                        @click="handleDownload(scope.row.url, scope.row.download), submitView(scope.row, 'countDownload')"><i class="el-icon-download"></i>
                         </el-button>
 
                         
@@ -200,6 +200,7 @@ export default {
             dialogVisible: false,
             data: {},
             allTags: [],
+            countDownload: 'true',
             types: {
                 file: '',
                 created_at:'',
@@ -289,6 +290,35 @@ export default {
                 });
                 
 
+        },
+
+        submitView(data, count) {
+            console.log(count,data);
+            // var countDownload = count;
+            // var countView = count;
+            axios
+                .post("/user/count", {data: data, count})
+                .then((response) => {
+                    this.loading = false;
+                    if(response.data == 'success'){
+                        this.resetForm();
+                        this.$message({
+                            message: "Successful",
+                            type: "success",
+                            duration: 3000,
+                        });
+                        this.fetch();
+                    }
+                })
+                .catch((error) => {
+                    this.loading = false;
+                    console.log(error.response);
+                    this.$notify.error({
+                        title: "Error",
+                        message: error.response.data.message,
+                    });
+                });
+             
         },
 
         tagHandler(value) { 

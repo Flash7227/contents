@@ -149,6 +149,35 @@
                         {{scope.row.user.email}}
                     </template>
                 </el-table-column>
+                <!----------------------------- view count start -->
+                <el-table-column
+                    prop="counter"
+                    label="Үзсэн/татагдсан тоо"
+                    align="center"
+                    header-align="center"
+                >
+                    <template slot-scope="scope"
+                    v-if="scope.row.type === 2 || scope.row.type === 3"
+                    ><el-tag type="info" v-if="scope.row.counter[0]">
+                     <i class="el-icon-view"></i>
+                        {{scope.row.counter[0].view}}
+                    </el-tag>
+                        <el-tag type="info" v-if="scope.row.counter[0]">
+                    <i class="el-icon-download"></i>
+                        {{scope.row.counter[0].download}}
+                         </el-tag>
+                         <el-tag type="info" v-if="!scope.row.counter[0]">
+                     <i class="el-icon-view"></i>
+                        0
+                    </el-tag>
+                         <el-tag type="info" v-if="!scope.row.counter[0]">
+                    <i class="el-icon-download"></i>
+                        0
+                         </el-tag>
+                    </template>
+                    
+                </el-table-column>
+                <!----------------------------- view count end -->
                 <el-table-column
                     prop="created_at"
                     label="Огноо"

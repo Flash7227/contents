@@ -25,6 +25,8 @@ Route::group(['middleware' => 'auth', 'prefix' => '/user'], function(){
     Route::get('/profile', 'UsersController@profileIndex');
     Route::get('/profile/upload', 'UsersController@profileUpload');
     Route::post('/profile/avatar', 'UsersController@avatarUpload');
+    //count view and download
+    Route::post('/count', 'UsersController@countViewAndDownload');
 });
 
 Route::group(['middleware' => 'admincheck', 'prefix' => '/admin'], function(){
@@ -38,6 +40,9 @@ Route::group(['middleware' => 'admincheck', 'prefix' => '/admin'], function(){
     Route::get('/uploads', 'AdminsController@uploadIndex');
     Route::post('/uploads/fetch', 'AdminsController@uploadFetch');
     Route::post('/uploads/modify', 'AdminsController@uploadModify');
+    
+    
+
 });
 
 Route::group([ 'prefix' => '/home'], function(){

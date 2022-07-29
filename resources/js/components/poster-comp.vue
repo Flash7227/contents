@@ -4,26 +4,16 @@
             <el-main>
                 <div class="row">
                     <div class="col-lg-12 col-md-12 col-sm-12 rowspace">
-                        <!-- <el-badge is-dot class="item" type="success">
-                            <el-button onclick="location.href='/home'" size="small">Нүүр</el-button>
-                        </el-badge>
-                        <el-badge is-dot class="item" type="warning">
-                            <el-button onclick="location.href='/home/video'" size="small">Бичлэг</el-button>
-                        </el-badge>
-                        <el-badge is-dot class="item" type="primary">
-                            <el-button onclick="location.href='/home/niitlel'" size="small">Нийтлэл</el-button>
-                        </el-badge>
-                        <el-badge is-dot class="item" type="warning">
-                            <el-button onclick="location.href='/home/poster'" size="small">Постер</el-button>
-                        </el-badge>
-                        <el-badge is-dot class="item" type="primary">
-                            <el-button onclick="location.href='/home/file'" size="small">Файл</el-button>
-                        </el-badge> -->
                         <el-card class="rowspace">
                             <el-form :inline="true">
                                 <el-form-item label="Нэр">
                                     <div class="block">
                                     <el-input v-model="search.name" placeholder="нэрээр хайх"></el-input>
+                                    </div>
+                                </el-form-item>
+                                <el-form-item label="#Tag">
+                                    <div class="block">
+                                        <el-input v-model="search.tag" placeholder="тагаар хайх"></el-input>
                                     </div>
                                 </el-form-item>
                                 <el-form-item label="Огноо">
@@ -41,7 +31,10 @@
                                     <el-button type="primary" icon="el-icon-search" @click="searchFunc"></el-button>
                                 </el-form-item>
                             </el-form>
-                            <p style="text-align:left">Нийт: {{ postersData.total }}</p>
+                            <hr>
+                            <div class="text-right">
+                                <small class="grey">Нийт: {{ postersData.total }}</small>
+                            </div>                                      
                             <el-table
                             header-cell-class-name="my-header"
                             style="text-align: center; width: 100%"
@@ -71,6 +64,22 @@
                                 </template>
                                 </el-table-column>
                                 <el-table-column
+                                prop="tags"
+                                label="Түлхүүр үг/tag"
+                                align="center"
+                                >
+                                <template slot-scope="scope">
+                                    <el-tag
+                                    type="info"
+                                    class="mr-1 mb-1"
+                                    v-for="(tag, index) in JSON.parse(scope.row.tags)"
+                                    :key="index"
+                                    disable-transitions>
+                                        #{{tag}}
+                                    </el-tag>
+                                </template>
+                                </el-table-column>
+                                <el-table-column
                                 label="Огноо"
                                 width="180"
                                 align="center">
@@ -84,14 +93,7 @@
                                     width="100"
                                     align="center">
                                     <template slot-scope="scope">
-                                        <!-- <el-button
-                                        size="small"
-                                        circle
-                                        @click="pickDetails(scope.row), centerDialogVisible = true
-                                        "><i class="el-icon-view"></i>
-                                        </el-button> -->
                                         <el-button icon="el-icon-view" size="small" circle class="button" @click="pickDetails(scope.row), centerDialogVisible = true" ></el-button>
-
                                         <el-button
                                         size="small"
                                         type="success"
@@ -108,6 +110,8 @@
                                 align="center"
                                 class="my-2"
                             ></pagination>
+                            
+
                         </el-card>
                     </div>
                 </div>
@@ -153,6 +157,7 @@
         },
         search: {
             name:'',
+            tag: '',
             date:''
         }
       }

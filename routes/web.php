@@ -57,8 +57,11 @@ Route::group([ 'prefix' => '/home'], function(){
     //search
     Route::post('/poster/fetchSearch', 'HomeController@posterSearch');
     Route::post('/blog/fetchSearch', 'HomeController@blogSearch');
-    Route::post('/blog/fetchSearch', 'HomeController@fileSearch');
+    Route::post('/file/fetchSearch', 'HomeController@fileSearch');
     Route::post('/video/fetchSearch', 'HomeController@videoSearch');
+    ///details blog
+    Route::get('/blog/details/{id}', 'HomeController@detailBlog');
+   // Route::get('/blog/details', 'HomeController@detailBlog');
 });
 
     

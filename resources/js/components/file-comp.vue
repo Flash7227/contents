@@ -4,28 +4,17 @@
             <el-main>
                 <div class="row">
                     <div class="col-lg-12 col-md-12 col-sm-12">
-                        <!-- <el-badge is-dot class="item" type="success">
-                            <el-button onclick="location.href='/home'" size="small">Нүүр</el-button>
-                        </el-badge>
-                        <el-badge is-dot class="item" type="warning">
-                            <el-button onclick="location.href='/home/video'" size="small">Бичлэг</el-button>
-                        </el-badge>
-                        <el-badge is-dot class="item" type="primary">
-                            <el-button onclick="location.href='/home/niitlel'" size="small">Нийтлэл</el-button>
-                        </el-badge>
-                        <el-badge is-dot class="item" type="warning">
-                            <el-button onclick="location.href='/home/poster'" size="small">Постер</el-button>
-                        </el-badge>
-                        <el-badge is-dot class="item" type="primary">
-                            <el-button onclick="location.href='/home/file'" size="small">Файл</el-button>
-                        </el-badge> -->
-
                         <div class="rowspace">
                             <el-card>
                                 <el-form :inline="true">
                                     <el-form-item label="Нэр">
                                         <div class="block">
                                         <el-input v-model="search.name" placeholder="нэрээр хайх"></el-input>
+                                        </div>
+                                    </el-form-item>
+                                    <el-form-item label="#Tag">
+                                        <div class="block">
+                                            <el-input v-model="search.tag" placeholder="тагаар хайх"></el-input>
                                         </div>
                                     </el-form-item>
                                     <el-form-item label="Огноо">
@@ -43,7 +32,10 @@
                                         <el-button type="primary" icon="el-icon-search" @click="searchFunc"></el-button>
                                     </el-form-item>
                                 </el-form>
-                                <p style="text-align:left">Нийт: {{ filesData.total }}</p>
+                                <hr>
+                                <div class="text-right">
+                                    <small class="grey">Нийт: {{ filesData.total }}</small>
+                                </div> 
                                 <el-table
                                     header-cell-class-name="my-header"
                                     style="text-align: center; width: 100%"
@@ -74,6 +66,22 @@
                                     </template>
                                     </el-table-column>
                                     <el-table-column
+                                    prop="tags"
+                                    label="Түлхүүр үг/tag"
+                                    align="center"
+                                    >
+                                    <template slot-scope="scope">
+                                        <el-tag
+                                        type="info"
+                                        class="mr-1 mb-1"
+                                        v-for="(tag, index) in JSON.parse(scope.row.tags)"
+                                        :key="index"
+                                        disable-transitions>
+                                            #{{tag}}
+                                        </el-tag>
+                                    </template>
+                                    </el-table-column>
+                                    <el-table-column
                                     label="Огноо"
                                     width="180"
                                     align="center">
@@ -101,35 +109,6 @@
                                             round
                                             @click="handleDownload(scope.row.url, scope.row.download)"><i class="el-icon-download"></i>
                                             </el-button>
-
-                                            <el-dialog
-                                                title="Tips"
-                                                :visible.sync="dialogVisible"
-                                                width="60%"
-                                                destroy-on-close
-                                                :before-close="handleClose">
-                                                <span>
-                                                    <el-image 
-                                                        v-if="scope.row.download === types.download"
-                                                        :src="types.download" 
-                                                        :preview-src-list="[types.download]"
-                                                        >
-                                                    </el-image>
-                                                    <video
-                                                        v-if="scope.row.download === types.download"
-                                                        ref="video" 
-                                                        class="video" 
-                                                        width="100%" 
-                                                        controls>
-                                                        <source :src="scope.row.download" type="video/mp4">
-                                                    </video>
-                                                </span>
-                                                <span slot="footer" class="dialog-footer">
-                                                    <el-button @click="dialogVisible = false">Cancel</el-button>
-                                                    <el-button type="primary" @click="dialogVisible = false">Confirm</el-button>
-                                                </span>
-                                            </el-dialog>
-                    
                                         </template>
                                     </el-table-column>
                                 </el-table>
@@ -143,6 +122,31 @@
                             </el-card>
                         </div>
                     </div>
+                    <el-dialog
+                       :title="selected.name"
+                        :visible.sync="dialogVisible"
+                        width="60%"
+                        destroy-on-close
+                        :before-close="handleClose">
+                        <span>
+                            <el-image 
+                                :src="selected.download" 
+                                :preview-src-list="[selected.download]"
+                                >
+                            </el-image>
+                            <video
+                                ref="video" 
+                                class="video" 
+                                width="100%" 
+                                controls>
+                                <source :src="selected.download" type="video/mp4">
+                            </video>
+                        </span>
+                        <span slot="footer" class="dialog-footer">
+                            <el-button @click="dialogVisible = false">Cancel</el-button>
+                            <el-button type="primary" @click="dialogVisible = false">Confirm</el-button>
+                        </span>
+                    </el-dialog>
                 </div>
             </el-main>
         </el-container>
@@ -154,13 +158,14 @@
       return {
         dialogVisible: false,
         filesData:{},
-        types: {
+        selected: {
             file: '',
             created_at:'',
             download:'',
             id:'',
             name:'',
             size:'',
+            desc: '',
             // tags:'',
             type:'',
             updated_at:'',
@@ -169,7 +174,8 @@
         },
         search: {
             name:'',
-            date:''
+            tag: '',
+            date:'',
         }
       }
     },
@@ -230,17 +236,18 @@
 
         pickDetails(data){
             
-            this.types.file = data.file;
-            this.types.created_at = data.created_at;
-            this.types.download = data.download;
-            this.types.id = data.id;
-            this.types.name = data.name;
-            this.types.size = data.size;
+            this.selected.file = data.file;
+            this.selected.created_at = data.created_at;
+            this.selected.download = data.download;
+            this.selected.id = data.id;
+            this.selected.name = data.name;
+            this.selected.size = data.size;
+            this.selected.desc = data.desc;
             // this.types.tags = data.tags;
-            this.types.type = data.type;
-            this.types.updated_at = data.updated_at;
-            this.types.url = data.url;
-            this.types.user_id = data.user_id;
+            this.selected.type = data.type;
+            this.selected.updated_at = data.updated_at;
+            this.selected.url = data.url;
+            this.selected.user_id = data.user_id;
                 
         },
 

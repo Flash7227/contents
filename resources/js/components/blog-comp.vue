@@ -49,7 +49,8 @@
               </div>
               <div style="padding: 14px;" class="description">
                 <div class="custom-card-title overme">
-                   <a v-bind:href="'/home/blog/details/'+ blog.id">{{blog.name}}</a>
+                   <!-- <a v-bind:href="'/home/blog/details/'+ blog.id">{{blog.name}}</a> -->
+                   <el-button @click="viewBlog(blog)" type="text"></el-button>
                 </div>
                 <small class="grey">{{dateformatter(blog.created_at, false)}}</small>
               </div>
@@ -133,8 +134,10 @@
         });
 
       },
-      
-      
+      viewBlog(data){
+          location.href = '/home/blog/' + data.id;
+      },
+
       handleClose(){
           this.dialogVisible = false;         
       },

@@ -1,5 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500&family=Roboto&display=swap');
 
+* {
+    padding: 0 0;
+    margin: 0 0;
+}
+
 .el-header {
     padding: 0 0;
 }
@@ -139,6 +144,24 @@
 }
 
 #navbarDropdown {}
+
+#navbarDropdown:hover {
+    background-color: #ffffff;
+    color: rgb(28, 59, 107);
+
+    border-radius: 0.7em;
+    cursor: pointer;
+    transition: background 0.5s;
+}
+
+#nav-mainpage:hover {
+    background-color: #ffffff;
+    color: rgb(28, 59, 107);
+
+    border-radius: 0.5em;
+    cursor: pointer;
+    transition: background 0.5s;
+}
 
 .dropdown:hover .dropdown-menu {
     display: block;

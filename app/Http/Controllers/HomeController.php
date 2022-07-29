@@ -178,12 +178,7 @@ class HomeController extends Controller
 
     }
 
-    public function detailBlog($id){
-        $datas = Uploads::where('sharetype', "public")->where('type', '4')->where('id', $id)->get();
-        return $datas;
-        return view('files.detailBlog', ['data'=>$data]);
-        
-    }
+   
     
 }
 

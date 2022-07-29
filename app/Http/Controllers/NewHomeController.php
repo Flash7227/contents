@@ -13,7 +13,9 @@ class NewHomeController extends Controller
     public function fetch()
     {
         $blog = Uploads::where('sharetype', "public")->where('type', '4')->orderBy('created_at', 'DESC')->limit(6)->get();
-        $files = Uploads::where('sharetype', "public")->where('type', '1')->orderBy('created_at', 'DESC')->limit(15)->get();
-        return [$blog, $files];
+        $files = Uploads::where('sharetype', "public")->where('type', '1')->orderBy('created_at', 'DESC')->limit(8)->get();
+        $videos = Uploads::where('sharetype', "public")->where('type', '2')->orderBy('created_at', 'DESC')->limit(6)->get();
+        $posters = Uploads::where('sharetype', "public")->where('type', '3')->orderBy('created_at', 'DESC')->limit(6)->get();
+        return [$blog, $files, $videos, $posters];
     }
 }

@@ -35,12 +35,12 @@
               <small class="grey">Нийт: {{ blogData.total }}</small>
             </div> 
           </div>
-          <div class="col-lg-4 col-md-4 col-sm-4 rowspace" v-for="(blog, index) in blogData.data" :key="index" >
+          <div class="col-lg-4 col-md-4 col-sm-4 " v-for="(blog, index) in blogData.data" :key="index" >
             <!-- <el-card :body-style="{ padding: '0px' }" > -->
-              <div class="readIcon" v-if="blog.url=='noimage123.png'">
+              <!-- <div class="readIcon" v-if="blog.url=='noimage123.png'">
                 <i class="el-icon-reading"></i>
-              </div>
-              <div class="demo-image__preview" v-else >
+              </div> -->
+              <div class="demo-image__preview" >
                 <el-image 
                   style="width: 100%; height: 270px; border-radius: 8px"
                   :src="blog.download" 
@@ -50,7 +50,7 @@
               <div style="padding: 14px;" class="description">
                 <div class="custom-card-title overme">
                    <!-- <a v-bind:href="'/home/blog/details/'+ blog.id">{{blog.name}}</a> -->
-                   <el-button @click="viewBlog(blog)" type="text"></el-button>
+                   <el-button @click="viewBlog(blog)" type="text" class="overme">{{blog.name}}</el-button>
                 </div>
                 <small class="grey">{{dateformatter(blog.created_at, false)}}</small>
               </div>
@@ -134,8 +134,36 @@
         });
 
       },
+      submitView(data, count) {
+        console.log(count,data);
+        // var countDownload = count;
+        // var countView = count;
+        axios
+        .post("/user/count", {data: data, count})
+        .then((response) => {
+            this.loading = false;
+            if(response.data == 'success'){
+                this.resetForm();
+                this.$message({
+                    message: "Successful",
+                    type: "success",
+                    duration: 3000,
+                });
+                this.fetch();
+            }
+        })
+        .catch((error) => {
+            this.loading = false;
+            console.log(error.response);
+            this.$notify.error({
+                title: "Error",
+                message: error.response.data.message,
+            });
+        });
+              
+      },
       viewBlog(data){
-          location.href = '/home/blog/' + data.id;
+          location.href = '/blog/' + data.id;
       },
 
       handleClose(){

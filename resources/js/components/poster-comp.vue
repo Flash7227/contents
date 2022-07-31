@@ -180,8 +180,8 @@
             });
         });
       },
-      searchFunc(){
-        axios.post("/home/poster/fetchSearch", { search: this.search})
+        searchFunc(){
+            axios.post("/home/poster/fetchSearch", { search: this.search})
             .then((response) => {
                 this.loading = false;
                 if(response.data[0]){
@@ -201,7 +201,35 @@
             });
 
         },
-      toView(dwnld){
+        submitView(data, count) {
+            console.log(count,data);
+            // var countDownload = count;
+            // var countView = count;
+            axios
+            .post("/user/count", {data: data, count})
+            .then((response) => {
+                this.loading = false;
+                if(response.data == 'success'){
+                    this.resetForm();
+                    this.$message({
+                        message: "Successful",
+                        type: "success",
+                        duration: 3000,
+                    });
+                    this.fetch();
+                }
+            })
+            .catch((error) => {
+                this.loading = false;
+                console.log(error.response);
+                this.$notify.error({
+                    title: "Error",
+                    message: error.response.data.message,
+                });
+            });
+                
+        },
+        toView(dwnld){
             console.log(dwnld);
         },
 

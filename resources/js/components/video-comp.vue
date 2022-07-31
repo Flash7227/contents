@@ -1,10 +1,10 @@
 <template>
 <div class="container">
-  <el-container style="text-align:center">
+  <el-container>
       <el-main>
         <div class="row">
           <div class="col-lg-12 col-md-12 col-sm-12">
-            <el-form :inline="true">
+            <el-form :inline="true" class="text-center">
               <el-form-item label="Нэр">
                   <div class="block">
                   <el-input v-model="search.name" placeholder="нэрээр хайх"></el-input>
@@ -37,8 +37,8 @@
           </div>
            <!-- Бичлэг -->
 
-          <div class="col-lg-4 col-md-4 col-sm-4 rowspace" v-for="(video, index) in videoData.data" :key="index">
-            <Media
+          <div class="col-lg-4 col-md-4 col-sm-4 rowspaceb text-center" v-for="(video, index) in videoData.data" :key="index">
+            <video
               style="width: 300px; height: 200px;"
               :kind="'video'"
               :isMuted="false"
@@ -46,15 +46,22 @@
               :autoplay="false"
               :controls="true"
               :loop="true"
-              @pause="handle"
-              :ref="'video_player'"
               width="auto"
-              class="example"
-            ></Media>
-            <div style="padding: 1px;">
-              <span style="text-align: left;">{{video.name}}</span>
+             
+            ></video>
+            <div style="padding: 1px">
+              <span>{{video.name}}</span>
               <div class="bottom clearfix">
-                <time class="time">{{ dateformatter(video.created_at) }}</time>
+              <time class="time" style="float: left">{{ dateformatter(video.created_at) }}</time>
+              <div style="float: right">
+                <el-button @click="selectRow(video), submitView(video,  'countView')" type="text"  size="medium" icon="el-icon-view" style="color: #409EFF; font-size: 1.3em"></el-button>
+                <el-button
+                  size="medium"
+                  type="text"
+                  circle
+                  @click="handleDownload(video.url, video.download), submitView(video, 'countDownload')"><i class="el-icon-download" style="color: #67C23A; font-size: 1.3em"></i>
+                </el-button>            
+              </div>
               </div>
             </div>
           </div>
@@ -67,17 +74,42 @@
             align="center"
             class="my-2"
           ></pagination>
+          <el-dialog
+            title="Үзэх"
+            :visible.sync="viewVisible"
+            width="90%"
+            append-to-body
+            :before-close="handleCloseView">
+            <video width="90%" height="auto" controls ref="video" >
+                <source :src="selected.download" type="video/mp4" ref="source1"/>
+                <source :src="selected.download" :type="getExt(selected.url)" ref="source2"/>
+                Your browser does not support the video tag.
+            </video>
+        </el-dialog>
     </el-main>
   </el-container>
   </div>
 </template>
 <script>
-import Media from "@dongido/vue-viaudio";
 
 export default {
   data() {
     return {
       videoData:{},
+      viewVisible: false,
+      selected: {
+        file: '',
+        created_at:'',
+        download:'',
+        id:'',
+        name:'',
+        size:'',
+        desc:'',
+        type:'',
+        updated_at:'',
+        url:'',
+        user_id:'',
+      },
       search: {
           name:'',
           tag: '',
@@ -85,9 +117,7 @@ export default {
       }
     };
   },
-  components: {
-    Media,
-  },
+
   name: "Example",
   methods: {
     getvideoData(page=1){
@@ -109,29 +139,94 @@ export default {
     },
     searchFunc(){
       axios.post("/home/video/fetchSearch", { search: this.search})
-        .then((response) => {
+      .then((response) => {
+        this.loading = false;
+        if(response.data[0]){
+            console.log(response.data);
+            this.videoData = response.data[0];
+        }else{
+            console.log(response.data);
+            this.getvideoData();
+        }
+      })
+      .catch((error) => {
+        console.log(error.response);
+        this.$notify.error({
+            title: "Error",
+            message: error.response.data.message,
+        });
+      });
+
+    },
+    submitView(data, count) {
+      console.log(count,data);
+      // var countDownload = count;
+      // var countView = count;
+      axios
+      .post("/user/count", {data: data, count})
+      .then((response) => {
           this.loading = false;
-          if(response.data[0]){
-              console.log(response.data);
-              this.videoData = response.data[0];
-          }else{
-              console.log(response.data);
-              this.getvideoData();
+          if(response.data == 'success'){
+              this.resetForm();
+              this.$message({
+                  message: "Successful",
+                  type: "success",
+                  duration: 3000,
+              });
+              this.fetch();
           }
-        })
-        .catch((error) => {
+      })
+      .catch((error) => {
+          this.loading = false;
           console.log(error.response);
           this.$notify.error({
               title: "Error",
               message: error.response.data.message,
           });
-        });
-
-      },
-    handle() {
-      setTimeout(() => {
-        //this.$refs.video_player.play();
-      },);
+      });
+            
+    },
+    handleDownload(urlz, downloadz) {
+      var url = urlz;
+      var download = downloadz;
+      var link = document.createElement("a");
+      link.setAttribute('download', url);
+      link.href = download;
+      console.log(url, link.href);
+      var a = document.body.appendChild(link);
+      link.click();
+      link.remove();
+    },
+    getExt(raw){
+      // console.log(raw);
+      var url = raw.split('.');
+      return 'video/'+url[url.length - 1];
+    },
+    selectRow(data){
+      this.selected.type = data.type;
+      this.selected.url = data.url;
+      this.selected.download = data.download;
+      this.viewdata();
+    },
+    async viewdata() {
+      this.viewVisible = true;
+      if(this.selected.type == 2){
+          this.loading = true;
+          const result = await this.viewAfter();
+      }
+    },
+    viewAfter() {
+      return new Promise(resolve => {
+          setTimeout(() => {
+          this.loading = false;
+              var video = this.$refs.video;
+              var source1 = this.$refs.source1;
+              var source2 = this.$refs.source2;
+              source1.setAttribute('src', this.selected.download);
+              source2.setAttribute('src', this.selected.download);
+              video.load();
+          }, 1000);
+      });
     },
     dateformatter(date, short) {
       if (short) {

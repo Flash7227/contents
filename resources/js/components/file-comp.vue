@@ -100,14 +100,14 @@
                                             size="small"
                                             type="info"
                                             round
-                                            @click="toView(scope.row.download), pickDetails(scope.row), dialogVisible = true
+                                            @click="toView(scope.row.download), pickDetails(scope.row), submitView(scope.row,  'countView'), dialogVisible = true
                                             "><i class="el-icon-view"></i>
                                             </el-button>
                                             <el-button
                                             size="small"
                                             type="success"
                                             round
-                                            @click="handleDownload(scope.row.url, scope.row.download)"><i class="el-icon-download"></i>
+                                            @click="handleDownload(scope.row.url, scope.row.download), submitView(scope.row,  'countDownload')"><i class="el-icon-download"></i>
                                             </el-button>
                                         </template>
                                     </el-table-column>
@@ -218,7 +218,35 @@
             });
 
         },
-      toView(dwnld){
+        submitView(data, count) {
+            console.log(count,data);
+            // var countDownload = count;
+            // var countView = count;
+            axios
+            .post("/user/count", {data: data, count})
+            .then((response) => {
+                this.loading = false;
+                if(response.data == 'success'){
+                    this.resetForm();
+                    this.$message({
+                        message: "Successful",
+                        type: "success",
+                        duration: 3000,
+                    });
+                    this.fetch();
+                }
+            })
+            .catch((error) => {
+                this.loading = false;
+                console.log(error.response);
+                this.$notify.error({
+                    title: "Error",
+                    message: error.response.data.message,
+                });
+            });
+                
+        },
+         toView(dwnld){
             console.log(dwnld);
         },
 

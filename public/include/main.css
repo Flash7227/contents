@@ -22,6 +22,7 @@
     padding-bottom: 10px;
 }
 
+
 .f_url {
     text-align: left;
     padding-left: 10px;
@@ -164,3 +165,4 @@
     border-right:solid grey 1px;  
 }
 .sub:last-child{border:0px}
+

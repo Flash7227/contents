@@ -56,14 +56,15 @@
               </div>
             <!-- </el-card> -->
           </div>
-          <pagination
+          
+        </div>
+        <pagination
             :data="blogData"
             @pagination-change-page="getData"
             :limit="6"
             align="center"
             class="my-2"
           ></pagination> 
-        </div>
               
        
           <el-dialog

@@ -93,12 +93,12 @@
                                     width="100"
                                     align="center">
                                     <template slot-scope="scope">
-                                        <el-button icon="el-icon-view" size="small" circle class="button" @click="pickDetails(scope.row), centerDialogVisible = true" ></el-button>
+                                        <el-button icon="el-icon-view" size="small" circle class="button" @click="pickDetails(scope.row), submitView(scope.row,  'countView'), centerDialogVisible = true" ></el-button>
                                         <el-button
                                         size="small"
                                         type="success"
                                         circle
-                                        @click="handleDownload(scope.row.url, scope.row.download)"><i class="el-icon-download"></i>
+                                        @click="handleDownload(scope.row.url, scope.row.download), submitView(scope.row, 'countDownload')"><i class="el-icon-download"></i>
                                         </el-button>
                                     </template>
                                 </el-table-column>

@@ -72,3 +72,5 @@ Route::group([ 'prefix' => '/home'], function(){
     
 Route::post('/ckeditor/upload', 'CkeditorController@upload')->name('ckeditor.upload');
 Route::post('/vue2/upload', 'CkeditorController@upload2');
+
+Route::get('/counter/{id}', 'NewHomeController@addCount');

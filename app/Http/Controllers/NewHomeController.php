@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 use App\Uploads;
+use App\Counter;
 use Illuminate\Http\Request;
 
 class NewHomeController extends Controller
@@ -21,7 +22,29 @@ class NewHomeController extends Controller
     public function blogFetch($id)
     {
         $blog = Uploads::find($id);
+        $counter = Counter::where('upload_id', $id)->first();
+        if($counter){
+            $counter->view = $counter->view + 1;
+        }else{
+            $counter = new Counter;
+            $counter->upload_id = $id;
+            $counter->view = 1;
+        }
+        $counter->save();
         return view('files.blog2', ['blog'=>$blog]);
+    }
+    public function addCount($id)
+    {
+        $counter = Counter::where('upload_id', $id)->first();
+        if($counter){
+            $counter->view = $counter->view + 1;
+        }else{
+            $counter = new Counter;
+            $counter->upload_id = $id;
+            $counter->view = 1;
+        }
+        $counter->save();
+        return "count added!";
     }
 }
 

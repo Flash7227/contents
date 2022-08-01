@@ -157,7 +157,7 @@
                     header-align="center"
                 >
                     <template slot-scope="scope"
-                    v-if="scope.row.type === 2 || scope.row.type === 3"
+                    
                     ><el-tag type="info" v-if="scope.row.counter[0]">
                      <i class="el-icon-view"></i>
                         {{scope.row.counter[0].view}}

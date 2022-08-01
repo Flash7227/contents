@@ -4,21 +4,21 @@
         v-loading.fullscreen.lock="loading"
         element-loading-text="Уншиж байна..."
     >
-        <el-card class="container blog-div">
-            <h4>Блог</h4>
+        <div class="container blog-div">
+            <h4 class="custom-title">Блог</h4>
             <!-- <el-divider></el-divider> -->
                 <el-carousel indicator-position="outside">
                     <el-carousel-item v-for="(blog,index) in blogs.slice(0, 3)" :key="index">
-                        <div class="item" @click="viewBlog(blog)">
+                        <div class="item hover01" @click="viewBlog(blog)">
                             <div class="item__content">
                             {{blog.name}}
                             </div>
-                            <img class="item__image" :src="blog.download" alt="" />
+                            <img class="item__image custom-hover" :src="blog.download" alt="" />
                         </div>
                     </el-carousel-item>
                 </el-carousel>
             <div class="row">
-                <div class="col-sm-12 col-md-4 mt-3 custom-hover" v-for="(blog,index) in blogs.slice(3)" :key="index" @click="viewBlog(blog)">
+                <div class="col-sm-12 col-md-4 mt-3 custom-hover hover01" v-for="(blog,index) in blogs.slice(3)" :key="index" @click="viewBlog(blog)">
                     <el-card :body-style="{ padding: '0px' }">
                         <img :src="blog.download" class="image">
                     </el-card>
@@ -29,35 +29,35 @@
                 </div>
             </div>
             <div class="text-center mt-3">
-                <el-button round @click="customHref('/home/blog')">Бүх постыг үзэх  ↓</el-button>
+                <el-button round @click="customHref('/home/blog')" type="primary" plain>Бүх постыг үзэх  ↓</el-button>
             </div>
-        </el-card>
+        </div>
         <el-card class="mt-3">
             <div class="row">
                 <div class="col-md-6 col-sm-12">
-                    <h4>Постер</h4>
+                    <h4 class="custom-title">Постер</h4>
                     <div class="row">
                         <div class="col-md-6 col-sm-12" v-for="(poster,index) in posters.slice(0, 1)" :key="index">
                             <div class="demo-image__preview text-center">
-                                <el-image :src="poster.download" style="width: 260px; height: 260px" :preview-src-list="[poster.download]"></el-image>
+                                <el-image @click="addCount(poster.id)" :src="poster.download" style="width: 260px; height: 260px" :preview-src-list="[poster.download]"></el-image>
                             </div>
                         </div>
                         <div class="col-md-6 col-sm-12">
                             <div class="row">
                                 <div class="col-lg-12 mt-1" v-for="(poster,index) in posters.slice(1)" :key="index">
                                     <div class="demo-image__preview text-center">
-                                        <el-image  :src="poster.download" style="width: 80px; height: 80px" :preview-src-list="[poster.download]"></el-image>
+                                        <el-image  @click="addCount(poster.id)" :src="poster.download" style="width: 80px; height: 80px" :preview-src-list="[poster.download]"></el-image>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="text-center mt-3">
-                        <el-button round @click="customHref('/home/poster')">Бүх постерыг үзэх  ↓</el-button>
+                        <el-button round @click="customHref('/home/poster')" type="primary" plain>Бүх постерыг үзэх  ↓</el-button>
                     </div>
                 </div>
                 <div class="col-md-6 col-sm-12">
-                    <h4>Бичлэг</h4>
+                    <h4 class="custom-title">Бичлэг</h4>
                     <table class="table">
                         <tr v-for="(video, index) in videos" :key="index">
                             <td class="text-left">{{video.name}}</td>
@@ -67,14 +67,14 @@
                         </tr>
                     </table>
                     <div class="text-center mt-3">
-                        <el-button round @click="customHref('/home/video')">Бүх бичлэгүүдийг үзэх  ↓</el-button>
+                        <el-button round @click="customHref('/home/video')" type="primary" plain>Бүх бичлэгүүдийг үзэх  ↓</el-button>
                     </div>
                 </div>
             </div>
         </el-card>
         <el-card class="file-div mt-3">
             <div class="container">
-                <h4 class="mt-1">Файл</h4>
+                <h4 class="mt-1 custom-title">Файл</h4>
                 <div>
                     <div class="custom-table-container">
                         <table class="custom-table">
@@ -94,13 +94,13 @@
                                     <td>{{readableSize(file.size)}}</td>
                                     <td>{{dateformatter(file.created_at)}}</td>
                                     <td>
-                                        <el-button  @click="downloadFile(file.url, file.download)" type="success" icon="el-icon-download" class="float-left" circle size="small" plain></el-button>
+                                        <el-button  @click="downloadFile(file.url, file.download, file.id)" type="success" icon="el-icon-download" class="float-left" circle size="small" plain></el-button>
                                     </td>
                                 </tr>
                             </tbody>
                         </table>
                         <div class="text-center mt-3">
-                            <el-button round @click="customHref('/home/file')">Бүх файлуудыг үзэх  ↓</el-button>
+                            <el-button round @click="customHref('/home/file')" type="primary" plain>Бүх файлуудыг үзэх  ↓</el-button>
                         </div>
                     </div>
                 </div>
@@ -159,6 +159,21 @@ export default {
                     });
                 });
         },
+        addCount(id) {
+            axios
+                .get("/counter/"+id)
+                .then((response) => {
+                    // this.loading = false;
+                })
+                .catch((error) => {
+                    // this.loading = false;
+                    // console.log(error.response);
+                    // this.$notify.error({
+                    //     title: "Error",
+                    //     message: error.response.data.message,
+                    // });
+                });
+        },
         dateformatter(date, short) {
             if (short) {
                 // console.log(short, '---');
@@ -177,13 +192,14 @@ export default {
                 return ( size / Math.pow(1024, i) ).toFixed(2) * 1 + ' ' + ['B', 'kB', 'MB', 'GB', 'TB'][i];
             }        
         },
-        downloadFile(url, download) {
+        downloadFile(url, download, id) {
             var link = document.createElement("a");
             link.setAttribute('download', url);
             link.href = download;
             document.body.appendChild(link);
             link.click();
             link.remove();
+            this.addCount(id);
         },
         handleTab(tab, event){
             console.log(tab, event);
@@ -197,6 +213,7 @@ export default {
             this.selected.type = data.type;
             this.selected.url = data.url;
             this.selected.download = data.download;
+            this.addCount(data.id);
             this.viewdata();
         },
         handleCloseView(){
@@ -319,5 +336,8 @@ export default {
 }
 .custom-hover{
     cursor: pointer;
+}
+.custom-title{
+    color: #84A4C1;
 }
 </style>

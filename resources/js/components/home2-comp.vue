@@ -39,14 +39,14 @@
                     <div class="row">
                         <div class="col-md-6 col-sm-12" v-for="(poster,index) in posters.slice(0, 1)" :key="index">
                             <div class="demo-image__preview text-center">
-                                <el-image @click="addCount(poster.id)" :src="poster.download" style="width: 260px; height: 260px" :preview-src-list="[poster.download]"></el-image>
+                                <el-image @click="addCount(poster.id, 'view')" :src="poster.download" style="width: 260px; height: 260px" :preview-src-list="[poster.download]"></el-image>
                             </div>
                         </div>
                         <div class="col-md-6 col-sm-12">
                             <div class="row">
                                 <div class="col-lg-12 mt-1" v-for="(poster,index) in posters.slice(1)" :key="index">
                                     <div class="demo-image__preview text-center">
-                                        <el-image  @click="addCount(poster.id)" :src="poster.download" style="width: 80px; height: 80px" :preview-src-list="[poster.download]"></el-image>
+                                        <el-image  @click="addCount(poster.id, 'view')" :src="poster.download" style="width: 80px; height: 80px" :preview-src-list="[poster.download]"></el-image>
                                     </div>
                                 </div>
                             </div>
@@ -159,19 +159,16 @@ export default {
                     });
                 });
         },
-        addCount(id) {
+        addCount(id, type) {
+            var url = "/counter/view/";
+            if(type == 'download'){
+                url = "/counter/download/";
+            }
             axios
-                .get("/counter/"+id)
+                .get(url+id)
                 .then((response) => {
-                    // this.loading = false;
                 })
                 .catch((error) => {
-                    // this.loading = false;
-                    // console.log(error.response);
-                    // this.$notify.error({
-                    //     title: "Error",
-                    //     message: error.response.data.message,
-                    // });
                 });
         },
         dateformatter(date, short) {
@@ -199,7 +196,7 @@ export default {
             document.body.appendChild(link);
             link.click();
             link.remove();
-            this.addCount(id);
+            this.addCount(id, 'download');
         },
         handleTab(tab, event){
             console.log(tab, event);
@@ -213,7 +210,7 @@ export default {
             this.selected.type = data.type;
             this.selected.url = data.url;
             this.selected.download = data.download;
-            this.addCount(data.id);
+            this.addCount(data.id, 'view');
             this.viewdata();
         },
         handleCloseView(){

@@ -33,7 +33,7 @@ class NewHomeController extends Controller
         $counter->save();
         return view('files.blog2', ['blog'=>$blog]);
     }
-    public function addCount($id)
+    public function addCountView($id)
     {
         $counter = Counter::where('upload_id', $id)->first();
         if($counter){
@@ -42,6 +42,19 @@ class NewHomeController extends Controller
             $counter = new Counter;
             $counter->upload_id = $id;
             $counter->view = 1;
+        }
+        $counter->save();
+        return "count added!";
+    }
+    public function addCountDownload($id)
+    {
+        $counter = Counter::where('upload_id', $id)->first();
+        if($counter){
+            $counter->download = $counter->download + 1;
+        }else{
+            $counter = new Counter;
+            $counter->upload_id = $id;
+            $counter->download = 1;
         }
         $counter->save();
         return "count added!";

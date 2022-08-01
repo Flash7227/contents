@@ -68,7 +68,7 @@
               <p class="pr-5 text-white-50">Харилцаа Холбооны Зохицуулах Хороо</p>
               <p><a href="#"><i class="fa fa-facebook-square mr-1"></i></a><a href="#"><i class="fa fa-linkedin-square"></i></a></p>
             </div> --}}
-            <div class="col-lg-4 col-xs-12 links mt-2 sub">
+            <div class="col-lg-4 col-xs-12 links mt-2">
               <h4 class="mt-lg-0 mt-sm-3">Холбоос</h4>
                 <ul class="m-0 p-0">
                   <li>- <a href="https://crc.gov.mn/" class="footer-color">Байгууллагын веб хуудас</a></li>
@@ -78,7 +78,7 @@
                   <li>- <a href="http://www.twitter.com/crcmn">Twitter холбоос</a></li>
                 </ul>
             </div>
-            <div class="col-lg-5 col-xs-12 location mt-2 sub">
+            <div class="col-lg-5 col-xs-12 location mt-2">
                 <h4 class="mt-lg-0 mt-sm-4">Хаяг</h4>
                 <p>Метро бизнес төв А-блок 5 давхар Д.Сүхбаатарын гудамж-13 Сүхбаатар дүүрэг, Улаанбаатар 14201-0033</p>
               </div>

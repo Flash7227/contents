@@ -26,7 +26,7 @@
           <a class="dropdown-item" href="/home/file">Файл</a>
         </div>
       </li> --}}
-        @auth
+   
         {{-- <li class="nav-item dropdown {{ Request::path() == 'user/upload' ? 'active' : ''}} {{ Request::path() == 'user/shared' ? 'active' : ''}}">
           <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             Файл
@@ -64,7 +64,7 @@
           </div>
         </li>
         @endif --}}
-        @endauth
+  
       </ul>
       <ul class="navbar-nav">
         @guest

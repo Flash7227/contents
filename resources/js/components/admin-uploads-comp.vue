@@ -81,6 +81,7 @@
                     prop="tags"
                     label="#tag"
                     align="center"
+                    width="150"
                     header-align="center"
                 >
                     <template slot-scope="scope">
@@ -89,7 +90,7 @@
                             class="mr-1 mb-1"
                             v-for="(tag, index) in JSON.parse(scope.row.tags)"
                             :key="index"
-                            >{{ tag }}</el-tag
+                            >{{ tagFinder(tag) }}</el-tag
                         >
                     </template>
                 </el-table-column>
@@ -451,6 +452,21 @@ export default {
                 this.emails = [];
             }
         },
+        tagFinder(id){
+            // console.log(id);
+            if(id){
+                var filtered = (JSON.parse(this.tags)).filter(
+                    (tag) => tag.id == id
+                );
+                // console.log(filtered);
+                if (filtered[0]) {
+                    return filtered[0].name;
+                } else {
+                    return "TAG NOT FOUND!";
+                }
+            }
+            
+        }
     },
     created() {
         this.fetch();
@@ -461,7 +477,10 @@ export default {
         },
         states: {
             type: String,
-        }
+        },
+        tags: {
+            type: String,
+        },
     },
 };
 </script>

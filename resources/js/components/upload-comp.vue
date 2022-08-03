@@ -68,7 +68,7 @@
                 </el-form-item>
 
                 <el-form-item label="#Tag" prop="tags">
-                    <el-select v-model="fileList.dynamicTags" placeholder="Select"
+                    <el-select v-model="fileList.dynamicTags" placeholder="Сонгох"
                         multiple
                         filterable>
                         <el-option
@@ -292,7 +292,7 @@
                     <small class="grey">Солиход шууд өөрчлөгдөнө!</small>
                 </el-form-item>
                 <el-form-item label="Tags" prop="tags">
-                       <el-select v-model="selected.dynamicTags" placeholder="Select"
+                       <el-select v-model="selected.dynamicTags" placeholder="Сонгох"
                         multiple
                         filterable>
                         <el-option
@@ -428,10 +428,6 @@ export default {
             loadText: "Уншиж байна...",
             dialogVisible: false,
             viewVisible: false,
-            inputVisible: false,
-            inputVisible2: false,
-            inputValue: "",
-            inputValue2: "",
             fileList: {
                 id: "",
                 dataType: "0",
@@ -731,32 +727,6 @@ export default {
                 return isJPG && isLt2M;
             }
         },
-        tagClose(tag, index) {
-            if (index == 1) {
-                this.fileList.dynamicTags.splice(
-                    this.fileList.dynamicTags.indexOf(tag),
-                    1
-                );
-            } else {
-                this.currentList.tags.splice(
-                    this.currentList.tags.indexOf(tag),
-                    1
-                );
-            }
-        },
-        tagClose2(tag, index) {
-            if (index == 1) {
-                this.selected.dynamicTags.splice(
-                    this.selected.dynamicTags.indexOf(tag),
-                    1
-                );
-            } else {
-                this.currentList.tags.splice(
-                    this.currentList.tags.indexOf(tag),
-                    1
-                );
-            }
-        },
         resetForm() {
             // this.$refs[formName].resetFields();
             this.$refs.upload.clearFiles();
@@ -768,53 +738,6 @@ export default {
             this.fileList.id = "";
             this.fileList.download = "";
             this.fileList.sharetype = "all";
-        },
-        showInput(index) {
-            if (index == 1) {
-                this.inputVisible = true;
-                this.$nextTick((_) => {
-                    this.$refs.saveTagInput.$refs.input.focus();
-                });
-            } else {
-                this.inputVisible2 = true;
-                this.$nextTick((_) => {
-                    this.$refs.saveTagInput2.$refs.input.focus();
-                });
-            }
-        },
-        handleInputConfirm(index) {
-            if (index == 1) {
-                let inputValue = this.inputValue;
-                if (inputValue) {
-                    this.fileList.dynamicTags.push(inputValue);
-                }
-                this.inputVisible = false;
-                this.inputValue = "";
-            } else {
-                let inputValue2 = this.inputValue2;
-                if (inputValue2) {
-                    this.currentList.tags.push(inputValue2);
-                }
-                this.inputVisible2 = false;
-                this.inputValue2 = "";
-            }
-        },
-        handleInputConfirm2(index) {
-            if (index == 1) {
-                let inputValue = this.inputValue;
-                if (inputValue) {
-                    this.selected.dynamicTags.push(inputValue);
-                }
-                this.inputVisible = false;
-                this.inputValue = "";
-            } else {
-                let inputValue2 = this.inputValue2;
-                if (inputValue2) {
-                    this.currentList.tags.push(inputValue2);
-                }
-                this.inputVisible2 = false;
-                this.inputValue2 = "";
-            }
         },
         remoteMethod(query) {
             if (query !== "") {

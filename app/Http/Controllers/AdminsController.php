@@ -99,7 +99,8 @@ class AdminsController extends Controller
     public function uploadIndex()
     {
         $emails = User::select('email')->get()->pluck('email');
-        return view('admin.uploads', ['emails'=>$emails]);
+        $tags = Tags::all();
+        return view('admin.uploads', ['emails'=>$emails, 'tags'=>$tags]);
     }
     public function uploadFetch(Request $req)
     {
@@ -170,6 +171,14 @@ class AdminsController extends Controller
             $tag->name = $form['name'];
             $tag->editor_id = Auth()->user()->id;
             $tag->save();
+        }else if($form['type'] == 'edit'){
+            $tag = Tags::find($form['name']);
+            $tag->name = $form['input2'];
+            $tag->editor_id = Auth()->user()->id;
+            $tag->save();
+        }else if($form['type'] == 'delete'){
+            $tag = Tags::find($form['name']);
+            $tag->delete();
         }
         return "success";
     }

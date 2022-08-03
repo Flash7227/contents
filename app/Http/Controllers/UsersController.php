@@ -6,6 +6,7 @@ use App\Counter;
 use Storage;
 use League\Flysystem\Filesystem;
 use App\User;
+use App\Tags;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -18,7 +19,8 @@ class UsersController extends Controller
     public function uploadIndex()
     {
         $emails = User::select('email')->get()->pluck('email');
-        return view('user.upload', ['emails'=>$emails]);
+        $tags = Tags::all();
+        return view('user.upload', ['emails'=>$emails, 'tags'=>$tags]);
     }
     public function uploadPost(Request $req)
     {

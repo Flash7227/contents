@@ -68,32 +68,17 @@
                 </el-form-item>
 
                 <el-form-item label="#Tag" prop="tags">
-                    <el-tag
-                        v-for="(tag,index) in fileList.dynamicTags"
+                    <el-select v-model="fileList.dynamicTags" placeholder="Select"
+                        multiple
+                        filterable>
+                        <el-option
+                        v-for="(tag,index) in JSON.parse(tags)"
                         :key="index"
-                        closable
-                        :disable-transitions="false"
-                        @close="tagClose(tag, 1)"
-                    >
-                        {{ tag }}
-                    </el-tag>
-                    <el-input
-                        class="input-new-tag"
-                        v-if="inputVisible"
-                        v-model="inputValue"
-                        ref="saveTagInput"
-                        size="mini"
-                        @keyup.enter.native="handleInputConfirm(1)"
-                        @blur="handleInputConfirm(1)"
-                    >
-                    </el-input>
-                    <el-button
-                        v-else
-                        class="button-new-tag"
-                        size="small"
-                        @click="showInput(1)"
-                        >Нэмэх</el-button
-                    >
+                        :label="tag.name"
+                        :value="tag.id"
+                        >
+                        </el-option>
+                    </el-select>
                 </el-form-item>
                 <el-form-item label="Хуваалцах төрөл" prop="sharetype">
                     <el-select
@@ -196,7 +181,7 @@
                             class="mr-1 mb-1"
                             v-for="(tag, index) in JSON.parse(scope.row.tags)"
                             :key="index"
-                            >{{ tag }}</el-tag
+                            >{{ tagFinder(tag) }}</el-tag
                         >
                     </template>
                 </el-table-column>
@@ -307,32 +292,17 @@
                     <small class="grey">Солиход шууд өөрчлөгдөнө!</small>
                 </el-form-item>
                 <el-form-item label="Tags" prop="tags">
-                    <el-tag
-                        v-for="(tag,index) in selected.dynamicTags"
+                       <el-select v-model="selected.dynamicTags" placeholder="Select"
+                        multiple
+                        filterable>
+                        <el-option
+                        v-for="(tag,index) in JSON.parse(tags)"
                         :key="index"
-                        closable
-                        :disable-transitions="false"
-                        @close="tagClose2(tag, 1)"
-                    >
-                        {{ tag }}
-                    </el-tag>
-                    <el-input
-                        class="input-new-tag"
-                        v-if="inputVisible"
-                        v-model="inputValue"
-                        ref="saveTagInput"
-                        size="mini"
-                        @keyup.enter.native="handleInputConfirm2(1)"
-                        @blur="handleInputConfirm2(1)"
-                    >
-                    </el-input>
-                    <el-button
-                        v-else
-                        class="button-new-tag"
-                        size="small"
-                        @click="showInput(1)"
-                        >#Нэмэх</el-button
-                    >
+                        :label="tag.name"
+                        :value="tag.id"
+                        >
+                        </el-option>
+                    </el-select>
                 </el-form-item>
                 <el-form-item label="Хуваалцах төрөл" prop="sharetype">
                     <el-select
@@ -1010,6 +980,20 @@ export default {
             }).catch(err => {
                 console.log(err);
             });
+        },
+        tagFinder(id){
+            if(id){
+                var filtered = (JSON.parse(this.tags)).filter(
+                    (tag) => tag.id == id
+                );
+                // console.log(filtered);
+                if (filtered[0]) {
+                    return filtered[0].name;
+                } else {
+                    return "TAG NOT FOUND!";
+                }
+            }
+            
         }
     },
     created() {
@@ -1024,6 +1008,9 @@ export default {
             type: String,
         },
         states: {
+            type: String,
+        },
+        tags: {
             type: String,
         },
         user:{

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use App\Uploads;
 use App\Counter;
+use App\Tags;
 use Illuminate\Http\Request;
 
 class NewHomeController extends Controller
@@ -14,7 +15,7 @@ class NewHomeController extends Controller
     public function fetch()
     {
         $blog = Uploads::where('sharetype', "public")->where('type', '4')->orderBy('created_at', 'DESC')->limit(6)->get();
-        $files = Uploads::where('sharetype', "public")->where('type', '1')->orderBy('created_at', 'DESC')->limit(8)->get();
+        $files = Uploads::where('sharetype', "public")->where('type', '1')->orderBy('created_at', 'DESC')->limit(4)->get();
         $videos = Uploads::where('sharetype', "public")->where('type', '2')->orderBy('created_at', 'DESC')->limit(4)->get();
         $posters = Uploads::where('sharetype', "public")->where('type', '3')->orderBy('created_at', 'DESC')->limit(4)->get();
         return [$blog, $files, $videos, $posters];

@@ -11,8 +11,8 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarColor02">
       <ul class="navbar-nav mr-auto">
-        <li  class="nav-item {{ Request::path() == 'home' ? 'active' : ''}} ml-4">
-          <a id="nav-mainpage" class="nav-link mainlink" href="/home">Нүүр
+        <li  class="nav-item mainlink {{ Request::path() == 'home' ? 'active' : ''}} ml-4">
+          <a id="nav-mainpage" class="nav-link " href="/home">Нүүр
           </a>
       </li>
       {{-- <li class="nav-item dropdown ml-2 {{ Request::path() == 'home/niitlel' ? 'active' : ''}} {{ Request::path() == 'home/video' ? 'active' : ''}} {{ Request::path() == 'home/poster' ? 'active' : ''}} {{ Request::path() == 'home/file' ? 'active' : ''}}">
@@ -37,33 +37,34 @@
           </div>
         </li> --}}
         
-        <li class="nav-item {{ Request::path() == 'home/blog' ? 'active' : ''}}">
-          <a class="nav-link mainlink" href="/home/blog">Блог
+        <li class="nav-item mainlink {{ Request::path() == 'home/blog' ? 'active' : ''}}">
+          <a class="nav-link " href="/home/blog">Блог
         </a>
         </li>
-        <li class="nav-item {{ Request::path() == 'home/video' ? 'active' : ''}}">
-          <a class="nav-link mainlink" href="/home/video">Видео</a>
+        <li class="nav-item mainlink {{ Request::path() == 'home/video' ? 'active' : ''}}">
+          <a class="nav-link " href="/home/video">Видео</a>
         </li>
-        <li class="nav-item {{ Request::path() == 'home/poster' ? 'active' : ''}}">
-          <a class="nav-link mainlink" href="/home/poster">Постер</a>
+        <li class="nav-item mainlink {{ Request::path() == 'home/poster' ? 'active' : ''}}">
+          <a class="nav-link " href="/home/poster">Постер</a>
         </li>
-        <li class="nav-item {{ Request::path() == 'home/file' ? 'active' : ''}}">
-          <a class="nav-link mainlink" href="/home/file">Файл</a>
+        <li class="nav-item mainlink {{ Request::path() == 'home/file' ? 'active' : ''}}">
+          <a class="nav-link " href="/home/file">Файл</a>
         </li>
         {{-- <li class="nav-item">
           <a class="nav-link" href="#">About</a>
         </li> --}}
-        {{-- @if(Auth()->user()->role === 1)
-        <li class="nav-item dropdown {{ Request::path() == 'admin/user' ? 'active' : ''}} {{ Request::path() == 'admin/uploads' ? 'active' : ''}}">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        @if(Auth()->user()->role === 1)
+        <li class="nav-item  mainlink dropdown {{ Request::path() == 'admin/user' ? 'active' : ''}} {{ Request::path() == 'admin/uploads' ? 'active' : ''}}">
+          <a class="nav-link  dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             Админ
           </a>
           <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <a class="dropdown-item" href="/admin/user">Хэрэглэгчид</a>
-            <a class="dropdown-item" href="/admin/uploads">Хэрэглэгчдийн хуулсан файл</a>
+            <a class="dropdown-item" href="/admin/user">Хэрэглэгч тохиргоо</a>
+            <a class="dropdown-item" href="/admin/uploads">Хуулагдсан файлууд</a>
+            <a class="dropdown-item" href="/admin/tags">TAG үүсгэх</a>
           </div>
         </li>
-        @endif --}}
+        @endif
   
       </ul>
       <ul class="navbar-nav">
@@ -83,8 +84,8 @@
               @if(Auth()->user()->role === 1)
               <a class="dropdown-item" href="/user/upload"><i class="el-icon-document"></i> Файл хуулах</a>
               <a class="dropdown-item" href="/user/shared"><i class="el-icon-share"></i> Хуваалцсан файл</a>
-              <a class="dropdown-item" href="/admin/uploads"><i class="el-icon-document-copy"></i> Хэрэглэгчдийн хуулсан файл</a>
-              <a class="dropdown-item" href="/admin/user"><i class="el-icon-setting"></i> Хэрэглэгч тохиргоо</a>
+              {{-- <a class="dropdown-item" href="/admin/uploads"><i class="el-icon-document-copy"></i> Хэрэглэгчдийн хуулсан файл</a>
+              <a class="dropdown-item" href="/admin/user"><i class="el-icon-setting"></i> Хэрэглэгч тохиргоо</a> --}}
               @endif
               @if(Auth()->user()->role === 0 || Auth()->user()->role === 2 || Auth()->user()->role === 1)
               <a class="dropdown-item" href="/user/profile"><i class="el-icon-user"></i> Миний хаяг</a>

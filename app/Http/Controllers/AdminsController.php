@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Uploads;
 use App\Counter;
 use App\User;
+use App\Tags;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
@@ -150,6 +151,25 @@ class AdminsController extends Controller
             // $upload->tags = json_encode($tags);
             // $upload->allowed = json_encode($allowed);
             // $upload->save();
+        }
+        return "success";
+    }
+    public function tagsIndex()
+    {
+        return view('admin.tags');
+    }
+    public function tagsFetch()
+    {
+        return Tags::all();
+    }
+    public function tagsPost(Request $req)
+    {
+        $form = $req->input('form');
+        if($form['type'] == 'new'){
+            $tag = new Tags;
+            $tag->name = $form['name'];
+            $tag->editor_id = Auth()->user()->id;
+            $tag->save();
         }
         return "success";
     }

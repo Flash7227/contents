@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 
 Auth::routes();
+Auth::routes(['verify' => true]);
 
 Route::get('/', 'HomeController@homecompIndex');
 
@@ -41,8 +42,9 @@ Route::group(['middleware' => 'admincheck', 'prefix' => '/admin'], function(){
     Route::post('/uploads/fetch', 'AdminsController@uploadFetch');
     Route::post('/uploads/modify', 'AdminsController@uploadModify');
     
-    
-
+    Route::get('/tags', 'AdminsController@tagsIndex');
+    Route::get('/tags/fetch', 'AdminsController@tagsFetch');
+    Route::post('/tags', 'AdminsController@tagsPost');
 });
 Route::get('/blog/{id}', 'NewHomeController@blogFetch');
 

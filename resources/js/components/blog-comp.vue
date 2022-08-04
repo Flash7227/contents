@@ -10,10 +10,18 @@
                   <el-input v-model="search.name" placeholder="нэрээр хайх"></el-input>
                   </div>
               </el-form-item>
-              <el-form-item label="#Tag">
-                <div class="block">
-                    <el-input v-model="search.tag" placeholder="тагаар хайх"></el-input>
-                </div>
+              <el-form-item label="#Tag" prop="tags">
+                <el-select v-model="search.tag" placeholder="Select"
+                    multiple
+                    filterable>
+                    <el-option
+                    v-for="(dbtag,index) in (Dbtags)"
+                    :key="index"
+                    :label="dbtag.name"
+                    :value="dbtag.id"
+                    >
+                    </el-option>
+                </el-select>
               </el-form-item>
               <el-form-item label="Огноо">
                   <el-date-picker
@@ -36,25 +44,29 @@
             </div> 
           </div>
           <div class="col-lg-4 col-md-4 col-sm-4 " v-for="(blog, index) in blogData.data" :key="index" >
-            <!-- <el-card :body-style="{ padding: '0px' }" > -->
-              <!-- <div class="readIcon" v-if="blog.url=='noimage123.png'">
-                <i class="el-icon-reading"></i>
-              </div> -->
-              <div class="demo-image__preview" >
-                <el-image 
-                  style="width: 100%; height: 270px; border-radius: 8px"
-                  :src="blog.download" 
-                  :preview-src-list=[blog.download]>
-                </el-image>
+            <div class="demo-image__preview" >
+              <el-image 
+                style="width: 100%; height: 270px; border-radius: 8px"
+                :src="blog.download" 
+                :preview-src-list=[blog.download]>
+              </el-image>
+            </div>
+            <div style="padding: 8px;" class="description">
+              <div class="custom-card-title overme">
+                <el-button @click="viewBlog(blog), submitView(blog, 'countView')" type="text" class="overme">{{blog.name}}</el-button>
               </div>
-              <div style="padding: 14px;" class="description">
-                <div class="custom-card-title overme">
-                   <!-- <a v-bind:href="'/home/blog/details/'+ blog.id">{{blog.name}}</a> -->
-                   <el-button @click="viewBlog(blog), submitView(blog,  'countView')" type="text" class="overme">{{blog.name}}</el-button>
-                </div>
+              <div>
+                <el-tag 
+                  size="mini" 
+                  type="info"
+                  v-for="(tag,index) in JSON.parse(blog.tags)"
+                  :key="index"
+                >{{tagName(tag)}}</el-tag>
+              </div>
+              
                 <small class="grey">{{dateformatter(blog.created_at, false)}}</small>
-              </div>
-            <!-- </el-card> -->
+            </div>
+            
           </div>
           
         </div>
@@ -88,6 +100,7 @@
       return {
         centerDialogVisible: false,
         blogData:{},
+        Dbtags:[],
         selected:{},
         search: {
           name:'',
@@ -102,7 +115,8 @@
         .get("/home/blog/fetch?page="+page)
         .then((response) => {
             this.loading = false;
-            this.blogData = response.data;
+            this.blogData = response.data[0];
+            this.Dbtags = response.data[1];
             console.log(this.blogData);
         })
         .catch((error) => {
@@ -140,7 +154,7 @@
         // var countDownload = count;
         // var countView = count;
         axios
-        .post("/user/count", {data: data, count})
+        .post("/home/count", {data: data, count})
         .then((response) => {
             this.loading = false;
             if(response.data == 'success'){
@@ -204,6 +218,21 @@
         this.selected.url = data.url;
         this.selected.user_id = data.user_id;
       },
+      tagName(id){
+        if(id){
+          // console.log(id);
+          var filtered = (this.Dbtags).filter(
+              (tag) => tag.id == id
+          );
+          //console.log(filtered);
+          if (filtered[0]) {
+              return filtered[0].name;
+          }else{
+            return "TAG NOT FOUND!";
+          }
+        }
+          
+      }
     },
     created() {
         this.getData();
@@ -211,10 +240,11 @@
     mounted(){
     },
     props: {
-        csrf: {
-            type: String,
-        },
+      csrf: {
+          type: String,
+      },
     }
+
  }
 </script>
 
@@ -258,7 +288,7 @@
   }
   .description{
     width: 100%;
-    height: 150px;
+    /* height: 150px; */
   }
 
   .card {

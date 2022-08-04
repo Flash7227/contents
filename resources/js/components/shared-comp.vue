@@ -37,7 +37,17 @@
               <br>
               <el-form-item label="#Tag">
                 <div class="block">
-                    <el-input v-model="search.tag" placeholder="тагаар хайх"></el-input>
+                    <!-- <el-input v-model="search.tag" placeholder="тагаар хайх"></el-input> -->
+                    <el-select v-model="search.tag" placeholder="Сонгох"
+                        filterable>
+                        <el-option
+                        v-for="(tag,index) in JSON.parse(tags)"
+                        :key="index"
+                        :label="tag.name"
+                        :value="tag.id"
+                        >
+                        </el-option>
+                    </el-select>
                 </div>
               </el-form-item>
               <el-form-item label="Огноо">
@@ -89,6 +99,15 @@
                 </template>
                 </el-table-column>
                 <el-table-column
+                label="Хэнээс"
+                align="center">
+                <template slot-scope="scope">
+                    <div slot="reference" class="name-wrapper">
+                        <span size="medium">{{scope.row.user.email}}</span>
+                    </div>
+                </template>
+                </el-table-column>
+                <el-table-column
                 label="Нэр"
                 align="center">
                 <template slot-scope="scope">
@@ -109,7 +128,7 @@
                     v-for="(tag, index) in JSON.parse(scope.row.tags)"
                      :key="index"
                      disable-transitions>
-                        #{{tag}}
+                        #{{tagFinder(tag)}}
                     </el-tag>
                 </template>
                 </el-table-column>
@@ -413,6 +432,20 @@ export default {
                 (this.data.current_page - 1) * this.data.per_page + index + 1
             );
         },
+        tagFinder(id){
+            if(id){
+                var filtered = (JSON.parse(this.tags)).filter(
+                    (tag) => tag.id == id
+                );
+                // console.log(filtered);
+                if (filtered[0]) {
+                    return filtered[0].name;
+                } else {
+                    return "TAG NOT FOUND!";
+                }
+            }
+            
+        }
        
     },
 
@@ -424,6 +457,9 @@ export default {
     },
     props: {
         csrf: {
+            type: String,
+        },
+        tags: {
             type: String,
         },
     }

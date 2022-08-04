@@ -196,14 +196,16 @@ class UsersController extends Controller
     }
     public function sharedIndex()
     {
-        return view('user.shared');
+        $tags = Tags::all();
+        return view('user.shared', ['tags'=>$tags]);
     }
 
     public function sharedFetch(Request $request){
         $email = Auth()->user()->email;
         $data = Uploads::
+        with('user')
         // where('allowed', Auth()->user()->email)
-        whereJsonContains('allowed', $email)
+        ->whereJsonContains('allowed', $email)
         // ->orWhereJsonContains('allowed','public')
         ->paginate(12);
         
@@ -247,7 +249,7 @@ class UsersController extends Controller
             $data->whereDate('created_at', $created_at);
         };
 
-        $data=$data->paginate(10);
+        $data=$data->with('user')->paginate(10);
         return [$data];
     }
 

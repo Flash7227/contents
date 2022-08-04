@@ -24,6 +24,7 @@ class CreateUploadsTable extends Migration
             $table->string('sharetype');
             $table->longText('allowed')->nullable();
             $table->string('size');
+            $table->dateTime('due_at')->nullable();
             $table->timestamps();
         });
     }

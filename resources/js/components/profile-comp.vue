@@ -35,6 +35,27 @@
                 </el-descriptions-item>
                 <el-descriptions-item>
                             <template slot="label">
+                            <i class="el-icon-s-claim"></i> 
+                            И-мэйл баталгаажуулалт
+                            </template>
+                            <el-alert
+                              v-if="info.email_verified_at"
+                              :title="'Баталгаажсан' + this.info.email_verified_at"
+                              type="success"
+                              show-icon
+                              :closable="false">
+                            </el-alert>
+                            <el-alert
+                              v-else
+                              title="Баталгаажуулаагүй"
+                              type="error"
+                              center
+                              :closable="false"
+                              show-icon>
+                            </el-alert>
+                </el-descriptions-item>
+                <el-descriptions-item>
+                            <template slot="label">
                             <i class="el-icon-s-check"></i>
                              Үйлдэлийн эрх
                             </template>

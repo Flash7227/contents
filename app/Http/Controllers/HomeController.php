@@ -1,8 +1,11 @@
 <?php
 
 namespace App\Http\Controllers;
+use Illuminate\Support\Facades\Auth;
 use App\Uploads;
+use App\Tags;
 use App\User;
+
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -47,8 +50,14 @@ class HomeController extends Controller
     }
     public function blogFetch()
     {
-        $getniitlel = Uploads::where('sharetype', "public")->where('type', '4')->orderBy('created_at', 'DESC')->paginate(9);
-        return $getniitlel;
+        if (Auth::check()){
+            $getniitlel = Uploads::whereIn('sharetype', ['public', 'all'])->where('type', '4')->orderBy('created_at', 'DESC')->paginate(9);
+ 
+        }else{
+            $getniitlel = Uploads::where('sharetype', "public")->where('type', '4')->orderBy('created_at', 'DESC')->paginate(9);
+        }
+        $tags=Tags::get();
+        return [$getniitlel, $tags];
     }
     public function blogSearch(Request $req){
         $search = $req->input('search');
@@ -57,21 +66,23 @@ class HomeController extends Controller
         $created_at = $search['date'];
 
         $data = Uploads::query();
-        $data->where('sharetype', "public")->where('type', '4');
-    
+        if (Auth::check()){
+            $data->whereIn('sharetype', ['public', 'all'])->where('type', '4');
+        }else{
+            $data->where('sharetype', "public")->where('type', '4');
+        }
+
         if($name){
             $data->where('name', $name);
             //$data->orWhere('name', 'like', '%' . $name . '%');
         };
         if($tag){
-            $data->whereJsonContains('tags', [$tag]);
+            $data->whereJsonContains('tags', $tag);
         };
         if($created_at){
             $data->whereDate('created_at', $created_at);
         };
         $data = $data->orderBy('created_at', 'DESC')->paginate(10);
-
-
         return [$data];
 
     }
@@ -82,8 +93,14 @@ class HomeController extends Controller
     }
     public function posterFetch()
     {
-        $getposter = Uploads::where('sharetype', "public")->where('type', '3')->orderBy('created_at', 'DESC')->paginate(10);
-        return $getposter;
+        if (Auth::check()){
+            $getposter = Uploads::whereIn('sharetype', ['public', 'all'])->where('type', '3')->orderBy('created_at', 'DESC')->paginate(10);
+        }else{
+            $getposter = Uploads::where('sharetype', "public")->where('type', '3')->orderBy('created_at', 'DESC')->paginate(10);
+        }
+        
+        $tags=Tags::get();
+        return [$getposter, $tags];
     }
     public function posterSearch(Request $req){
         $search = $req->input('search');
@@ -92,20 +109,22 @@ class HomeController extends Controller
         $created_at = $search['date'];
 
         $data = Uploads::query();
-        $data->where('sharetype', "public")->where('type', '3');
-    
+        if (Auth::check()){
+            $data->whereIn('sharetype', ['public', 'all'])->where('type', '3');
+        }else{
+            $data->where('sharetype', "public")->where('type', '3'); 
+        }
+
         if($name){
             $data->where('name', $name);
         };
         if($tag){
-            $data->whereJsonContains('tags', [$tag]);
+            $data->whereJsonContains('tags', $tag);
         };
         if($created_at){
             $data->whereDate('created_at', $created_at);
         };
         $data = $data->orderBy('created_at', 'DESC')->paginate(10);
-
-
         return [$data];
 
     }
@@ -116,8 +135,13 @@ class HomeController extends Controller
     }
     public function videoFetch()
     {
-        $getvideo = Uploads::where('sharetype', "public")->where('type', '2')->orderBy('created_at', 'DESC')->paginate(9);
-        return $getvideo;
+        if (Auth::check()){
+            $getvideo = Uploads::whereIn('sharetype', ['public','all'])->where('type', '2')->orderBy('created_at', 'DESC')->paginate(9);
+        }else{
+            $getvideo = Uploads::where('sharetype', "public")->where('type', '2')->orderBy('created_at', 'DESC')->paginate(9);
+        }
+        $tags=Tags::get();
+        return [$getvideo, $tags];
     }
     public function videoSearch(Request $req){
         $search = $req->input('search');
@@ -126,22 +150,24 @@ class HomeController extends Controller
         $created_at = $search['date'];
 
         $data = Uploads::query();
-        $data->where('sharetype', "public")->where('type', '2');
+        if (Auth::check()){
+            $data->whereIn('sharetype', ['public', 'all'])->where('type', '2');
+
+        }else{
+            $data->where('sharetype', "public")->where('type', '2');
+        }
     
         if($name){
             $data->where('name', $name);
         };
         if($tag){
-            $data->whereJsonContains('tags', [$tag]);
+            $data->whereJsonContains('tags', $tag);
         };
         if($created_at){
             $data->whereDate('created_at', $created_at);
         };
         $data = $data->orderBy('created_at', 'DESC')->paginate(10);
-
-
         return [$data];
-
     }
 
     ///file
@@ -151,8 +177,13 @@ class HomeController extends Controller
     }
     public function fileFetch()
     {
-        $getfile = Uploads::where('sharetype', "public")->where('type', '1')->orderBy('created_at', 'DESC')->paginate(10);
-        return $getfile;
+        if (Auth::check()){
+            $getfile = Uploads::whereIn('sharetype', ['public', 'all'])->where('type', '1')->orderBy('created_at', 'DESC')->paginate(10);
+        }else{
+            $getfile = Uploads::where('sharetype', "public")->where('type', '1')->orderBy('created_at', 'DESC')->paginate(10);
+        }
+        $tags=Tags::get();
+        return [$getfile, $tags];
     }
     public function fileSearch(Request $req){
         $search = $req->input('search');
@@ -161,13 +192,17 @@ class HomeController extends Controller
         $created_at = $search['date'];
 
         $data = Uploads::query();
-        $data->where('sharetype', "public")->where('type', '1');
-    
+        if (Auth::check()){
+            $data->whereIn('sharetype', ['public', 'all'])->where('type', '1');
+        }else{
+            $data->where('sharetype', "public")->where('type', '1');
+        }
+       
         if($name){
             $data->where('name', $name);
         };
         if($tag){
-            $data->whereJsonContains('tags', [$tag]);
+            $data->whereJsonContains('tags', $tag);
         };
         if($created_at){
             $data->whereDate('created_at', $created_at);

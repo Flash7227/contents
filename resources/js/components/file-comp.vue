@@ -12,10 +12,18 @@
                                         <el-input v-model="search.name" placeholder="нэрээр хайх"></el-input>
                                         </div>
                                     </el-form-item>
-                                    <el-form-item label="#Tag">
-                                        <div class="block">
-                                            <el-input v-model="search.tag" placeholder="тагаар хайх"></el-input>
-                                        </div>
+                                    <el-form-item label="#Tag" prop="tags">
+                                        <el-select v-model="search.tag" placeholder="Select"
+                                            multiple
+                                            filterable>
+                                            <el-option
+                                            v-for="(dbtag,index) in (Dbtags)"
+                                            :key="index"
+                                            :label="dbtag.name"
+                                            :value="dbtag.id"
+                                            >
+                                            </el-option>
+                                        </el-select>
                                     </el-form-item>
                                     <el-form-item label="Огноо">
                                         <el-date-picker
@@ -77,7 +85,7 @@
                                         v-for="(tag, index) in JSON.parse(scope.row.tags)"
                                         :key="index"
                                         disable-transitions>
-                                            #{{tag}}
+                                            {{tagName(tag)}}
                                         </el-tag>
                                     </template>
                                     </el-table-column>
@@ -115,7 +123,7 @@
                                 <pagination
                                     :data="filesData"
                                     @pagination-change-page="getfilesData"
-                                    :limit="3"
+                                    :limit="1"
                                     align="center"
                                     class="my-2"
                                 ></pagination>
@@ -158,6 +166,7 @@
       return {
         dialogVisible: false,
         filesData:{},
+        Dbtags:[],
         selected: {
             file: '',
             created_at:'',
@@ -185,7 +194,8 @@
         .get("/home/file/fetch?page=" + page)
         .then((response) => {
             this.loading = false;
-            this.filesData = response.data;
+            this.filesData = response.data[0];
+            this.Dbtags = response.data[1];
             console.log(this.filesData);
         })
         .catch((error) => {
@@ -223,7 +233,7 @@
             // var countDownload = count;
             // var countView = count;
             axios
-            .post("/user/count", {data: data, count})
+            .post("/home/count", {data: data, count})
             .then((response) => {
                 this.loading = false;
                 if(response.data == 'success'){
@@ -277,6 +287,20 @@
             this.selected.url = data.url;
             this.selected.user_id = data.user_id;
                 
+        },
+        tagName(id){
+            if(id){
+                // console.log(id);
+                var filtered = (this.Dbtags).filter(
+                    (tag) => tag.id == id
+                );
+                //console.log(filtered);
+                if (filtered[0]) {
+                    return filtered[0].name;
+                }else{
+                return "TAG NOT FOUND!";
+                }
+            }
         },
 
         dateformatter(date, short) {

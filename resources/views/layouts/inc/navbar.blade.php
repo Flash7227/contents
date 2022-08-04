@@ -53,6 +53,7 @@
         {{-- <li class="nav-item">
           <a class="nav-link" href="#">About</a>
         </li> --}}
+        @auth
         @if(Auth()->user()->role === 1)
         <li class="nav-item  mainlink dropdown {{ Request::path() == 'admin/user' ? 'active' : ''}} {{ Request::path() == 'admin/uploads' ? 'active' : ''}}">
           <a class="nav-link  dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -65,6 +66,7 @@
           </div>
         </li>
         @endif
+        @endauth
   
       </ul>
       <ul class="navbar-nav">

@@ -10,10 +10,18 @@
                   <el-input v-model="search.name" placeholder="нэрээр хайх"></el-input>
                   </div>
               </el-form-item>
-              <el-form-item label="#Tag">
-                <div class="block">
-                    <el-input v-model="search.tag" placeholder="тагаар хайх"></el-input>
-                </div>
+              <el-form-item label="#Tag" prop="tags">
+                <el-select v-model="search.tag" placeholder="Select"
+                    multiple
+                    filterable>
+                    <el-option
+                      v-for="(dbtag,index) in (Dbtags)"
+                      :key="index"
+                      :label="dbtag.name"
+                      :value="dbtag.id"
+                      >
+                    </el-option>
+                </el-select>
               </el-form-item>
               <el-form-item label="Огноо">
                   <el-date-picker
@@ -37,9 +45,9 @@
           </div>
            <!-- Бичлэг -->
 
-          <div class="col-lg-4 col-md-4 col-sm-4 rowspaceb text-center" v-for="(video, index) in videoData.data" :key="index">
+          <div class="col-lg-4 col-md-4 col-sm-4 rowspaceb " v-for="(video, index) in videoData.data" :key="index">
             <video
-              style="width: 300px; height: 200px;"
+              style="width: 100%; height: 200px;"
               :kind="'video'"
               :isMuted="false"
               :src="video.download"
@@ -49,21 +57,26 @@
               width="auto"
              
             ></video>
-            <div style="padding: 1px">
-              <span>{{video.name}}</span>
-              <div class="bottom clearfix">
-              <time class="time" style="float: left">{{ dateformatter(video.created_at) }}</time>
-              <div style="float: right">
-                <el-button @click="selectRow(video), submitView(video,  'countView')" type="text"  size="medium" icon="el-icon-view" style="color: #409EFF; font-size: 1.3em"></el-button>
+              <div>
+                <span class="overme">{{video.name}}</span>
+                <el-button style="float: right; padding: 3px 0; color: #409EFF; font-size: 1.3em" @click="selectRow(video), submitView(video,  'countView')" type="text"  size="medium" icon="el-icon-view"></el-button>
                 <el-button
+                  style="float: right; padding: 3px 0"
                   size="medium"
                   type="text"
                   circle
                   @click="handleDownload(video.url, video.download), submitView(video, 'countDownload')"><i class="el-icon-download" style="color: #67C23A; font-size: 1.3em"></i>
-                </el-button>            
+                </el-button>
               </div>
+              <div>
+                <el-tag 
+                  size="mini" 
+                  type="info"
+                  v-for="(tag,index) in JSON.parse(video.tags)"
+                  :key="index"
+                >{{tagName(tag)}}</el-tag>
               </div>
-            </div>
+              <time class="time" style="float: left">{{ dateformatter(video.created_at) }}</time>
           </div>
           
         </div>  
@@ -75,6 +88,7 @@
             class="my-2"
           ></pagination>
           <el-dialog
+          class="text-center"
             title="Үзэх"
             :visible.sync="viewVisible"
             width="90%"
@@ -96,6 +110,7 @@ export default {
   data() {
     return {
       videoData:{},
+      Dbtags: [],
       viewVisible: false,
       selected: {
         file: '',
@@ -125,7 +140,8 @@ export default {
       .get("/home/video/fetch?page="+page)
       .then((response) => {
           this.loading = false;
-          this.videoData = response.data;
+          this.videoData = response.data[0];
+          this.Dbtags = response.data[1];
           console.log(this.videoData);
       })
       .catch((error) => {
@@ -163,7 +179,7 @@ export default {
       // var countDownload = count;
       // var countView = count;
       axios
-      .post("/user/count", {data: data, count})
+      .post("/home/count", {data: data, count})
       .then((response) => {
           this.loading = false;
           if(response.data == 'success'){
@@ -236,6 +252,20 @@ export default {
           return moment(date).format("YYYY-MM-DD HH:mm");
       }
     },
+    tagName(id){
+      if(id){
+        // console.log(id);
+        var filtered = (this.Dbtags).filter(
+            (tag) => tag.id == id
+        );
+        //console.log(filtered);
+        if (filtered[0]) {
+            return filtered[0].name;
+        }else{
+          return "TAG NOT FOUND!";
+        }
+      }
+    }
   },
   created() {
         this.getvideoData();
@@ -255,9 +285,9 @@ export default {
     text-align: center;
     
   }
-  .Media {
-    width: 100%;
-    height: auto;
+  element.style {
+      width: 100%;
+      height: 200px;
   }
   .bottom {
     margin-top: 13px;

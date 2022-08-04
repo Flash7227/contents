@@ -67,6 +67,7 @@ Route::group([ 'prefix' => '/home'], function(){
     Route::post('/blog/fetchSearch', 'HomeController@blogSearch');
     Route::post('/file/fetchSearch', 'HomeController@fileSearch');
     Route::post('/video/fetchSearch', 'HomeController@videoSearch');
+    Route::post('/count', 'UsersController@countViewAndDownload');
 
    
 });

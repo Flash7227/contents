@@ -25,6 +25,14 @@
                     <div class="custom-card-title">
                         {{blog.name}}
                     </div>
+                    <div>
+                        <el-tag
+                                type="info"
+                                class="mr-1 mb-1"
+                                v-for="(tag, index) in JSON.parse(blog.tags)"
+                                :key="index"
+                                >{{ tagFinder(tag) }}</el-tag>
+                    </div>
                     <small class="grey">{{dateformatter(blog.created_at, false)}}</small>
                 </div>
             </div>
@@ -244,12 +252,33 @@ export default {
         },
         viewBlog(data){
             location.href = '/blog/' + data.id;
+        },
+        tagFinder(id){
+            if(id){
+                var filtered = (JSON.parse(this.tags)).filter(
+                    (tag) => tag.id == id
+                );
+                // console.log(filtered);
+                if (filtered[0]) {
+                    return filtered[0].name;
+                } else {
+                    return "TAG NOT FOUND!";
+                }
+            }
+            
         }
     },
     created() {
         this.fetch();
     },
-    // props:['permissions']
+    props: {
+        csrf: {
+            type: String,
+        },
+        tags: {
+            type: String,
+        },
+    }
 };
 </script>
 <style scoped>

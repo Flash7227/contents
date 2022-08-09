@@ -29,11 +29,13 @@ class HomeController extends Controller
      */
     public function welcome()
     {
-        return view('user.home');
+        $tags = Tags::all();
+        return view('user.home', ['tags'=>$tags]);
     }
     public function homecompIndex()
     {
-        return view('user.home');
+        $tags = Tags::all();
+        return view('user.home', ['tags'=>$tags]);
     }
     public function uploadData()
     {

@@ -128,30 +128,30 @@ class AdminsController extends Controller
         $form = $req->input('form');
         $type = $req->input('type');
         $upload = Uploads::find($form['id']);
-        if($type == 'del'){
+        if($type == 'delete'){
             if($upload->url != 'noimage123.png'){
                 if (Storage::exists('/public/uploads/'.$upload->url)) {
                     Storage::delete('/public/uploads/'.$upload->url);
                 }
             }
             $upload->delete();
-        }else{
-            // $upload->name = $form['name'];
-            // $upload->desc = $form['desc'];
-            // $upload->sharetype = $form['sharetype'];
-            // $tags = [];
-            // if($form['dynamicTags']){
-            //     // $tags = explode(",", $form['dynamicTags']);
-            //     $tags = $form['dynamicTags'];
-            // };
-            // $allowed = [];
-            // if($form['allowed']){
-            //     // $allowed = explode(",", $form['allowed']);
-            //     $allowed = $form['allowed'];
-            // }
-            // $upload->tags = json_encode($tags);
-            // $upload->allowed = json_encode($allowed);
-            // $upload->save();
+        }else if($type == 'edit'){
+            $upload->name = $form['name'];
+            $upload->desc = $form['desc'];
+            $upload->sharetype = $form['sharetype'];
+            $tags = [];
+            if($form['dynamicTags']){
+                // $tags = explode(",", $form['dynamicTags']);
+                $tags = $form['dynamicTags'];
+            };
+            $allowed = [];
+            if($form['allowed']){
+                // $allowed = explode(",", $form['allowed']);
+                $allowed = $form['allowed'];
+            }
+            $upload->tags = json_encode($tags);
+            $upload->allowed = json_encode($allowed);
+            $upload->save();
         }
         return "success";
     }

@@ -11,7 +11,8 @@ class NewHomeController extends Controller
 {
     public function index()
     {
-        return view('user.home');
+        $tags = Tags::all();
+        return view('user.home', ['tags'=>$tags]);
     }
     public function fetch()
     {

@@ -1,6 +1,6 @@
 <template>
     <div
-        class="container"
+        class="container-fluid"
         v-loading.fullscreen.lock="loading"
         element-loading-text="Уншиж байна..."
     >
@@ -156,6 +156,7 @@
                     label="Үзсэн/татагдсан тоо"
                     align="center"
                     header-align="center"
+                    width="180"
                 >
                     <template slot-scope="scope"
                     
@@ -200,46 +201,179 @@
                 class="my-2"
             ></pagination>
         </el-card>
-     <el-dialog
+        <el-dialog
             title="Дэлгэрэнгүй"
             :visible.sync="dialogVisible"
             width="90%"
             :before-close="handleClose">
-            <table class="table table-bordered">
-                <tr>
-                    <th>Төрөл</th>
-                    <th>Файлын нэр</th>
-                    <th>Файлын хэмжээ</th>
-                    <th>Огноо</th>
-                    <th>Хэрэглэгчийн ID</th>
-                    <th>Хэрэглэгчийн нэр</th>
-                    <th>Хэрэглэгчийн email</th>
-                    <th>Хэрэглэгчийн тайлбар</th>
-                </tr>
-                <tr>
-                    <td>{{ typeName(selected.type) }}</td>
-                    <td>{{selected.name}}</td>
-                    <td> {{readableSize(selected.size)}}</td>
-                    <td>{{ dateformatter(selected.created_at) }}</td>
-                    <td>{{selected.user.id}}</td>
-                    <td>{{selected.user.name}}</td>
-                    <td>{{selected.user.email}}</td>
-                    <td>{{selected.user.desc}}</td>
-                </tr>
-            </table>
-            <div class="text-right">
-                <el-button icon="el-icon-delete" type="danger" @click="modify('del')">Устгах</el-button>
+            <el-form                
+                ref="invisModify"
+                :model="selected"
+                label-width="160px"
+                size="mini"
+                :rules="rules">
+
+                <el-form-item label="Нийтлэл" prop="desc" v-if="selected.type==4">
+                    <!-- <ckeditor :editor="editor" v-model="selected.desc" :config="editorConfig"></ckeditor> -->
+                        <vue-editor
+                        id="editor2"
+                        use-custom-image-handler
+                        @image-added="handleImageAdded"
+                        :editor-toolbar="editorSettings.customToolbar"
+                        v-model="selected.desc"/>
+                </el-form-item>
+                <el-form-item label="Нэр" prop="name">
+                    <el-input v-model="selected.name"></el-input>
+                </el-form-item>
+                <el-form-item label="Cover зураг" prop="upload" v-if="selected.type == 4">
+                    <el-upload
+                        class="avatar-uploader"
+                        action="/user/upload/modify/cover"
+                        :show-file-list="false"
+                        :on-success="handleSuccess"
+                        :data="selected"
+                        accept="image/jpeg,image/gif,image/png"
+                        :on-error="handleError"
+                        :headers="{ 'X-CSRF-TOKEN': csrf }"
+                        :before-upload="beforeCoverUpload">
+                        <img v-if="selected.url != 'noimage123.png'" :src="selected.download" class="avatar">
+                        <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                    </el-upload>
+                    <small class="grey">Солиход шууд өөрчлөгдөнө!</small>
+                </el-form-item>
+                <el-form-item label="Tags" prop="tags">
+                       <el-select v-model="selected.dynamicTags" placeholder="Сонгох"
+                        multiple
+                        filterable>
+                        <el-option
+                        v-for="(tag,index) in JSON.parse(tags)"
+                        :key="index"
+                        :label="tag.name"
+                        :value="tag.id"
+                        >
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="Хуваалцах төрөл" prop="sharetype">
+                    <el-select
+                        v-model="selected.sharetype"
+                    >
+                        <el-option
+                            v-for="(item, index) in sharetypes"
+                            :key="index"
+                            :label="item.label"
+                            :value="item.value"
+                        >
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item v-if="selected.sharetype == 'allowed'" label="Хуваалцах жагсаалт" prop="allowed">
+                    <el-select
+                        v-model="selected.allowed"
+                        multiple
+                        filterable
+                        remote
+                        reserve-keyword
+                        placeholder="Имайл"
+                        :remote-method="remoteMethod"
+                        :loading="loading"
+                        allow-create
+                        default-first-option
+                    >
+                        <el-option
+                            v-for="(item, index) in emails"
+                            :key="index"
+                            :label="item"
+                            :value="item"
+                        >
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+            </el-form>
+   
+            <span slot="footer" class="dialog-footer">
+                    <div>
+                        <el-button @click="modify('delete')" type="danger" icon="el-icon-delete" class="float-left" circle></el-button>
+                        <el-button v-if="selected.type != 4" @click="downloadFile" type="success" icon="el-icon-download" class="float-left" circle></el-button>
+                        <el-button v-if="selected.type == 2 || selected.type == 3" @click="viewdata" icon="el-icon-view" circle class="float-left"></el-button>
+                    </div>
+                    <el-button @click="modify('edit')" type="primary" icon="el-icon-edit" plain>Засах</el-button>
+            </span>
+    </el-dialog>
+    <el-dialog
+            title="Үзэх"
+            :visible.sync="viewVisible"
+            width="90%"
+            append-to-body
+            :before-close="handleCloseView">
+
+            <div v-if="selected.type == 2" class="text-center">
+                <video width="90%" height="auto" controls ref="video" >
+                    <source :src="selected.download" type="video/mp4" ref="source1"/>
+                    <source :src="selected.download" :type="getExt()" ref="source2"/>
+                    Your browser does not support the video tag.
+                </video>
             </div>
-     </el-dialog>
+            <div v-else-if="selected.type == 3" class="text-center demo-image__preview">
+                <el-image 
+                    style="width: 90%; height: auto"
+                    :src="selected.download" 
+                    :preview-src-list="[selected.download]">
+                </el-image>
+            </div>
+
+    </el-dialog>
     </div>
 </template>
 
 <script>
+import { VueEditor, Quill } from 'vue2-editor'
+import ImageResize from 'quill-image-resize-vue'
+Quill.register('modules/imageResize', ImageResize)
+const quillTable = require('vue-quill-table');
+ 
+Quill.register(quillTable.TableCell);
+Quill.register(quillTable.TableRow);
+Quill.register(quillTable.Table);
+Quill.register(quillTable.Contain);
+Quill.register('modules/table', quillTable.TableModule);
+const maxRows = 10;
+const maxCols = 5;
+const tableOptions = [];
+for (let r = 1; r <= maxRows; r++) {
+    for (let c = 1; c <= maxCols; c++) {
+        tableOptions.push('newtable_' + r + '_' + c);
+    }
+}
 export default {
     data() {
         return {
+            editorSettings: {
+                modules: {
+                    imageResize: {},
+                    table: {}
+                },
+                customToolbar: [
+                    [{ header: [false, 1, 2, 3, 4, 5, 6] }],
+                    ["bold", "italic", "underline", "strike"], // toggled buttons
+                    [
+                        { align: "" },
+                        { align: "center" },
+                        { align: "right" },
+                        { align: "justify" }
+                    ],
+                    ["blockquote", "code-block"],
+                    [{ list: "ordered" }, { list: "bullet" }, { list: "check" }],
+                    [{ indent: "-1" }, { indent: "+1" }], // outdent/indent
+                    [{ color: [] }, { background: [] }], // dropdown with defaults from theme
+                    ["link", "image", "video"],
+                    ["clean"], // remove formatting button
+                     [{table: tableOptions}, {table: 'append-row'}, {table: 'append-col'}],
+                ]
+            },
             loading: false,
             dialogVisible: false,
+            viewVisible: false,
             uploads:{},
                         options: [
                 {
@@ -290,6 +424,11 @@ export default {
                 download: "",
                 sharetype:"",
                 user:{}
+            },
+            rules: {
+                name: [
+                    { required: true, message: 'Заавал бөглөнө үү!', trigger: 'blur' }
+                ],           
             },
             form:{
                 email:"",
@@ -373,6 +512,110 @@ export default {
                 return moment(date).format("YYYY-MM-DD HH:mm");
             }
         },
+        handleImageAdded(file, Editor, cursorLocation, resetUploader) {
+            var formData = new FormData();
+            formData.append("upload", file);
+            axios({
+                url: "/vue2/upload",
+                method: "POST",
+                headers:{
+                    'X-CSRF-TOKEN': this.csrf
+                },
+                data: formData
+            }).then(result => {
+                const url = result.data.url; // Get url from response
+                Editor.insertEmbed(cursorLocation, "image", url);
+                resetUploader();
+            }).catch(err => {
+                console.log(err);
+            });
+        },
+        handleCloseView(){
+            if(this.selected.type == 2){
+                var video = this.$refs.video;
+                video.play();
+                video.pause();
+                // video.currentTime = 0;
+            }
+            this.viewVisible = false;         
+        },
+        getExt(){
+            var url = this.selected.url.split('.');
+            return 'video/'+url[url.length - 1];
+        },
+        handleSuccess(response) {
+            console.log(response);
+            this.loading = false;
+            this.loadText = "Уншиж байна...";
+            // this.resetForm();
+            if(response == 'success'){
+                this.$message({
+                    message: "Successful",
+                    type: "success",
+                    duration: 3000,
+                });
+                this.fetch();
+            }else{
+                this.$notify.error({
+                    title: "Error",
+                    message: response
+                });
+            }
+        },
+        async viewdata() {
+            this.viewVisible = true;
+            if(this.selected.type == 2){
+                this.loading = true;
+                const result = await this.viewAfter();
+            }
+        },
+        viewAfter() {
+            return new Promise(resolve => {
+                setTimeout(() => {
+                this.loading = false;
+                    var video = this.$refs.video;
+                    var source1 = this.$refs.source1;
+                    var source2 = this.$refs.source2;
+                    source1.setAttribute('src', this.selected.download);
+                    source2.setAttribute('src', this.selected.download);
+                    video.load();
+                }, 1000);
+            });
+        },
+        handleError() {
+            this.loading = false;
+            this.loadText = "Уншиж байна...";
+            this.$message({
+                message: "Error!",
+                type: "error",
+                duration: 3000,
+            });
+            // this.fetch();
+        },
+        handleExceed(files, fileList) {
+            this.$message({
+                message: "Please upload one at the time!",
+                type: "warning",
+                duration: 4000,
+            });
+        },
+        beforeCoverUpload(file){
+            this.selected.size = file.size;
+            if(this.selected.type == 4){
+                const isJPG =
+                file.type === "image/jpeg" || "image/png" || "image/gif";
+                const isLt2M = file.size / 1024 / 1024 < 2;
+                if (!isJPG) {
+                    this.$message.error("Avatar picture must be JPG format!");
+                    return false;
+                }
+                if (!isLt2M) {
+                    this.$message.error("Avatar picture size can not exceed 2MB!");
+                    return false;
+                }
+                return isJPG && isLt2M;
+            }
+        },
         typeName(type) {
             var filtered = this.options.filter(
                 (option) => option.value == type
@@ -405,6 +648,15 @@ export default {
             return (
                 (this.uploads.current_page - 1) * this.uploads.per_page + index + 1
             );
+        },
+        downloadFile() {
+            var url = this.selected.url;
+            var link = document.createElement("a");
+            link.setAttribute('download', url);
+            link.href = this.selected.download;
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
         },
         openDetails(row, column, event){
             this.selected.type = row.type;
@@ -484,3 +736,35 @@ export default {
     },
 };
 </script>
+<style scoped>
+    .el-form .el-select {
+        width: 100%;
+    }
+    .avatar-uploader .el-upload {
+        border: 1px dashed #d9d9d9;
+        border-radius: 6px;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+    }
+    .avatar-uploader .el-upload:hover {
+    border-color: #409EFF;
+    }
+    .avatar-uploader-icon {
+        font-size: 28px;
+        color: #8c939d;
+        width: 178px;
+        height: 178px;
+        line-height: 178px;
+        text-align: center;
+    }
+    .avatar {
+        width: 178px;
+        height: 178px;
+        display: block;
+    }
+    .el-table .file-row{
+        background: #409EFF;
+    }
+
+</style>

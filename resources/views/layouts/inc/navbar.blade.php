@@ -36,6 +36,7 @@
                         <a class="dropdown-item" href="/admin/user">Хэрэглэгчид</a>
                         <a class="dropdown-item" href="/admin/uploads">Файлууд</a>
                         <a class="dropdown-item" href="/admin/tags">#TAG</a>
+                        <a class="dropdown-item" href="/admin/logs">LOGS</a>
                     </div>
                     </li>
                 @endif

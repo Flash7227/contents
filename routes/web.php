@@ -45,6 +45,9 @@ Route::group(['middleware' => 'admincheck', 'prefix' => '/admin'], function(){
     Route::get('/tags', 'AdminsController@tagsIndex');
     Route::get('/tags/fetch', 'AdminsController@tagsFetch');
     Route::post('/tags', 'AdminsController@tagsPost');
+
+    Route::get('/logs', 'AdminsController@logsIndex');
+    Route::post('/logs/fetch', 'AdminsController@logsFetch');
 });
 Route::get('/blog/{id}', 'NewHomeController@blogFetch');
 

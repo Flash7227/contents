@@ -6,6 +6,7 @@ use App\Uploads;
 use App\Counter;
 use App\User;
 use App\Tags;
+use App\Logmaker;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
@@ -171,15 +172,42 @@ class AdminsController extends Controller
             $tag->name = $form['name'];
             $tag->editor_id = Auth()->user()->id;
             $tag->save();
+            $log = new Logmaker;
+            $log->user_id = Auth()->user()->id;
+            $log->action = 'tag new';
+            $log->upload_id = $tag->id;
+            $log->info = json_encode($tag);
+            $log->save();
         }else if($form['type'] == 'edit'){
             $tag = Tags::find($form['name']);
             $tag->name = $form['input2'];
             $tag->editor_id = Auth()->user()->id;
             $tag->save();
+            $log = new Logmaker;
+            $log->user_id = Auth()->user()->id;
+            $log->action = 'tag edit';
+            $log->upload_id = $tag->id;
+            $log->info = json_encode($tag);
+            $log->save();
         }else if($form['type'] == 'delete'){
             $tag = Tags::find($form['name']);
+            $log = new Logmaker;
+            $log->user_id = Auth()->user()->id;
+            $log->action = 'tag delete';
+            $log->upload_id = $tag->id;
+            $log->info = json_encode($tag);
+            $log->save();
             $tag->delete();
         }
         return "success";
+    }
+    public function logsIndex()
+    {
+        return view('admin.logs');
+    }
+    public function logsFetch(Request $req)
+    {
+        $logs = Logmaker::with(['user', 'upload'])->orderBy('created_at', 'DESC')->paginate(15);
+        return $logs;
     }
 }

@@ -3,6 +3,7 @@
 namespace App;
 use App\User;
 use App\Counter;
+use App\Logmaker;
 use Illuminate\Database\Eloquent\Model;
 
 class Uploads extends Model
@@ -28,5 +29,9 @@ class Uploads extends Model
     public function counter()
     {
         return $this->hasMany(Counter::class, 'upload_id');
+    }
+    public function log()
+    {
+        return $this->hasMany(Logmaker::class, 'upload_id');
     }
 }

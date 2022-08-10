@@ -6,6 +6,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use App\Uploads;
+use App\Logmaker;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -41,5 +42,8 @@ class User extends Authenticatable implements MustVerifyEmail
     
     public function uploads(){
         return $this->hasMany(Uploads::class, 'user_id');
+    }
+    public function logs(){
+        return $this->hasMany(Logmaker::class, 'user_id');
     }
 }

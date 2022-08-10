@@ -1,10 +1,10 @@
 <template>
     <div
-        class="container"
+        class="container-fluid"
         v-loading.fullscreen.lock="loading"
         :element-loading-text="loadText"
     >
-        <el-card v-if="persmissionCheck('upload')">
+        <el-card v-if="persmissionCheck('upload')" class="container">
             <p class="text-right">Шинэ файл хуулах</p>
             <el-form
                 ref="fileList"
@@ -115,6 +115,15 @@
                         >
                         </el-option>
                     </el-select>
+                </el-form-item>
+                <el-form-item label="Устах өдөр" prop="due_at">
+                    <el-date-picker
+                        v-model="fileList.due_at"
+                        type="date"
+                        format="yyyy-MM-dd"
+                        value-format="yyyy-MM-dd"
+                        placeholder="Сонгоогүй бол устахгүй.">
+                    </el-date-picker>
                 </el-form-item>
                 <el-form-item label="Хуулах лимит">
                     <el-progress :text-inside="true" :stroke-width="15" :percentage="datapercent" :color="customColors" :format="customProgressFormat"></el-progress>
@@ -231,6 +240,17 @@
                     </template>
                 </el-table-column>
                 <el-table-column
+                    prop="due_at"
+                    label="Устах өдөр"
+                    align="center"
+                    width="150"
+                    header-align="center"
+                >
+                    <template slot-scope="scope">
+                        {{dateformatter(scope.row.due_at, true)}}
+                    </template>
+                </el-table-column>
+                <el-table-column
                     prop="created_at"
                     label="Огноо"
                     align="center"
@@ -339,6 +359,15 @@
                         </el-option>
                     </el-select>
                 </el-form-item>
+                <el-form-item label="Устах өдөр" prop="due_at">
+                    <el-date-picker
+                        v-model="selected.due_at"
+                        type="date"
+                        format="yyyy-MM-dd"
+                        value-format="yyyy-MM-dd"
+                        placeholder="Сонгоогүй бол устахгүй.">
+                    </el-date-picker>
+                </el-form-item>
             </el-form>
    
             <span slot="footer" class="dialog-footer">
@@ -439,7 +468,8 @@ export default {
                 sharetype:"all",
                 allowed: [],
                 url:"",
-                size:""
+                size:"",
+                due_at:""
             },
             selected:{
                 id:"",
@@ -451,7 +481,8 @@ export default {
                 url:"",
                 size:"",
                 download: "",
-                sharetype:""
+                sharetype:"",
+                due_at:""
             },
             attachments: [],
             srcList: [],
@@ -738,6 +769,7 @@ export default {
             this.fileList.id = "";
             this.fileList.download = "";
             this.fileList.sharetype = "all";
+            this.fileList.due_at = "";
         },
         remoteMethod(query) {
             if (query !== "") {
@@ -796,6 +828,7 @@ export default {
             this.selected.dynamicTags = JSON.parse(row.tags);
             this.selected.download = row.download;
             this.selected.sharetype = row.sharetype;
+            this.selected.due_at = row.due_at;
             this.dialogVisible = true;
         },
         uploader(editor)

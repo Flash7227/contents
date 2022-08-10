@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use App\Uploads;
 use App\Counter;
+use App\Logmaker;
 use Storage;
 use League\Flysystem\Filesystem;
 use App\User;
@@ -33,6 +34,7 @@ class UsersController extends Controller
             $temp_tags = $form['dynamicTags'];
             $temp_allowed = $form['allowed'];
             $sharetype = $form['sharetype'];
+            $due_at = $form['due_at'];
             $size = 0;
         }else{
             $name = $req->input('name');
@@ -42,6 +44,7 @@ class UsersController extends Controller
             $temp_allowed = $req->input('allowed');
             $size = $req->input('size');
             $sharetype = $req->input('sharetype');
+            $due_at = $req->input('due_at');
 
             if(!$req->hasFile('file')){
                 return response()->json([
@@ -101,7 +104,14 @@ class UsersController extends Controller
             $upload->desc = $desc;
             $upload->user_id = Auth()->user()->id;
             $upload->size = $size;
+            $upload->due_at = $due_at;
             $upload->save();
+            $log = new Logmaker;
+            $log->user_id = Auth()->user()->id;
+            $log->action = 'upload new';
+            $log->upload_id = $upload->id;
+            $log->info = json_encode($upload);
+            $log->save();
             return "success";
         }else{
             return "error";
@@ -118,11 +128,18 @@ class UsersController extends Controller
                     Storage::delete('/public/uploads/'.$upload->url);
                 }
             }
+            $log = new Logmaker;
+            $log->user_id = Auth()->user()->id;
+            $log->action = 'upload delete';
+            $log->upload_id = $form['id'];
+            $log->info = json_encode($upload);
+            $log->save();
             $upload->delete();
         }else{
             $upload->name = $form['name'];
             $upload->desc = $form['desc'];
             $upload->sharetype = $form['sharetype'];
+            $upload->due_at = $form['due_at'];
             $tags = [];
             if($form['dynamicTags']){
                 // $tags = explode(",", $form['dynamicTags']);
@@ -136,6 +153,12 @@ class UsersController extends Controller
             $upload->tags = json_encode($tags);
             $upload->allowed = json_encode($allowed);
             $upload->save();
+            $log = new Logmaker;
+            $log->user_id = Auth()->user()->id;
+            $log->action = 'upload modify';
+            $log->upload_id = $form['id'];
+            $log->info = json_encode($upload);
+            $log->save();
         }
         return "success";
     }
@@ -174,6 +197,12 @@ class UsersController extends Controller
                 $upload->url = $fileNameToStore;
                 $upload->size = $size;
                 $upload->save();
+                $log = new Logmaker;
+                $log->user_id = Auth()->user()->id;
+                $log->action = 'cover modify';
+                $log->upload_id = $id;
+                $log->info = json_encode($upload);
+                $log->save();
                 return "success";
             }else{
                 return response()->json([

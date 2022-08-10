@@ -32,6 +32,7 @@ Vue.component('profile-comp', require('./components/profile-comp.vue').default);
 
 Vue.component('admin-uploads-comp', require('./components/admin-uploads-comp.vue').default);
 Vue.component('admin-tags-comp', require('./components/admin-tags-comp.vue').default);
+Vue.component('admin-logs-comp', require('./components/admin-logs-comp.vue').default);
 
 ////attachments components
 Vue.component('blog-comp', require('./components/blog-comp.vue').default);

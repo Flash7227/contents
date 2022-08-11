@@ -17,10 +17,18 @@ class NewHomeController extends Controller
     public function fetch()
     {
         if(Auth::check()){
-            $blog = Uploads::whereIn('sharetype', ["public", "all"])->where('type', '4')->orderBy('created_at', 'DESC')->limit(6)->get();
-            $files = Uploads::whereIn('sharetype', ["public", "all"])->where('type', '1')->orderBy('created_at', 'DESC')->limit(4)->get();
-            $videos = Uploads::whereIn('sharetype',["public", "all"])->where('type', '2')->orderBy('created_at', 'DESC')->limit(4)->get();
-            $posters = Uploads::whereIn('sharetype', ["public", "all"])->where('type', '3')->orderBy('created_at', 'DESC')->limit(4)->get();
+            if(Auth()->user()->email_verified_at){
+                $blog = Uploads::whereIn('sharetype', ["public", "all"])->where('type', '4')->orderBy('created_at', 'DESC')->limit(6)->get();
+                $files = Uploads::whereIn('sharetype', ["public", "all"])->where('type', '1')->orderBy('created_at', 'DESC')->limit(4)->get();
+                $videos = Uploads::whereIn('sharetype',["public", "all"])->where('type', '2')->orderBy('created_at', 'DESC')->limit(4)->get();
+                $posters = Uploads::whereIn('sharetype', ["public", "all"])->where('type', '3')->orderBy('created_at', 'DESC')->limit(4)->get();
+            }else{
+                $blog = Uploads::where('sharetype', "public")->where('type', '4')->orderBy('created_at', 'DESC')->limit(6)->get();
+                $files = Uploads::where('sharetype', "public")->where('type', '1')->orderBy('created_at', 'DESC')->limit(4)->get();
+                $videos = Uploads::where('sharetype', "public")->where('type', '2')->orderBy('created_at', 'DESC')->limit(4)->get();
+                $posters = Uploads::where('sharetype', "public")->where('type', '3')->orderBy('created_at', 'DESC')->limit(4)->get();
+            }
+    
         }else{
             $blog = Uploads::where('sharetype', "public")->where('type', '4')->orderBy('created_at', 'DESC')->limit(6)->get();
             $files = Uploads::where('sharetype', "public")->where('type', '1')->orderBy('created_at', 'DESC')->limit(4)->get();

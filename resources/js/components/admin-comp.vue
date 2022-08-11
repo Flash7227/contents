@@ -24,6 +24,10 @@
                 label="И-мэйл"
                 align="center" header-align="center"
                 >
+                <template slot-scope="scope">
+                    <el-tag type="success" v-if="scope.row.email_verified_at">{{scope.row.email}}</el-tag>
+                    <el-tag v-else type="warning">{{scope.row.email}}</el-tag>
+                </template>
             </el-table-column>
             <el-table-column
                 prop="name"

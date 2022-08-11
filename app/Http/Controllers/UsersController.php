@@ -108,6 +108,7 @@ class UsersController extends Controller
             $upload->save();
             $log = new Logmaker;
             $log->user_id = Auth()->user()->id;
+            $log->email = Auth()->user()->email;
             $log->action = 'upload new';
             $log->upload_id = $upload->id;
             $log->info = json_encode($upload);
@@ -130,6 +131,7 @@ class UsersController extends Controller
             }
             $log = new Logmaker;
             $log->user_id = Auth()->user()->id;
+            $log->email = Auth()->user()->email;
             $log->action = 'upload delete';
             $log->upload_id = $form['id'];
             $log->info = json_encode($upload);
@@ -155,6 +157,7 @@ class UsersController extends Controller
             $upload->save();
             $log = new Logmaker;
             $log->user_id = Auth()->user()->id;
+            $log->email = Auth()->user()->email;
             $log->action = 'upload modify';
             $log->upload_id = $form['id'];
             $log->info = json_encode($upload);
@@ -199,6 +202,7 @@ class UsersController extends Controller
                 $upload->save();
                 $log = new Logmaker;
                 $log->user_id = Auth()->user()->id;
+                $log->email = Auth()->user()->email;
                 $log->action = 'cover modify';
                 $log->upload_id = $id;
                 $log->info = json_encode($upload);
@@ -367,6 +371,15 @@ class UsersController extends Controller
     }
 
 
-    
+    public function emailVerify(Request $req)
+    {
+        if(Auth()->user()->email_verified_at){
+            return 'Аль хэдийн баталгаажсан байна!';
+        }else{
+            $req->user()->sendEmailVerificationNotification();
+            return 'Линк илгээгдсэн!';
+        }
+
+    }
    
 }

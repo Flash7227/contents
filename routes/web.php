@@ -28,6 +28,7 @@ Route::group(['middleware' => 'auth', 'prefix' => '/user'], function(){
     Route::post('/profile/avatar', 'UsersController@avatarUpload');
     //count view and download
     Route::post('/count', 'UsersController@countViewAndDownload');
+    Route::post('/email/verify', 'UsersController@emailVerify');
 });
 
 Route::group(['middleware' => 'admincheck', 'prefix' => '/admin'], function(){

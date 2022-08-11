@@ -5,7 +5,18 @@
         element-loading-text="Уншиж байна..."
     >
     <el-card>
+        <el-form :inline="true" :model="form" class="demo-form-inline"  @submit.prevent.native="fetch()">
+            <el-form-item label="Email" prop="email">
+                <el-input placeholder="Хэрэглэгчийн имайл хаяг" v-model="form.email" clearable></el-input>
+            </el-form-item>
+            <el-form-item>
+                <el-button icon="el-icon-search" @click="fetch()">Хайх</el-button>
+            </el-form-item>
+        </el-form>
+    </el-card>
+    <el-card>
         <el-table
+        @row-click="openDetails"
         :data="logs.data"
         style="width: 100%">
             <el-table-column
@@ -41,7 +52,7 @@
                 prop="created_at"
                 label="Огноо">
                  <template slot-scope="scope">
-                        {{dateformatter(scope.row.created_at, true)}}
+                        {{dateformatter(scope.row.created_at)}}
                 </template>
             </el-table-column>
         </el-table>
@@ -53,6 +64,13 @@
             class="my-2"
         ></pagination>
     </el-card>
+        <el-dialog
+            title="Дэлгэрэнгүй"
+            :visible.sync="dialogVisible"
+            width="90%"
+            :before-close="handleClose">
+        {{(selected.info)}}
+        </el-dialog>
         
     </div>
 </template>
@@ -62,9 +80,13 @@ export default {
     data() {
         return {
             loading: false,
+            dialogVisible: false,
             logs:{},
             form:{
-
+                email:""
+            },
+            selected:{
+                info:""
             }
         };
     },
@@ -98,6 +120,13 @@ export default {
             } else {
                 return moment(date).format("YYYY-MM-DD HH:mm");
             }
+        },
+        openDetails(row, column, event){
+            this.selected.info = row.info;
+            this.dialogVisible = true;
+        },
+        handleClose(){
+            this.dialogVisible = false;         
         },
     },
     created() {

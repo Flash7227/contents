@@ -16,8 +16,9 @@ class CreateLogmakersTable extends Migration
         Schema::create('logmakers', function (Blueprint $table) {
             $table->id();
             $table->integer('user_id')->nullable();
+            $table->string('email')->nullable();
             $table->string('action');
-            $table->string('upload_id');
+            $table->string('upload_id')->nullable();
             $table->longText('info')->nullable();
             $table->timestamps();
         });

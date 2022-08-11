@@ -101,6 +101,12 @@
                             <li>Хувийн хаяг үүсгэх бол <a id="a-tag" href="#0" class="t-signin">  Энд дар </a></li>
                         </ul>
                     </nav>
+                    <nav>
+                        <ul>
+                            <li></li>
+                            <li>Нууц үгээ мартсан бол <a id="a-tag" href="/password/reset" class="t-signin">  Энд дар </a></li>
+                        </ul>
+                    </nav>
                     <div class="heading">
                         <h2>Нэвтрэх</h2>
                     </div>

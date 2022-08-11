@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container"         v-loading.fullscreen.lock="loading">
     <div class="child">
     <el-row>
       <el-col>
@@ -40,7 +40,7 @@
                             </template>
                             <el-alert
                               v-if="info.email_verified_at"
-                              :title="'Баталгаажсан' + this.info.email_verified_at"
+                              :title="'Баталгаажсан ' + dateformatter(this.info.email_verified_at)"
                               type="success"
                               show-icon
                               :closable="false">
@@ -83,6 +83,14 @@
                                 
                                 plain
                                 @click="imageModal()"> зураг солих
+              </el-button>
+              <el-button
+                                type="info"
+                                icon="el-icon-refresh-right"
+                                style="margin-top:12px;"
+                                
+                                plain
+                                @click="emailVerification()"> Имайл баталгаажуулах линк дахин авах
               </el-button>
           </el-card>
         </div>
@@ -150,7 +158,7 @@
   export default {
     data() {
       return {
-         
+         loading: false,
         info: {
           id:'',
           name: '',
@@ -281,6 +289,33 @@
                 return value == 'Дотоод ажилтан';
             }else{
                 return value === 'Хоосон'
+            }
+        },
+        emailVerification(){
+          this.loading = true;
+              axios.post("/user/email/verify")
+                .then((response) => {
+                    this.loading = false;
+                      this.$notify({
+                        title: 'Success',
+                        message: response.data,
+                        type: 'success'
+                      });
+                })
+                .catch((error) => {
+                    console.log(error.response);
+                    this.$notify.error({
+                        title: "Error",
+                        message: error.response.data.message,
+                    });
+                });
+        },
+        dateformatter(date, short) {
+            if (short) {
+                // console.log(short, '---');
+                return moment(date).format("YYYY-MM-DD");
+            } else {
+                return moment(date).format("YYYY-MM-DD HH:mm");
             }
         },
     },

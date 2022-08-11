@@ -7,6 +7,7 @@ use App\Counter;
 use App\User;
 use App\Tags;
 use App\Logmaker;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
@@ -43,7 +44,13 @@ class AdminsController extends Controller
 
         if($request->input('delete')){
             $user = User::find($request->input('id'));
+            $log = new Logmaker;
+            $log->info = json_encode($user);
             if($user->delete()){
+                $log->user_id = Auth()->user()->id;
+                $log->email = Auth()->user()->email;
+                $log->action = 'user delete';
+                $log->save();
                 return 'success';
             };
         }else{
@@ -55,9 +62,10 @@ class AdminsController extends Controller
             $form = $request->input('form');
             if(isset($form['id'])){
                 $user = User::find($form['id']);
+                $action = 'user modify';
             }else{
                 $user = new User;
-
+                $action = 'user new';
                 $userr = Auth()->user();
 
                 $validator = Validator::make($request->all(), 
@@ -76,6 +84,7 @@ class AdminsController extends Controller
                         'role' => $request['form']['role'],
                         'storage_limit' => $request['form']['storage_limit'],
                         'password' => Hash::make($request['form']['password']),
+                        'email_verified_at' => Carbon::now()
                     ]);
                 }else {
                     $user->fill(
@@ -85,10 +94,17 @@ class AdminsController extends Controller
                             'permissions' => $request['form']['permissions'],
                             'role' => $request['form']['role'],
                             'storage_limit' => $request['form']['storage_limit'],
+                            'email_verified_at' => Carbon::now()
                         ]);
                 }
 
             if($user->save()){
+                $log = new Logmaker;
+                $log->user_id = Auth()->user()->id;
+                $log->email = Auth()->user()->email;
+                $log->action = $action;
+                $log->info = json_encode($user);
+                $log->save();
                 return 'success';
             }
         }
@@ -135,6 +151,12 @@ class AdminsController extends Controller
                     Storage::delete('/public/uploads/'.$upload->url);
                 }
             }
+            $log = new Logmaker;
+            $log->user_id = Auth()->user()->id;
+            $log->email = Auth()->user()->email;
+            $log->action = 'upload delete';
+            $log->info = json_encode($upload);
+            $log->save();
             $upload->delete();
         }else if($type == 'edit'){
             $upload->name = $form['name'];
@@ -152,6 +174,12 @@ class AdminsController extends Controller
             }
             $upload->tags = json_encode($tags);
             $upload->allowed = json_encode($allowed);
+            $log = new Logmaker;
+            $log->user_id = Auth()->user()->id;
+            $log->email = Auth()->user()->email;
+            $log->action = 'upload modify';
+            $log->info = json_encode($upload);
+            $log->save();
             $upload->save();
         }
         return "success";
@@ -167,38 +195,36 @@ class AdminsController extends Controller
     public function tagsPost(Request $req)
     {
         $form = $req->input('form');
+        $log = new Logmaker;
+        $log->user_id = Auth()->user()->id;
+        $log->email = Auth()->user()->email;
         if($form['type'] == 'new'){
             $tag = new Tags;
             $tag->name = $form['name'];
             $tag->editor_id = Auth()->user()->id;
             $tag->save();
-            $log = new Logmaker;
-            $log->user_id = Auth()->user()->id;
+
             $log->action = 'tag new';
             $log->upload_id = $tag->id;
             $log->info = json_encode($tag);
-            $log->save();
         }else if($form['type'] == 'edit'){
             $tag = Tags::find($form['name']);
             $tag->name = $form['input2'];
             $tag->editor_id = Auth()->user()->id;
             $tag->save();
-            $log = new Logmaker;
-            $log->user_id = Auth()->user()->id;
+
             $log->action = 'tag edit';
             $log->upload_id = $tag->id;
             $log->info = json_encode($tag);
-            $log->save();
         }else if($form['type'] == 'delete'){
             $tag = Tags::find($form['name']);
-            $log = new Logmaker;
-            $log->user_id = Auth()->user()->id;
+
             $log->action = 'tag delete';
             $log->upload_id = $tag->id;
             $log->info = json_encode($tag);
-            $log->save();
             $tag->delete();
         }
+        $log->save();
         return "success";
     }
     public function logsIndex()
@@ -207,7 +233,12 @@ class AdminsController extends Controller
     }
     public function logsFetch(Request $req)
     {
-        $logs = Logmaker::with(['user', 'upload'])->orderBy('created_at', 'DESC')->paginate(15);
+        $logs = Logmaker::query();
+        $form = $req->input('form');
+        if($form['email']){
+            $logs->where('email', $form['email']);
+        }
+        $logs = $logs->with(['user', 'upload'])->orderBy('created_at', 'DESC')->paginate(15);
         return $logs;
     }
 }

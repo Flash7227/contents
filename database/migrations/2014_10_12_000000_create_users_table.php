@@ -30,6 +30,7 @@ class CreateUsersTable extends Migration
             array(
                 'name' => 'Administrator',
                 'email' => 'admin@admin.admin',
+                'email_verified_at' => Carbon\Carbon::now(),
                 'permissions' => json_encode([]),
                 'storage_limit' => '0',
                 'password' =>  Hash::make('12345678'),

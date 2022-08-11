@@ -69,7 +69,7 @@
             :visible.sync="dialogVisible"
             width="90%"
             :before-close="handleClose">
-        {{(selected.info)}}
+        <div v-if="selected.info">{{ JSON.parse(selected.info)}}</div>
         </el-dialog>
         
     </div>

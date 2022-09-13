@@ -270,7 +270,7 @@ class UsersController extends Controller
         $data = Uploads::query();
         $data->whereJsonContains('allowed', $email);
         if($name){
-            $data->where('name', $name);
+            $data->where('name', 'like', '%'.$name.'%');
         };
         if($type){
             $data->where('type', $type);

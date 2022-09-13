@@ -75,7 +75,7 @@ class HomeController extends Controller
         }
 
         if($name){
-            $data->where('name', $name);
+            $data->where('name', 'like', '%'.$name.'%');
             //$data->orWhere('name', 'like', '%' . $name . '%');
         };
         if($tag){
@@ -118,7 +118,7 @@ class HomeController extends Controller
         }
 
         if($name){
-            $data->where('name', $name);
+            $data->where('name', 'like', '%'.$name.'%');
         };
         if($tag){
             $data->whereJsonContains('tags', $tag);
@@ -160,7 +160,7 @@ class HomeController extends Controller
         }
     
         if($name){
-            $data->where('name', $name);
+            $data->where('name', 'like', '%'.$name.'%');
         };
         if($tag){
             $data->whereJsonContains('tags', $tag);
@@ -201,7 +201,7 @@ class HomeController extends Controller
         }
        
         if($name){
-            $data->where('name', $name);
+            $data->where('name', 'like', '%'.$name.'%');
         };
         if($tag){
             $data->whereJsonContains('tags', $tag);

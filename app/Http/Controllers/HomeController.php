@@ -64,8 +64,10 @@ class HomeController extends Controller
     public function blogSearch(Request $req){
         $search = $req->input('search');
         $name = $search['name'];
-        $tag = $search['tag'];
-        $created_at = $search['date'];
+        $tags = $search['tag'];
+        $dates = $search['date'];
+       
+       
 
         $data = Uploads::query();
         if (Auth::check()){
@@ -78,11 +80,13 @@ class HomeController extends Controller
             $data->where('name', 'like', '%'.$name.'%');
             //$data->orWhere('name', 'like', '%' . $name . '%');
         };
-        if($tag){
-            $data->whereJsonContains('tags', $tag);
+        if($tags){
+            foreach($tags as $tag){
+                $data->whereJsonContains('tags', $tag);
+            }
         };
-        if($created_at){
-            $data->whereDate('created_at', $created_at);
+        if($dates){
+            $data->whereBetween('created_at', [$dates[0],$dates[1]]);
         };
         $data = $data->orderBy('created_at', 'DESC')->paginate(10);
         return [$data];
@@ -107,8 +111,9 @@ class HomeController extends Controller
     public function posterSearch(Request $req){
         $search = $req->input('search');
         $name = $search['name'];
-        $tag = $search['tag'];
-        $created_at = $search['date'];
+        $tags = $search['tag'];
+        $dates = $search['date'];
+        //return $dates;
 
         $data = Uploads::query();
         if (Auth::check()){
@@ -120,11 +125,13 @@ class HomeController extends Controller
         if($name){
             $data->where('name', 'like', '%'.$name.'%');
         };
-        if($tag){
-            $data->whereJsonContains('tags', $tag);
+        if($tags){
+            foreach($tags as $tag){
+                $data->whereJsonContains('tags', $tag);
+            }
         };
-        if($created_at){
-            $data->whereDate('created_at', $created_at);
+        if($dates){
+            $data->whereBetween('created_at', [$dates[0],$dates[1]]);
         };
         $data = $data->orderBy('created_at', 'DESC')->paginate(10);
         return [$data];
@@ -148,8 +155,9 @@ class HomeController extends Controller
     public function videoSearch(Request $req){
         $search = $req->input('search');
         $name = $search['name'];
-        $tag = $search['tag'];
-        $created_at = $search['date'];
+        $tags = $search['tag'];
+        $dates = $search['date'];
+        //return $tag;
 
         $data = Uploads::query();
         if (Auth::check()){
@@ -162,11 +170,15 @@ class HomeController extends Controller
         if($name){
             $data->where('name', 'like', '%'.$name.'%');
         };
-        if($tag){
-            $data->whereJsonContains('tags', $tag);
+        if($tags){
+            
+            foreach($tags as $tag){
+                $data->whereJsonContains('tags', $tag);
+
+            }
         };
-        if($created_at){
-            $data->whereDate('created_at', $created_at);
+        if($dates){
+            $data->whereBetween('created_at', [$dates[0],$dates[1]]);
         };
         $data = $data->orderBy('created_at', 'DESC')->paginate(10);
         return [$data];
@@ -190,8 +202,8 @@ class HomeController extends Controller
     public function fileSearch(Request $req){
         $search = $req->input('search');
         $name = $search['name'];
-        $tag = $search['tag'];
-        $created_at = $search['date'];
+        $tags = $search['tag'];
+        $dates = $search['date'];
 
         $data = Uploads::query();
         if (Auth::check()){
@@ -203,11 +215,13 @@ class HomeController extends Controller
         if($name){
             $data->where('name', 'like', '%'.$name.'%');
         };
-        if($tag){
-            $data->whereJsonContains('tags', $tag);
+        if($tags){
+            foreach($tags as $tag){
+                $data->whereJsonContains('tags', $tag);
+            }
         };
-        if($created_at){
-            $data->whereDate('created_at', $created_at);
+        if($dates){
+            $data->whereBetween('created_at', [$dates[0],$dates[1]]);
         };
         $data = $data->orderBy('created_at', 'DESC')->paginate(10);
 

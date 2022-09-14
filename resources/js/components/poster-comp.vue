@@ -5,7 +5,7 @@
                 <div class="row">
                     <div class="col-lg-12 col-md-12 col-sm-12 rowspace">
                         <el-card class="rowspace">
-                            <el-form :inline="true">
+                            <el-form :inline="true" size="mini">
                                 <el-form-item label="Нэр">
                                     <div class="block">
                                     <el-input v-model="search.name" placeholder="нэрээр хайх"></el-input>
@@ -24,20 +24,27 @@
                                         </el-option>
                                     </el-select>
                                 </el-form-item>
-                                <el-form-item label="Огноо">
-                                    <el-date-picker
-                                        v-model="search.date"
-                                        type="date"
-                                        :localTime="false"
-                                        format="yyyy-MM-dd"
-                                        value-format="yyyy-MM-dd"
-                                        placeholder="огноогоор хайх"
-                                        :clearable="true">
-                                    </el-date-picker>
-                                </el-form-item>
-                                <el-form-item>
-                                    <el-button type="primary" icon="el-icon-search" @click="searchFunc"></el-button>
-                                </el-form-item>
+                                <!-- <div class="col-lg-12 col-md-12 col-sm-12 rowspace"> -->
+                                    <el-form-item>
+                                        <div class="block">
+                                            <span class="demonstration">Огноо</span>
+                                            <el-date-picker
+                                            v-model="search.date"
+                                            type="daterange"
+                                            align="right"
+                                            start-placeholder="Start Date"
+                                            end-placeholder="End Date"
+                                            default-value="2022-01-01">
+                                            </el-date-picker>
+                                        </div>
+                                    </el-form-item>
+                                    <el-form-item>
+                                        <el-button type="primary" icon="el-icon-search" @click="searchFunc"></el-button>
+                                    </el-form-item>
+
+                                <!-- </div> -->
+                                
+                                
                             </el-form>
                             <hr>
                             <div class="text-right">
@@ -148,6 +155,7 @@
  export default {
     data () {
       return {
+        date: '',
         centerDialogVisible: false,
         postersData:{},
         Dbtags:[],
@@ -168,7 +176,9 @@
             name:'',
             tag: '',
             date:''
-        }
+        },
+       
+      
       }
     },
     methods: {

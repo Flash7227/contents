@@ -74,7 +74,7 @@
         </div>
         <pagination
             :data="blogData"
-            @pagination-change-page="getData"
+            @pagination-change-page="searchFunc"
             :limit="6"
             align="center"
             class="my-2"

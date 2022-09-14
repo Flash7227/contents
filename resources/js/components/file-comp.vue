@@ -124,7 +124,7 @@
                                 </el-table>
                                 <pagination
                                     :data="filesData"
-                                    @pagination-change-page="getfilesData"
+                                    @pagination-change-page="searchFunc"
                                     :limit="1"
                                     align="center"
                                     class="my-2"

@@ -82,7 +82,7 @@ class HomeController extends Controller
         };
         if($tags){
             foreach($tags as $tag){
-                $data->whereJsonContains('tags', $tag);
+                $data->whereJsonContains('tags', $tag)->orWhereJsonContains('tags', (string) $tag);
             }
         };
         if($dates){
@@ -127,7 +127,7 @@ class HomeController extends Controller
         };
         if($tags){
             foreach($tags as $tag){
-                $data->whereJsonContains('tags', $tag);
+                $data->whereJsonContains('tags', $tag)->orWhereJsonContains('tags', (string) $tag);
             }
         };
         if($dates){
@@ -173,8 +173,7 @@ class HomeController extends Controller
         if($tags){
             
             foreach($tags as $tag){
-                $data->whereJsonContains('tags', $tag);
-
+                $data->whereJsonContains('tags', $tag)->orWhereJsonContains('tags', (string) $tag);
             }
         };
         if($dates){
@@ -217,7 +216,7 @@ class HomeController extends Controller
         };
         if($tags){
             foreach($tags as $tag){
-                $data->whereJsonContains('tags', $tag);
+                $data->whereJsonContains('tags', $tag)->orWhereJsonContains('tags', (string) $tag);
             }
         };
         if($dates){

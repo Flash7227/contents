@@ -84,7 +84,7 @@
         </div>  
         <pagination
             :data="videoData"
-            @pagination-change-page="getvideoData"
+            @pagination-change-page="searchFunc"
             :limit="3"
             align="center"
             class="my-2"

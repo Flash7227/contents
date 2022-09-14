@@ -120,7 +120,7 @@
                             </el-table>
                             <pagination
                                 :data="postersData"
-                                @pagination-change-page="getPosterData"
+                                @pagination-change-page="searchFunc"
                                 :limit="1"
                                 align="center"
                                 class="my-2"

@@ -253,7 +253,7 @@ class UsersController extends Controller
         $data = Uploads::
         // where('allowed', Auth()->user()->email)
         whereJsonContains('allowed', $email)
-        ->whereJsonContains('tags',$tag)
+        ->whereJsonContains('tags',$tag)->orWhereJsonContains('tags', (string) $tag)
         ->paginate(100);
         // return [$email, $tag];
         return $data;
@@ -276,7 +276,7 @@ class UsersController extends Controller
             $data->where('type', $type);
         };
         if($tag){
-            $data->whereJsonContains('tags', [$tag]);
+            $data->whereJsonContains('tags', $tag)->orWhereJsonContains('tags', (string) $tag);
         };
         if($created_at){
             $data->whereDate('created_at', $created_at);

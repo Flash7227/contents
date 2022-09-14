@@ -1,12 +1,12 @@
 @extends('layouts.app')
 @section('content')
-<breadcrumb :urls="['НЭЭЛТТЭЙ КОНТЕНТ', 'БЛОГ']"></breadcrumb>
+<breadcrumb :urls="['НЭЭЛТТЭЙ КОНТЕНТ', 'НИЙТЛЭЛ']"></breadcrumb>
  <div class="container">
     <h5 class="text-center" style="font-weight: bold; font-size: 40px; padding-top: 40px">{{$blog->name}}</h5>
     {{-- <div class="text-center">
         <a class="breadcrumb-item" href="/home">Нүүр</a>
         <a disable > > </a>
-        <a class="breadcrumb-item" href="/home/blog">Блог</a>
+        <a class="breadcrumb-item" href="/home/blog">НИЙТЛЭЛ</a>
     </div> --}}
     <p class="text-center" style="color: #84A4C1; font-size: 15px; padding-top: 10px; margin-bottom: 3rem">{{$blog->created_at}}</p>
 

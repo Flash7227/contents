@@ -1,5 +1,6 @@
 
   <nav class="navbar navbar-expand-lg nav-new navbar-dark">
+    <div class="container">
     <a class="navbar-brand ml-2" href="/">
         <img src="/imgs/logo-white.png" width="auto" height="40" class="navbar-image"/>
     </a>
@@ -14,7 +15,7 @@
                 </a>
             </li>
             <li class="nav-item mainlink {{ Request::path() == 'home/blog' ? 'active' : ''}}">
-                <a class="nav-link " href="/home/blog">Блог
+                <a class="nav-link " href="/home/blog">Нийтлэл
               </a>
             </li>
             <li class="nav-item mainlink {{ Request::path() == 'home/video' ? 'active' : ''}}">
@@ -68,6 +69,7 @@
         </li>
         @endguest
       </ul>
+    </div>
     </div>
   </nav>
 

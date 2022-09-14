@@ -31,8 +31,7 @@
                   type="daterange"
                   align="right"
                   start-placeholder="Start Date"
-                  end-placeholder="End Date"
-                  default-value="2022-01-01">
+                  end-placeholder="End Date">
                   </el-date-picker>
                 </div>
               </el-form-item>
@@ -95,7 +94,7 @@
             :visible.sync="viewVisible"
             width="90%"
             append-to-body
-            :before-close="handleCloseView">
+            :before-close="handleClose">
             <video width="90%" height="auto" controls ref="video" >
                 <source :src="selected.download" type="video/mp4" ref="source1"/>
                 <source :src="selected.download" :type="getExt(selected.url)" ref="source2"/>
@@ -112,6 +111,7 @@ export default {
   data() {
     return {
       videoData:{},
+      searchVid:{},
       Dbtags: [],
       viewVisible: false,
       selected: {
@@ -155,8 +155,8 @@ export default {
           });
       });
     },
-    searchFunc(){
-      axios.post("/home/video/fetchSearch", { search: this.search})
+    searchFunc(page=1){
+      axios.post("/home/video/fetchSearch?page="+page, { search: this.search})
       .then((response) => {
         this.loading = false;
         if(response.data[0]){
@@ -267,6 +267,13 @@ export default {
           return "TAG NOT FOUND!";
         }
       }
+    },
+    handleClose(done) {
+      this.$confirm('Are you sure to close this dialog?')
+        .then(_ => {
+          done();
+        })
+        .catch(_ => {});
     }
   },
   created() {

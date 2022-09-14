@@ -88,7 +88,7 @@ class HomeController extends Controller
         if($dates){
             $data->whereBetween('created_at', [$dates[0],$dates[1]]);
         };
-        $data = $data->orderBy('created_at', 'DESC')->paginate(10);
+        $data = $data->orderBy('created_at', 'DESC')->paginate(9);
         return [$data];
 
     }
@@ -179,7 +179,7 @@ class HomeController extends Controller
         if($dates){
             $data->whereBetween('created_at', [$dates[0],$dates[1]]);
         };
-        $data = $data->orderBy('created_at', 'DESC')->paginate(10);
+        $data = $data->orderBy('created_at', 'DESC')->paginate(9);
         return [$data];
     }
 

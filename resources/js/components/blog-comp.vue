@@ -31,8 +31,7 @@
                   type="daterange"
                   align="right"
                   start-placeholder="Start Date"
-                  end-placeholder="End Date"
-                  default-value="2022-01-01">
+                  end-placeholder="End Date">
                   </el-date-picker>
                 </div>
               </el-form-item>
@@ -130,8 +129,8 @@
             });
         });
       },
-      searchFunc(){
-      axios.post("/home/blog/fetchSearch", { search: this.search})
+      searchFunc(page=1){
+      axios.post("/home/blog/fetchSearch?page="+page, { search: this.search})
         .then((response) => {
             this.loading = false;
             if(response.data[0]){

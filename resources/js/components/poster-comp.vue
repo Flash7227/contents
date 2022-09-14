@@ -3,8 +3,8 @@
         <el-container>
             <el-main>
                 <div class="row">
-                    <div class="col-lg-12 col-md-12 col-sm-12 rowspace">
-                        <el-card class="rowspace">
+                    <div class="col-lg-12 col-md-12 col-sm-12">
+                        
                             <el-form :inline="true" size="mini">
                                 <el-form-item label="Нэр">
                                     <div class="block">
@@ -33,8 +33,7 @@
                                             type="daterange"
                                             align="right"
                                             start-placeholder="Start Date"
-                                            end-placeholder="End Date"
-                                            default-value="2022-01-01">
+                                            end-placeholder="End Date">
                                             </el-date-picker>
                                         </div>
                                     </el-form-item>
@@ -65,7 +64,7 @@
                                     <div slot="reference" class="name-wrapper">
                                         <span v-if="scope.row.type === 1" size="medium">Файл</span>
                                         <span v-if="scope.row.type === 2" size="medium">Видео</span>
-                                        <span v-if="scope.row.type === 3" size="medium">Зураг</span>
+                                        <span v-if="scope.row.type === 3" size="medium">Постер</span>
                                     </div>
                                 </template>
                                 </el-table-column>
@@ -127,7 +126,7 @@
                             ></pagination>
                             
 
-                        </el-card>
+                       
                     </div>
                 </div>
                 
@@ -200,8 +199,8 @@
             });
         });
       },
-        searchFunc(){
-            axios.post("/home/poster/fetchSearch", { search: this.search})
+        searchFunc(page=1){
+            axios.post("/home/poster/fetchSearch?page="+page, { search: this.search})
             .then((response) => {
                 this.loading = false;
                 if(response.data[0]){

@@ -5,7 +5,7 @@
         element-loading-text="Уншиж байна..."
     >
         <div class="container blog-div">
-            <h4 class="custom-title">Блог</h4>
+            <h4 class="custom-title">Нийтлэл</h4>
             <!-- <el-divider></el-divider> -->
                 <el-carousel indicator-position="outside">
                     <el-carousel-item v-for="(blog,index) in blogs.slice(0, 3)" :key="index">

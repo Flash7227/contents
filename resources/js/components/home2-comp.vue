@@ -13,7 +13,7 @@
                             {{poster.name}}
                         </div>
                         <!-- <img class="item__image el-image__preview" :src="poster.download" alt=""  @click="addCount(poster.id, 'view')" :preview-src-list="[poster.download]"/> -->
-                        <el-image class="item__image" :src="poster.download" :preview-src-list="[poster.download]" fit="cover"></el-image>
+                        <el-image class="item__image" :src="poster.download" :preview-src-list="[poster.download]" fit="contain"></el-image>
                     </div>
                 </el-carousel-item>
             </el-carousel>
@@ -319,12 +319,13 @@ export default {
   background: rgba(0, 0, 0, 0.5);
   color: #fff;
   padding: 3px;
+  z-index: 1;
 }
 
 .item__image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  object-fit: contain;
+  margin-bottom: 30px;
+  z-index: 0.8;
 }
 
 .el-carousel__item:nth-child(2n) {

@@ -72,8 +72,8 @@
               <h4 class="mt-lg-0 mt-sm-3">Холбоос</h4>
                 <ul class="m-0 p-0">
                   <li>- <a href="https://crc.gov.mn/" class="footer-color">Байгууллагын веб хуудас</a></li>
-                  <li>- <a href="http://www.black-list.mn//" class="footer-color">Шуудангийн нэгдсэн кодын систем</a></li>
-                  <li>- <a href="https://zipcode.mn/" class="footer-color">Зөрчилтэй домайны жагсаалт</a></li>
+                  <li>- <a href="https://zipcode.mn/"  class="footer-color">Шуудангийн нэгдсэн кодын систем</a></li>
+                  <li>- <a href="http://www.black-list.mn" class="footer-color">Зөрчилтэй домайны жагсаалт</a></li>
                   <li>- <a href="http://www.facebook.com/crcmongol">Facebook холбоос</a></li>
                   <li>- <a href="http://www.twitter.com/crcmn">Twitter холбоос</a></li>
                 </ul>

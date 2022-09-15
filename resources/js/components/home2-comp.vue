@@ -5,63 +5,37 @@
         element-loading-text="Уншиж байна..."
     >
         <div class="container blog-div">
-            <h4 class="custom-title">Нийтлэл</h4>
-            <!-- <el-divider></el-divider> -->
-                <el-carousel indicator-position="outside">
-                    <el-carousel-item v-for="(blog,index) in blogs.slice(0, 3)" :key="index">
-                        <div class="item hover01" @click="viewBlog(blog)">
-                            <div class="item__content">
-                            {{blog.name}}
-                            </div>
-                            <img class="item__image custom-hover" :src="blog.download" alt="" />
+            <h4 class="custom-title">Постер</h4>
+            <el-carousel :interval="4000" type="card" height="350px">
+                <el-carousel-item v-for="(poster,index) in posters" :key="index">
+                    <div class="item" @click="addCount(poster.id, 'view')" >
+                        <div class="item__content">
+                            {{poster.name}}
                         </div>
-                    </el-carousel-item>
-                </el-carousel>
-            <div class="row">
-                <div class="col-sm-12 col-md-4 mt-3 custom-hover hover01" v-for="(blog,index) in blogs.slice(3)" :key="index" @click="viewBlog(blog)">
-                    <el-card :body-style="{ padding: '0px' }">
-                        <img :src="blog.download" class="image">
-                    </el-card>
-                    <div class="custom-card-title">
-                        {{blog.name}}
+                        <!-- <img class="item__image el-image__preview" :src="poster.download" alt=""  @click="addCount(poster.id, 'view')" :preview-src-list="[poster.download]"/> -->
+                        <el-image class="item__image" :src="poster.download" :preview-src-list="[poster.download]" fit="cover"></el-image>
                     </div>
-                    <div>
-                        <el-tag
-                                type="info"
-                                class="mr-1 mb-1"
-                                v-for="(tag, index) in JSON.parse(blog.tags)"
-                                :key="index"
-                                >{{ tagFinder(tag) }}</el-tag>
-                    </div>
-                    <small class="grey">{{dateformatter(blog.created_at, false)}}</small>
-                </div>
-            </div>
+                </el-carousel-item>
+            </el-carousel>
             <div class="text-center mt-3">
-                <el-button round @click="customHref('/home/blog')" type="primary" plain>Бүх постыг үзэх  ↓</el-button>
+                <el-button round @click="customHref('/home/poster')" type="primary" plain>Бүх постерыг үзэх  ↓</el-button>
             </div>
         </div>
+        
         <el-card class="mt-3">
             <div class="row">
                 <div class="col-md-6 col-sm-12">
-                    <h4 class="custom-title">Постер</h4>
-                    <div class="row">
-                        <div class="col-md-6 col-sm-12" v-for="(poster,index) in posters.slice(0, 1)" :key="index">
-                            <div class="demo-image__preview text-center">
-                                <el-image @click="addCount(poster.id, 'view')" :src="poster.download" style="width: 260px; height: 260px" :preview-src-list="[poster.download]"></el-image>
-                            </div>
-                        </div>
-                        <div class="col-md-6 col-sm-12">
-                            <div class="row">
-                                <div class="col-lg-12 mt-1" v-for="(poster,index) in posters.slice(1)" :key="index">
-                                    <div class="demo-image__preview text-center">
-                                        <el-image  @click="addCount(poster.id, 'view')" :src="poster.download" style="width: 80px; height: 80px" :preview-src-list="[poster.download]"></el-image>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <h4 class="custom-title">Нийтлэл</h4>
+                    <table class="table">
+                        <tr v-for="(blog, index) in blogs" :key="index">
+                            <td class="text-left">{{blog.name}}</td>
+                            <td class="text-right">
+                                <el-button @click="viewBlog(blog)" circle icon="el-icon-view" type="primary" plain></el-button>
+                            </td>
+                        </tr>
+                    </table>
                     <div class="text-center mt-3">
-                        <el-button round @click="customHref('/home/poster')" type="primary" plain>Бүх постерыг үзэх  ↓</el-button>
+                        <el-button round @click="customHref('/home/blog')" type="primary" plain>Бүх нийтлэлийг үзэх  ↓</el-button>
                     </div>
                 </div>
                 <div class="col-md-6 col-sm-12">

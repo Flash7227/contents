@@ -54,7 +54,11 @@
                 <i class="el-icon-user"></i> {{ Auth::user()->name }}
             </a>
             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-              <a class="dropdown-item" href="/user/upload"><i class="el-icon-document"></i> Файл хуулах</a>
+     
+              @if(in_array('upload', Auth()->user()->permissions))
+            
+                <a class="dropdown-item" href="/user/upload"><i class="el-icon-document"></i> Файл хуулах</a>
+              @endif
               <a class="dropdown-item" href="/user/shared"><i class="el-icon-share"></i> Хуваалцсан файл</a>
               <a class="dropdown-item" href="/user/profile"><i class="el-icon-user"></i> Миний хаяг</a>
                 <a class="dropdown-item" href="{{ route('logout') }}"

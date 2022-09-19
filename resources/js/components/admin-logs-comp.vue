@@ -91,10 +91,10 @@ export default {
         };
     },
     methods: {
-        fetch() {
+        fetch(page = 1) {
             this.loading = true;
             axios
-                .post("/admin/logs/fetch", {form:this.form})
+                .post("/admin/logs/fetch?page="+page, {form:this.form})
                 .then((response) => {
                     this.loading = false;
                     this.logs = response.data;

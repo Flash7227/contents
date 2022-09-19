@@ -13,7 +13,7 @@
                             {{poster.name}}
                         </div>
                         <!-- <img class="item__image el-image__preview" :src="poster.download" alt=""  @click="addCount(poster.id, 'view')" :preview-src-list="[poster.download]"/> -->
-                        <el-image class="item__image" :src="poster.download" :preview-src-list="[poster.download]" fit="contain"></el-image>
+                        <el-image class="item__image custom-hover" :src="poster.download" :preview-src-list="[poster.download]" fit="contain"></el-image>
                     </div>
                 </el-carousel-item>
             </el-carousel>
@@ -28,7 +28,8 @@
                     <h4 class="custom-title">Нийтлэл</h4>
                     <table class="table">
                         <tr v-for="(blog, index) in blogs" :key="index">
-                            <td class="text-left">{{blog.name}}</td>
+                            <td class="text-left"><p style="font-size: 0.8;">{{blog.name}}</p>
+                            </td>
                             <td class="text-right">
                                 <el-button @click="viewBlog(blog)" circle icon="el-icon-view" type="primary" plain></el-button>
                             </td>
@@ -325,6 +326,7 @@ export default {
 .item__image {
   object-fit: contain;
   margin-bottom: 30px;
+  opacity: 0.9;
   z-index: 0.8;
 }
 
@@ -335,8 +337,10 @@ export default {
 .el-carousel__item:nth-child(2n + 1) {
   background-color: #d3dce6;
 }
-.custom-hover{
+.custom-hover:hover{
     cursor: pointer;
+    opacity: 1;
+    transition: 0.3s;
 }
 .custom-title{
     color: #84A4C1;

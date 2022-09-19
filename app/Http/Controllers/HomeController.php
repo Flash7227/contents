@@ -53,10 +53,10 @@ class HomeController extends Controller
     public function blogFetch()
     {
         if (Auth::check()){
-            $getniitlel = Uploads::whereIn('sharetype', ['public', 'all'])->where('type', '4')->orderBy('created_at', 'DESC')->paginate(9);
+            $getniitlel = Uploads::whereIn('sharetype', ['public', 'all'])->where('type', 4)->orderBy('created_at', 'DESC')->paginate(9);
  
         }else{
-            $getniitlel = Uploads::where('sharetype', "public")->where('type', '4')->orderBy('created_at', 'DESC')->paginate(9);
+            $getniitlel = Uploads::where('sharetype', "public")->where('type', 4)->orderBy('created_at', 'DESC')->paginate(9);
         }
         $tags=Tags::get();
         return [$getniitlel, $tags];
@@ -69,7 +69,7 @@ class HomeController extends Controller
        
        
 
-        $data = Uploads::where('type', 4)->get();
+        $data = Uploads::query();
         if (Auth::check()){
             $data->whereIn('sharetype', ['public', 'all'])->where('type', 4);
         }else{
@@ -115,8 +115,7 @@ class HomeController extends Controller
         $dates = $search['date'];
         //return $dates;
 
-        //$data = Uploads::query();
-        $data = Uploads::where('type', 3)->get();
+        $data = Uploads::query();
         if (Auth::check()){
             $data->whereIn('sharetype', ['public', 'all'])->where('type', 3);
         }else{
@@ -160,8 +159,7 @@ class HomeController extends Controller
         $dates = $search['date'];
         //return $tag;
 
-        //$data = Uploads::query();
-        $data = Uploads::where('type', 2)->get();
+        $data = Uploads::query();
         if (Auth::check()){
             $data->whereIn('sharetype', ['public', 'all'])->where('type', 2);
 
@@ -206,8 +204,7 @@ class HomeController extends Controller
         $tags = $search['tag'];
         $dates = $search['date'];
 
-        // $data = Uploads::query();
-        $data = Uploads::where('type', 1)->get();
+        $data = Uploads::query();
         if (Auth::check()){
             $data->whereIn('sharetype', ['public', 'all'])->where('type', 1);
         }else{

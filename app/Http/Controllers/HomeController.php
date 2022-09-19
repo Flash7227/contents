@@ -82,7 +82,9 @@ class HomeController extends Controller
         };
         if($tags){
             foreach($tags as $tag){
-                $data->whereJsonContains('tags', $tag)->orWhereJsonContains('tags', (string) $tag);
+                $data->where(function ($query) use($tag){
+                    $query->whereJsonContains('tags', $tag)->orWhereJsonContains('tags', (string) $tag);
+                });
             }
         };
         if($dates){
@@ -127,7 +129,9 @@ class HomeController extends Controller
         };
         if($tags){
             foreach($tags as $tag){
-                $data->whereJsonContains('tags', $tag)->orWhereJsonContains('tags', (string) $tag);
+                $data->where(function ($query) use($tag){
+                    $query->whereJsonContains('tags', $tag)->orWhereJsonContains('tags', (string) $tag);
+                });
             }
         };
         if($dates){
@@ -173,7 +177,9 @@ class HomeController extends Controller
         if($tags){
             
             foreach($tags as $tag){
-                $data->whereJsonContains('tags', $tag)->orWhereJsonContains('tags', (string) $tag);
+                $data->where(function ($query) use($tag){
+                    $query->whereJsonContains('tags', $tag)->orWhereJsonContains('tags', (string) $tag);
+                });
             }
         };
         if($dates){
@@ -216,7 +222,9 @@ class HomeController extends Controller
         };
         if($tags){
             foreach($tags as $tag){
-                $data->whereJsonContains('tags', $tag)->orWhereJsonContains('tags', (string) $tag);
+                $data->where(function ($query) use($tag){
+                    $query->whereJsonContains('tags', $tag)->orWhereJsonContains('tags', (string) $tag);
+                });
             }
         };
         if($dates){

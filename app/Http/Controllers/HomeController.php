@@ -69,11 +69,11 @@ class HomeController extends Controller
        
        
 
-        $data = Uploads::query();
+        $data = Uploads::where('type', 4)->get();
         if (Auth::check()){
-            $data->whereIn('sharetype', ['public', 'all'])->where('type', '4');
+            $data->whereIn('sharetype', ['public', 'all'])->where('type', 4);
         }else{
-            $data->where('sharetype', "public")->where('type', '4');
+            $data->where('sharetype', "public")->where('type', 4);
         }
 
         if($name){
@@ -100,9 +100,9 @@ class HomeController extends Controller
     public function posterFetch()
     {
         if (Auth::check()){
-            $getposter = Uploads::whereIn('sharetype', ['public', 'all'])->where('type', '3')->orderBy('created_at', 'DESC')->paginate(10);
+            $getposter = Uploads::whereIn('sharetype', ['public', 'all'])->where('type', 3)->orderBy('created_at', 'DESC')->paginate(10);
         }else{
-            $getposter = Uploads::where('sharetype', "public")->where('type', '3')->orderBy('created_at', 'DESC')->paginate(10);
+            $getposter = Uploads::where('sharetype', "public")->where('type', 3)->orderBy('created_at', 'DESC')->paginate(10);
         }
         
         $tags=Tags::get();
@@ -115,11 +115,12 @@ class HomeController extends Controller
         $dates = $search['date'];
         //return $dates;
 
-        $data = Uploads::query();
+        //$data = Uploads::query();
+        $data = Uploads::where('type', 3)->get();
         if (Auth::check()){
-            $data->whereIn('sharetype', ['public', 'all'])->where('type', '3');
+            $data->whereIn('sharetype', ['public', 'all'])->where('type', 3);
         }else{
-            $data->where('sharetype', "public")->where('type', '3'); 
+            $data->where('sharetype', "public")->where('type',3); 
         }
 
         if($name){
@@ -145,9 +146,9 @@ class HomeController extends Controller
     public function videoFetch()
     {
         if (Auth::check()){
-            $getvideo = Uploads::whereIn('sharetype', ['public','all'])->where('type', '2')->orderBy('created_at', 'DESC')->paginate(9);
+            $getvideo = Uploads::whereIn('sharetype', ['public','all'])->where('type', 2)->orderBy('created_at', 'DESC')->paginate(9);
         }else{
-            $getvideo = Uploads::where('sharetype', "public")->where('type', '2')->orderBy('created_at', 'DESC')->paginate(9);
+            $getvideo = Uploads::where('sharetype', "public")->where('type', 2)->orderBy('created_at', 'DESC')->paginate(9);
         }
         $tags=Tags::get();
         return [$getvideo, $tags];
@@ -159,12 +160,13 @@ class HomeController extends Controller
         $dates = $search['date'];
         //return $tag;
 
-        $data = Uploads::query();
+        //$data = Uploads::query();
+        $data = Uploads::where('type', 2)->get();
         if (Auth::check()){
-            $data->whereIn('sharetype', ['public', 'all'])->where('type', '2');
+            $data->whereIn('sharetype', ['public', 'all'])->where('type', 2);
 
         }else{
-            $data->where('sharetype', "public")->where('type', '2');
+            $data->where('sharetype', "public")->where('type', 2);
         }
     
         if($name){
@@ -191,9 +193,9 @@ class HomeController extends Controller
     public function fileFetch()
     {
         if (Auth::check()){
-            $getfile = Uploads::whereIn('sharetype', ['public', 'all'])->where('type', '1')->orderBy('created_at', 'DESC')->paginate(10);
+            $getfile = Uploads::whereIn('sharetype', ['public', 'all'])->where('type', 1)->orderBy('created_at', 'DESC')->paginate(10);
         }else{
-            $getfile = Uploads::where('sharetype', "public")->where('type', '1')->orderBy('created_at', 'DESC')->paginate(10);
+            $getfile = Uploads::where('sharetype', "public")->where('type', 1)->orderBy('created_at', 'DESC')->paginate(10);
         }
         $tags=Tags::get();
         return [$getfile, $tags];
@@ -204,11 +206,12 @@ class HomeController extends Controller
         $tags = $search['tag'];
         $dates = $search['date'];
 
-        $data = Uploads::query();
+        // $data = Uploads::query();
+        $data = Uploads::where('type', 1)->get();
         if (Auth::check()){
-            $data->whereIn('sharetype', ['public', 'all'])->where('type', '1');
+            $data->whereIn('sharetype', ['public', 'all'])->where('type', 1);
         }else{
-            $data->where('sharetype', "public")->where('type', '1');
+            $data->where('sharetype', "public")->where('type', 1);
         }
        
         if($name){

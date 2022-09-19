@@ -60,7 +60,7 @@
             ></video>
               <div>
                 <span class="overme">{{video.name}}</span>
-                <el-button style="float: right; padding: 3px 0; color: #409EFF; font-size: 1.3em" @click="selectRow(video), submitView(video,  'countView')" type="text"  size="medium" icon="el-icon-view"></el-button>
+                <el-button style="float: right; padding: 3px 0; color: #409EFF; font-size: 1.3em" @click="selectRow(video), submitView(video,  'countView'), centerDialogVisible = true" type="text"  size="medium" icon="el-icon-view"></el-button>
                 <el-button
                   style="float: right; padding: 3px 0"
                   size="medium"
@@ -89,18 +89,21 @@
             class="my-2"
           ></pagination>
           <el-dialog
-          class="text-center"
+            class="text-center"
             title="Үзэх"
-            :visible.sync="viewVisible"
-            width="90%"
-            append-to-body
-            :before-close="handleClose">
-            <video width="90%" height="auto" controls ref="video" >
+            :visible.sync="centerDialogVisible"
+            width="90%">
+            <span>
+              <video width="90%" height="auto" controls ref="video" >
                 <source :src="selected.download" type="video/mp4" ref="source1"/>
                 <source :src="selected.download" :type="getExt(selected.url)" ref="source2"/>
-                Your browser does not support the video tag.
-            </video>
+              </video>
+            </span>
+            <span slot="footer" class="dialog-footer">
+              <el-button @click="centerDialogVisible = false">Хаах</el-button>
+            </span>
         </el-dialog>
+        
     </el-main>
   </el-container>
   </div>
@@ -113,7 +116,7 @@ export default {
       videoData:{},
       searchVid:{},
       Dbtags: [],
-      viewVisible: false,
+      centerDialogVisible: false,
       selected: {
         file: '',
         created_at:'',
@@ -268,13 +271,13 @@ export default {
         }
       }
     },
-    handleClose(done) {
-      this.$confirm('Are you sure to close this dialog?')
-        .then(_ => {
-          done();
-        })
-        .catch(_ => {});
-    }
+    // handleClose(done) {
+    //   this.$confirm('Are you sure to close this dialog?')
+    //     .then(_ => {
+    //       done();
+    //     })
+    //     .catch(_ => {});
+    // }
   },
   created() {
         this.getvideoData();
